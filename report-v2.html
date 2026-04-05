@@ -915,7 +915,51 @@
 
   <div style="display:flex;gap:12px">
     <button class="btn-secondary" onclick="goBack()">← 기본 정보</button>
-    <button class="btn-primary" style="flex:1" onclick="generateReport()">보고서 생성 →</button>
+    <button class="btn-primary" style="flex:1" onclick="submitRequest()">✦ 분석 요청 제출 →</button>
+  </div>
+</div>
+
+<!-- ===== 생성 중 오버레이 ===== -->
+<div id="generatingOverlay" class="generating-overlay hidden">
+  <div class="generating-logo">WEROS</div>
+  <div class="generating-msg" id="generatingMsg">✦ 생년월일 데이터를 분석하고 있습니다...</div>
+  <div class="generating-bar">
+    <div class="generating-fill" id="generatingFill" style="width:0%"></div>
+  </div>
+</div>
+
+<!-- ===== STEP 3: 보고서 ===== -->
+<div id="step3" class="hidden">
+  <div class="container" style="max-width:600px;text-align:center;padding-top:100px">
+
+    <!-- 접수 완료 아이콘 -->
+    <div style="font-size:48px;margin-bottom:24px">✦</div>
+
+    <div style="font-size:10px;letter-spacing:0.25em;color:var(--gold);margin-bottom:16px">
+      WEROS · 분석 요청 접수 완료
+    </div>
+
+    <h1 style="font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:300;color:var(--dark);margin-bottom:16px;line-height:1.3">
+      <span id="rptNameComplete">—</span>님의<br>요청이 접수되었습니다
+    </h1>
+
+    <div style="width:40px;height:1px;background:var(--gold);margin:24px auto"></div>
+
+    <p style="font-size:14px;color:var(--muted);line-height:2;margin-bottom:32px">
+      전문가가 사주·이름·설문 데이터를 검토한 후<br>
+      <strong style="color:var(--text)">입력하신 이메일로 보고서를 발송</strong>해드립니다.<br><br>
+      발송까지 <strong style="color:var(--gold)">1~3 영업일</strong> 소요될 수 있습니다.
+    </p>
+
+    <!-- 접수 정보 요약 -->
+    <div style="background:var(--cream);border:1px solid var(--border);padding:20px 24px;text-align:left;margin-bottom:32px">
+      <div style="font-size:9px;letter-spacing:0.2em;color:var(--muted);margin-bottom:12px">접수 정보</div>
+      <div id="submitSummary" style="font-size:13px;color:var(--text-sub);line-height:2"></div>
+    </div>
+
+    <p style="font-size:12px;color:var(--muted);line-height:1.8">
+      문의사항은 <strong>theweros.com</strong> 으로 연락해 주세요.
+    </p>
   </div>
 </div>
 
@@ -1448,6 +1492,40 @@ function getVizHTML(idx, state) {
   return map[idx] || '';
 }
 
+
+async function submitRequest() {
+  const err = document.getElementById('step2Error');
+
+  // 필수 답변 체크
+  const done = ql.filter(q => {
+    const a = state.answers[q.id];
+    if (q.type === 'text') return a && a.trim().length >= (q.minLength || 0);
+    if (q.type === 'rank' || q.type === 'multi') return Array.isArray(a) && a.length >= 1;
+    return a && String(a).trim().length > 0;
+  }).length;
+
+  if (done < ql.length) {
+    err.textContent = `아직 ${ql.length - done}개 문항이 남아있어요. 모두 답변해주세요.`;
+    return;
+  }
+  err.textContent = '';
+
+  // 접수완료 화면으로 이동
+  setStep(3);
+
+  // 이름 표시
+  document.getElementById('rptNameComplete').textContent = state.name || '고객';
+
+  // 접수 정보 요약
+  document.getElementById('submitSummary').innerHTML =
+    `이름: <strong>${state.name}${state.nameHanja ? ' · ' + state.nameHanja : ''}</strong><br>` +
+    `생년월일: <strong>${state.calType} ${state.birthYear}년 ${state.birthMonth}월 ${state.birthDay}일</strong><br>` +
+    `성별: <strong>${state.gender}</strong>${state.mbti ? ' · MBTI: <strong>' + state.mbti + '</strong>' : ''}<br>` +
+    `이메일: <strong>${state.email}</strong>`;
+
+  // Supabase 저장
+  await saveToSupabase();
+}
 
 async function generateReport() {
   const err = document.getElementById('step2Error');
