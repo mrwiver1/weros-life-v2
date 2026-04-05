@@ -1746,33 +1746,55 @@ function autoCalcSuri() {
   alert('✓ 수리 자동계산 완료\n원격:' + won + ' / 형격:' + hyung + ' / 이격:' + yi + ' / 정격:' + jung);
 }
 function fillDummy1() {
+  // 이름
   document.getElementById('name').value = '김지연';
   document.getElementById('nameHanja').value = '金志演';
-  setTimeout(autoCalcSuri, 100);
+
+  // 성별/MBTI
   document.getElementById('gender').value = '여성';
   document.getElementById('mbti').value = 'INFJ';
+
+  // 고민
   document.getElementById('concern').value = '40대 중반에 접어들며 지금까지 해온 일이 정말 나에게 맞는 건지 의문이 든다. 새로운 도전을 해야 할지, 현재를 지키는 게 맞는지 갈림길에 서 있는 느낌.';
-  document.getElementById('birthYear').value = '1978';
-  document.getElementById('birthMonth').value = '3';
-  document.getElementById('birthDay').value = '15';
-  document.getElementById('calType').value = '양력';
-  document.getElementById('birthAmPm').value = '오전';
-  document.getElementById('birthHour').value = '10';
-  document.getElementById('birthMin').value = '00';
-  document.getElementById('email').value = 'jiyeon@test.com';
-  document.getElementById('phone').value = '010-1234-5678';
-  document.getElementById('consentPrivacy').checked = true;
 
-  // 사주 미리 계산
-  try {
-    state.saju = calcSaju(1978, 3, 15, 10, 0, false, '남성');
-    document.getElementById('sajuResult').textContent =
-      `✦ 사주: ${state.saju.year.full}년 ${state.saju.month.full}월 ${state.saju.day.full}일 ${state.saju.time.full}시`;
-  } catch(e) {}
+  // 생년월일 - select 방식
+  var byEl = document.getElementById('birthYear');
+  var bmEl = document.getElementById('birthMonth');
+  var bdEl = document.getElementById('birthDay');
+  if (byEl) byEl.value = '1978';
+  if (bmEl) bmEl.value = '3';
+  if (bdEl) bdEl.value = '15';
 
-  // 설문도 더미 채우기
-  fillDummySurvey();
+  // 양력/음력
+  var calEl = document.getElementById('calType');
+  if (calEl) calEl.value = '양력';
+  var solarEl = document.getElementById('calTypeSolar');
+  if (solarEl) solarEl.checked = true;
+
+  // 출생시간
+  var ampmEl = document.getElementById('birthAmPm');
+  var hourEl  = document.getElementById('birthHour');
+  var minEl   = document.getElementById('birthMin');
+  if (ampmEl) ampmEl.value = '오전';
+  if (hourEl)  hourEl.value = '10';
+  if (minEl)   minEl.value  = '00';
+
+  // 사주 자동계산 트리거
+  onBirthChange();
+
+  // 이메일
+  document.getElementById('email').value = 'test@weros.com';
+
+  // 수리 자동계산
+  setTimeout(autoCalcSuri, 200);
+
+  // 더미 버튼 다시 숨기기
+  var btn = document.getElementById('dummyBtn');
+  if (btn) btn.classList.add('hidden');
+
+  alert('✓ 더미 데이터 채우기 완료!');
 }
+
 
 function fillDummySurvey() {
   const dummyTexts = [
@@ -1804,7 +1826,7 @@ function fillDummySurvey() {
 
 // ===== 운영자 단축키 (Ctrl+Shift+D) - 더미 버튼 토글 =====
 document.addEventListener('keydown', e => {
-  if (e.ctrlKey && e.shiftKey && e.key === 'W') {
+  if (e.ctrlKey && e.shiftKey && e.key === 'D') {
     e.preventDefault();
     const btn = document.getElementById('dummyBtn');
     if (btn) btn.classList.toggle('hidden');
