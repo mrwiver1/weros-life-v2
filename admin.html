@@ -533,17 +533,23 @@ function checkPW() {
         <div class="suri-card">
           <div class="suri-title">수리 (한글 기준)</div>
 
+          <!-- 오행 구성 -->
+          <div class="suri-item" style="margin-bottom:14px">
+            <label>오행 구성</label>
+            <div id="ko-ohang-display" style="font-size:13px;color:var(--text);padding:7px 0;border-bottom:1px solid var(--border);letter-spacing:0.05em">—</div>
+          </div>
+
           <!-- 원/형 첫 번째 줄 -->
           <div class="suri-row-2col">
             <div class="suri-field-block">
               <div class="suri-field-row">
                 <div class="suri-item">
                   <label>원격 (元格)</label>
-                  <input type="number" id="ko-won" placeholder="14" oninput="showSuriDesc('ko-won',this.value,'ko-won-desc')">
+                  <input type="number" id="ko-won" placeholder="14" oninput="showSuriDesc('ko-won',this.value,'ko-won-desc')" onchange="showSuriDesc('ko-won',this.value,'ko-won-desc')">
                 </div>
                 <div class="suri-item">
                   <label>형격 (亨格)</label>
-                  <input type="number" id="ko-hyung" placeholder="21" oninput="showSuriDesc('ko-hyung',this.value,'ko-hyung-desc')">
+                  <input type="number" id="ko-hyung" placeholder="21" oninput="showSuriDesc('ko-hyung',this.value,'ko-hyung-desc')" onchange="showSuriDesc('ko-hyung',this.value,'ko-hyung-desc')">
                 </div>
               </div>
               <div class="suri-desc-row2">
@@ -559,11 +565,11 @@ function checkPW() {
               <div class="suri-field-row">
                 <div class="suri-item">
                   <label>이격 (利格)</label>
-                  <input type="number" id="ko-yi" placeholder="18" oninput="showSuriDesc('ko-yi',this.value,'ko-yi-desc')">
+                  <input type="number" id="ko-yi" placeholder="18" oninput="showSuriDesc('ko-yi',this.value,'ko-yi-desc')" onchange="showSuriDesc('ko-yi',this.value,'ko-yi-desc')">
                 </div>
                 <div class="suri-item">
                   <label>정격 (貞格)</label>
-                  <input type="number" id="ko-jung" placeholder="31" oninput="showSuriDesc('ko-jung',this.value,'ko-jung-desc')">
+                  <input type="number" id="ko-jung" placeholder="31" oninput="showSuriDesc('ko-jung',this.value,'ko-jung-desc')" onchange="showSuriDesc('ko-jung',this.value,'ko-jung-desc')">
                 </div>
               </div>
               <div class="suri-desc-row2">
@@ -577,17 +583,17 @@ function checkPW() {
           <div class="gua-row" style="margin-top:18px">
             <div class="suri-item">
               <label>주역괘 번호 · 초년</label>
-              <input type="number" id="ko-gua-e" placeholder="14" oninput="showGuaDesc(this.value,'ko-gua-e-desc')">
+              <input type="number" id="ko-gua-e" placeholder="14" oninput="showGuaDesc(this.value,'ko-gua-e-desc')" onchange="showGuaDesc(this.value,'ko-gua-e-desc')">
               <div class="gua-desc-box" id="ko-gua-e-desc"></div>
             </div>
             <div class="suri-item">
               <label>주역괘 번호 · 중년</label>
-              <input type="number" id="ko-gua-m" placeholder="57" oninput="showGuaDesc(this.value,'ko-gua-m-desc')">
+              <input type="number" id="ko-gua-m" placeholder="57" oninput="showGuaDesc(this.value,'ko-gua-m-desc')" onchange="showGuaDesc(this.value,'ko-gua-m-desc')">
               <div class="gua-desc-box" id="ko-gua-m-desc"></div>
             </div>
             <div class="suri-item">
               <label>주역괘 번호 · 말년</label>
-              <input type="number" id="ko-gua-l" placeholder="11" oninput="showGuaDesc(this.value,'ko-gua-l-desc')">
+              <input type="number" id="ko-gua-l" placeholder="11" oninput="showGuaDesc(this.value,'ko-gua-l-desc')" onchange="showGuaDesc(this.value,'ko-gua-l-desc')">
               <div class="gua-desc-box" id="ko-gua-l-desc"></div>
             </div>
           </div>
@@ -602,17 +608,23 @@ function checkPW() {
         <div class="suri-card">
           <div class="suri-title">수리 (한자 기준)</div>
 
+          <!-- 오행 구성 -->
+          <div class="suri-item" style="margin-bottom:14px">
+            <label>오행 구성</label>
+            <div id="hj-ohang-display" style="font-size:13px;color:var(--text);padding:7px 0;border-bottom:1px solid var(--border);letter-spacing:0.05em">—</div>
+          </div>
+
           <!-- 원/형 첫 번째 줄 -->
           <div class="suri-row-2col">
             <div class="suri-field-block">
               <div class="suri-field-row">
                 <div class="suri-item">
                   <label>원격 (元格)</label>
-                  <input type="number" id="hj-won" placeholder="14" oninput="showSuriDesc('hj-won',this.value,'hj-won-desc')">
+                  <input type="number" id="hj-won" placeholder="14" oninput="showSuriDesc('hj-won',this.value,'hj-won-desc')" onchange="showSuriDesc('hj-won',this.value,'hj-won-desc')">
                 </div>
                 <div class="suri-item">
                   <label>형격 (亨格)</label>
-                  <input type="number" id="hj-hyung" placeholder="21" oninput="showSuriDesc('hj-hyung',this.value,'hj-hyung-desc')">
+                  <input type="number" id="hj-hyung" placeholder="21" oninput="showSuriDesc('hj-hyung',this.value,'hj-hyung-desc')" onchange="showSuriDesc('hj-hyung',this.value,'hj-hyung-desc')">
                 </div>
               </div>
               <div class="suri-desc-row2">
@@ -628,11 +640,11 @@ function checkPW() {
               <div class="suri-field-row">
                 <div class="suri-item">
                   <label>이격 (利格)</label>
-                  <input type="number" id="hj-yi" placeholder="18" oninput="showSuriDesc('hj-yi',this.value,'hj-yi-desc')">
+                  <input type="number" id="hj-yi" placeholder="18" oninput="showSuriDesc('hj-yi',this.value,'hj-yi-desc')" onchange="showSuriDesc('hj-yi',this.value,'hj-yi-desc')">
                 </div>
                 <div class="suri-item">
                   <label>정격 (貞格)</label>
-                  <input type="number" id="hj-jung" placeholder="31" oninput="showSuriDesc('hj-jung',this.value,'hj-jung-desc')">
+                  <input type="number" id="hj-jung" placeholder="31" oninput="showSuriDesc('hj-jung',this.value,'hj-jung-desc')" onchange="showSuriDesc('hj-jung',this.value,'hj-jung-desc')">
                 </div>
               </div>
               <div class="suri-desc-row2">
@@ -646,17 +658,17 @@ function checkPW() {
           <div class="gua-row" style="margin-top:18px">
             <div class="suri-item">
               <label>주역괘 번호 · 초년</label>
-              <input type="number" id="hj-gua-e" placeholder="14" oninput="showGuaDesc(this.value,'hj-gua-e-desc')">
+              <input type="number" id="hj-gua-e" placeholder="14" oninput="showGuaDesc(this.value,'hj-gua-e-desc')" onchange="showGuaDesc(this.value,'hj-gua-e-desc')">
               <div class="gua-desc-box" id="hj-gua-e-desc"></div>
             </div>
             <div class="suri-item">
               <label>주역괘 번호 · 중년</label>
-              <input type="number" id="hj-gua-m" placeholder="57" oninput="showGuaDesc(this.value,'hj-gua-m-desc')">
+              <input type="number" id="hj-gua-m" placeholder="57" oninput="showGuaDesc(this.value,'hj-gua-m-desc')" onchange="showGuaDesc(this.value,'hj-gua-m-desc')">
               <div class="gua-desc-box" id="hj-gua-m-desc"></div>
             </div>
             <div class="suri-item">
               <label>주역괘 번호 · 말년</label>
-              <input type="number" id="hj-gua-l" placeholder="11" oninput="showGuaDesc(this.value,'hj-gua-l-desc')">
+              <input type="number" id="hj-gua-l" placeholder="11" oninput="showGuaDesc(this.value,'hj-gua-l-desc')" onchange="showGuaDesc(this.value,'hj-gua-l-desc')">
               <div class="gua-desc-box" id="hj-gua-l-desc"></div>
             </div>
           </div>
@@ -9964,6 +9976,11 @@ const DUMMY_REQUESTS = [
     calType: '양력',
     email: 'jwlee@example.com',
     concern: '40대 중반, 브랜드 컨설팅 전환기에 방향성이 필요합니다.',
+    koOhang: '토화토화', hjOhang: '금목목수',
+    koWon: 14, koHyung: 21, koYi: 18, koJung: 31,
+    koGuaE: 14, koGuaM: 57, koGuaL: 11,
+    hjWon: 16, hjHyung: 23, hjYi: 20, hjJung: 33,
+    hjGuaE: 1,  hjGuaM: 14, hjGuaL: 57,
     status: 'pending',
     submittedAt: '2026-04-05 09:23',
   },
@@ -10035,6 +10052,7 @@ function selectRequest(id) {
 
   renderClientSummary();
   computeAndRenderSaju();
+  setTimeout(populateSuriFields, 300);
   renderPersonList(); // 선택 상태 업데이트
 }
 
@@ -10163,9 +10181,69 @@ function renderDayun(daYunList, birthYear) {
 // ══════════════════════════════════════════
 // 재계산
 // ══════════════════════════════════════════
+// 수리 입력값 자동 채우기 + 설명 트리거
+function populateSuriFields() {
+  var r = currentRequest;
+  if (!r) return;
+
+  // 한글 수리값 (currentRequest에 있으면 채우기)
+  var fields = [
+    ['ko-won',   r.koWon],
+    ['ko-hyung', r.koHyung],
+    ['ko-yi',    r.koYi],
+    ['ko-jung',  r.koJung],
+    ['hj-won',   r.hjWon],
+    ['hj-hyung', r.hjHyung],
+    ['hj-yi',    r.hjYi],
+    ['hj-jung',  r.hjJung],
+  ];
+  fields.forEach(function(f) {
+    var el = document.getElementById(f[0]);
+    if (el && f[1]) {
+      el.value = f[1];
+      // 설명 자동 표시
+      showSuriDesc(f[0], f[1], f[0] + '-desc');
+    }
+  });
+
+  // 주역괘 자동 표시
+  var guaFields = [
+    ['ko-gua-e', r.koGuaE, 'ko-gua-e-desc'],
+    ['ko-gua-m', r.koGuaM, 'ko-gua-m-desc'],
+    ['ko-gua-l', r.koGuaL, 'ko-gua-l-desc'],
+    ['hj-gua-e', r.hjGuaE, 'hj-gua-e-desc'],
+    ['hj-gua-m', r.hjGuaM, 'hj-gua-m-desc'],
+    ['hj-gua-l', r.hjGuaL, 'hj-gua-l-desc'],
+  ];
+  guaFields.forEach(function(f) {
+    var el = document.getElementById(f[0]);
+    if (el && f[1]) {
+      el.value = f[1];
+      showGuaDesc(f[1], f[2]);
+    }
+  });
+
+  // 오행 구성 표시
+  var koOhang = document.getElementById('ko-ohang-display');
+  var hjOhang = document.getElementById('hj-ohang-display');
+  if (koOhang) koOhang.textContent = r.koOhang || (currentSaju ? getOhangStr(currentSaju) : '—');
+  if (hjOhang) hjOhang.textContent = r.hjOhang || (currentSaju ? getOhangStr(currentSaju) : '—');
+}
+
+// 사주 오행 문자열 생성
+function getOhangStr(s) {
+  if (!s || !s.wuxing) return '—';
+  var map = {'木':'목','火':'화','土':'토','金':'금','水':'수'};
+  function toKo(str) {
+    return str.split('').map(function(c){ return map[c]||c; }).join('');
+  }
+  return '년' + toKo(s.wuxing.year) + ' 월' + toKo(s.wuxing.month) + ' 일' + toKo(s.wuxing.day) + ' 시' + toKo(s.wuxing.time);
+}
+
 function regenerateSaju() {
   if (!currentRequest) return;
   computeAndRenderSaju();
+  setTimeout(populateSuriFields, 300);
   alert('✓ 사주 재계산 완료');
 }
 
