@@ -553,6 +553,24 @@
   </div>
 </div>
 
+<!-- 모드 배지 -->
+<script>
+(function(){
+  var m = new URLSearchParams(window.location.search).get('mode');
+  if (m === 'test') {
+    var d = document.createElement('div');
+    d.style.cssText = 'position:fixed;top:52px;right:0;background:#e8a030;color:#fff;font-size:10px;padding:3px 12px;letter-spacing:2px;z-index:200';
+    d.textContent = 'TEST MODE · 과금 없음';
+    document.body.appendChild(d);
+  } else if (m === 'demo') {
+    var d = document.createElement('div');
+    d.style.cssText = 'position:fixed;top:52px;right:0;background:#3a6a3a;color:#fff;font-size:10px;padding:3px 12px;letter-spacing:2px;z-index:200';
+    d.textContent = 'DEMO MODE · 과금됨';
+    document.body.appendChild(d);
+  }
+})();
+</script>
+
 <!-- ===== STEP 1: 기본정보 ===== -->
 <div id="step1" class="container">
   <div class="section-header">
@@ -997,6 +1015,12 @@ const CHAPTERS = [
 
 // ===== API 호출 =====
 async function callAPI(system, userMsg, retries = 3) {
+  // test 모드: API 호출 없이 더미 텍스트 반환 (과금 없음)
+  if (APP_MODE === 'test') {
+    await new Promise(r => setTimeout(r, 800));
+    return '**[TEST MODE]** 이 텍스트는 테스트용 더미 응답입니다.\n\n실제 분석 내용은 demo 또는 live 모드에서 확인하세요.\n\n> 테스트 모드에서는 API 과금이 발생하지 않습니다.';
+  }
+
   let text = '', messages = [{role:'user', content: userMsg}];
   for (let i = 0; i <= retries; i++) {
     if (i > 0) await new Promise(r => setTimeout(r, 1500));
@@ -1787,6 +1811,11 @@ function fillDummy1() {
 
   // 수리 자동계산
   setTimeout(autoCalcSuri, 200);
+
+  // 26문항 설문 더미 채우기
+  setTimeout(function() {
+    if (typeof fillDummySurvey === 'function') fillDummySurvey();
+  }, 500);
 
   // 더미 버튼 다시 숨기기
   var btn = document.getElementById('dummyBtn');
