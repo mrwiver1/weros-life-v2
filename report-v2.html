@@ -1310,178 +1310,120 @@ function updateProgress() {
 // ===== 보고서 생성 =====
 
 // ===== 챕터별 시각화 HTML =====
-function getVizHTML(chapterIndex, state) {
-  const s = state || {};
-  const name = s.name || '당신';
+function getVizHTML(idx, state) {
+  var s = state || {};
+  var name = s.name || '당신';
+  var mbti = s.mbti || '';
 
-  const vizMap = {
-    // CH0 PROLOGUE - 핵심 키워드 6카드
-    0: `<div style="margin-top:32px;padding-top:24px;border-top:1px solid #e0d5c5">
-      <div style="font-size:9px;letter-spacing:3px;color:#9a7a50;margin-bottom:14px">✦ 핵심 키워드 요약</div>
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
-        <div style="background:#1a1510;padding:16px 14px;border:1px solid rgba(154,122,80,0.3)"><div style="font-size:9px;letter-spacing:2px;color:#c8a870;opacity:.7;margin-bottom:6px">나의 본질</div><div style="font-size:13px;font-weight:700;color:#c8a870" id="viz0-k1">분석 중...</div></div>
-        <div style="background:#120f0a;padding:16px 14px;border:1px solid rgba(154,122,80,0.3)"><div style="font-size:9px;letter-spacing:2px;color:#c8a870;opacity:.7;margin-bottom:6px">살아야 할 방식</div><div style="font-size:13px;font-weight:700;color:#c8a870" id="viz0-k2">분석 중...</div></div>
-        <div style="background:#0e0b07;padding:16px 14px;border:1px solid rgba(154,122,80,0.3)"><div style="font-size:9px;letter-spacing:2px;color:#9a8a6a;opacity:.7;margin-bottom:6px">핵심 과제</div><div style="font-size:13px;font-weight:700;color:#9a8a6a" id="viz0-k3">분석 중...</div></div>
-        <div style="background:#1a1510;padding:16px 14px;border:1px solid rgba(154,122,80,0.3)"><div style="font-size:9px;letter-spacing:2px;color:#c8a870;opacity:.7;margin-bottom:6px">돈의 방식</div><div style="font-size:13px;font-weight:700;color:#c8a870" id="viz0-k4">분석 중...</div></div>
-        <div style="background:#120f0a;padding:16px 14px;border:1px solid rgba(154,122,80,0.3)"><div style="font-size:9px;letter-spacing:2px;color:#c8a870;opacity:.7;margin-bottom:6px">관계 방식</div><div style="font-size:13px;font-weight:700;color:#c8a870" id="viz0-k5">분석 중...</div></div>
-        <div style="background:#c8a870;padding:16px 14px"><div style="font-size:9px;letter-spacing:2px;color:#1a1510;opacity:.7;margin-bottom:6px">지금 이 시기</div><div style="font-size:13px;font-weight:700;color:#1a1510" id="viz0-k6">분석 중...</div></div>
-      </div>
-    </div>`,
+  var viz0 = '<div style="margin-top:32px;padding-top:24px;border-top:1px solid #e0d5c5">'
+    + '<div style="font-size:9px;letter-spacing:3px;color:#9a7a50;margin-bottom:14px">✦ 핵심 키워드 요약</div>'
+    + '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">'
+    + '<div style="background:#1a1510;padding:16px 14px;border:1px solid rgba(154,122,80,0.3)"><div style="font-size:9px;letter-spacing:2px;color:#c8a870;opacity:.7;margin-bottom:6px">나의 본질</div><div style="font-size:13px;font-weight:700;color:#c8a870">깊이 있는 통찰자</div></div>'
+    + '<div style="background:#120f0a;padding:16px 14px;border:1px solid rgba(154,122,80,0.3)"><div style="font-size:9px;letter-spacing:2px;color:#c8a870;opacity:.7;margin-bottom:6px">살아야 할 방식</div><div style="font-size:13px;font-weight:700;color:#c8a870">자율과 창의의 삶</div></div>'
+    + '<div style="background:#0e0b07;padding:16px 14px;border:1px solid rgba(154,122,80,0.3)"><div style="font-size:9px;letter-spacing:2px;color:#9a8a6a;opacity:.7;margin-bottom:6px">핵심 과제</div><div style="font-size:13px;font-weight:700;color:#9a8a6a">완벽주의 해체</div></div>'
+    + '<div style="background:#1a1510;padding:16px 14px;border:1px solid rgba(154,122,80,0.3)"><div style="font-size:9px;letter-spacing:2px;color:#c8a870;opacity:.7;margin-bottom:6px">돈의 방식</div><div style="font-size:13px;font-weight:700;color:#c8a870">전문성 기반 수입</div></div>'
+    + '<div style="background:#120f0a;padding:16px 14px;border:1px solid rgba(154,122,80,0.3)"><div style="font-size:9px;letter-spacing:2px;color:#c8a870;opacity:.7;margin-bottom:6px">관계 방식</div><div style="font-size:13px;font-weight:700;color:#c8a870">깊고 선택적 연결</div></div>'
+    + '<div style="background:#c8a870;padding:16px 14px"><div style="font-size:9px;letter-spacing:2px;color:#1a1510;opacity:.7;margin-bottom:6px">지금 이 시기</div><div style="font-size:13px;font-weight:700;color:#1a1510">전환과 자기수용</div></div>'
+    + '</div></div>';
 
-    // CH1 본질 - 기질 프로필 바
-    1: `<div style="margin-top:32px;padding-top:24px;border-top:1px solid #e0d5c5">
-      <div style="font-size:9px;letter-spacing:3px;color:#9a7a50;margin-bottom:14px">✦ 기질 프로필</div>
-      <div style="background:#1a1510;padding:24px 28px">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-          <div>
-            <div style="font-size:9px;letter-spacing:2px;color:#9a7a50;margin-bottom:8px">에너지 방향</div>
-            <div style="height:6px;background:rgba(200,168,112,0.15);border-radius:3px;margin-bottom:4px">
-              <div style="height:100%;width:${(s.mbti||'').startsWith('I')?'25':'75'}%;background:#c8a870;border-radius:3px"></div>
-            </div>
-            <div style="display:flex;justify-content:space-between;font-size:10px;color:#9a8a6a"><span>내향 ◀</span><span>▶ 외향</span></div>
-          </div>
-          <div>
-            <div style="font-size:9px;letter-spacing:2px;color:#9a7a50;margin-bottom:8px">사고 방식</div>
-            <div style="height:6px;background:rgba(200,168,112,0.15);border-radius:3px;margin-bottom:4px">
-              <div style="height:100%;width:${(s.mbti||'').includes('N')?'30':'70'}%;background:#c8a870;border-radius:3px"></div>
-            </div>
-            <div style="display:flex;justify-content:space-between;font-size:10px;color:#9a8a6a"><span>직관 ◀</span><span>▶ 분석</span></div>
-          </div>
-          <div>
-            <div style="font-size:9px;letter-spacing:2px;color:#9a7a50;margin-bottom:8px">결정 방식</div>
-            <div style="height:6px;background:rgba(200,168,112,0.15);border-radius:3px;margin-bottom:4px">
-              <div style="height:100%;width:${(s.mbti||'').includes('F')?'25':'65'}%;background:#c8a870;border-radius:3px"></div>
-            </div>
-            <div style="display:flex;justify-content:space-between;font-size:10px;color:#9a8a6a"><span>감성 ◀</span><span>▶ 이성</span></div>
-          </div>
-          <div>
-            <div style="font-size:9px;letter-spacing:2px;color:#9a7a50;margin-bottom:8px">생활 방식</div>
-            <div style="height:6px;background:rgba(200,168,112,0.15);border-radius:3px;margin-bottom:4px">
-              <div style="height:100%;width:${(s.mbti||'').includes('J')?'65':'35'}%;background:#c8a870;border-radius:3px"></div>
-            </div>
-            <div style="display:flex;justify-content:space-between;font-size:10px;color:#9a8a6a"><span>유연 ◀</span><span>▶ 계획</span></div>
-          </div>
-        </div>
-        <div style="margin-top:16px;padding-top:16px;border-top:1px solid rgba(200,168,112,0.15);display:flex;align-items:center;gap:12px">
-          <div style="font-size:22px;font-weight:700;color:#c8a870;font-family:'Cormorant Garamond',serif">${s.mbti||'?'}</div>
-          <div style="font-size:12px;color:#9a8a6a;line-height:1.6">${name}님의 기질 유형<br><span style="color:#c8a870">설문 데이터 + 사주 기질 교차분석 기반</span></div>
-        </div>
-      </div>
-    </div>`,
+  var eW = mbti.startsWith('I') ? '25' : '75';
+  var tW = mbti.indexOf('N') >= 0 ? '30' : '70';
+  var dW = mbti.indexOf('F') >= 0 ? '25' : '65';
+  var lW = mbti.indexOf('J') >= 0 ? '65' : '35';
 
-    // CH2 재능 - 재능 스펙트럼
-    2: `<div style="margin-top:32px;padding-top:24px;border-top:1px solid #e0d5c5">
-      <div style="font-size:9px;letter-spacing:3px;color:#9a7a50;margin-bottom:14px">✦ 재능 스펙트럼</div>
-      <div style="display:flex;flex-direction:column;gap:8px">
-        ${['창의·기획력','언어·표현력','분석·통찰력','공감·소통력','실행·추진력','조직·관리력'].map((t,i)=>{
-          const w = [75,80,70,65,45,40][i];
-          return \`<div style="display:flex;align-items:center;gap:12px">
-            <div style="font-size:11px;color:#6a5a45;width:80px;flex-shrink:0">\${t}</div>
-            <div style="flex:1;height:4px;background:#e0d5c5;border-radius:2px">
-              <div style="height:100%;width:\${w}%;background:\${w>=70?'#c8a870':'#b0a080'};border-radius:2px"></div>
-            </div>
-            <div style="font-size:10px;color:#9a7a50;width:30px">\${w}%</div>
-          </div>\`;
-        }).join('')}
-      </div>
-    </div>`,
+  var viz1 = '<div style="margin-top:32px;padding-top:24px;border-top:1px solid #e0d5c5">'
+    + '<div style="font-size:9px;letter-spacing:3px;color:#9a7a50;margin-bottom:14px">✦ 기질 프로필</div>'
+    + '<div style="background:#1a1510;padding:24px 28px">'
+    + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">'
+    + '<div><div style="font-size:9px;letter-spacing:2px;color:#9a7a50;margin-bottom:8px">에너지 방향</div><div style="height:6px;background:rgba(200,168,112,0.15);border-radius:3px;margin-bottom:4px"><div style="height:100%;width:' + eW + '%;background:#c8a870;border-radius:3px"></div></div><div style="display:flex;justify-content:space-between;font-size:10px;color:#9a8a6a"><span>내향 ◀</span><span>▶ 외향</span></div></div>'
+    + '<div><div style="font-size:9px;letter-spacing:2px;color:#9a7a50;margin-bottom:8px">사고 방식</div><div style="height:6px;background:rgba(200,168,112,0.15);border-radius:3px;margin-bottom:4px"><div style="height:100%;width:' + tW + '%;background:#c8a870;border-radius:3px"></div></div><div style="display:flex;justify-content:space-between;font-size:10px;color:#9a8a6a"><span>직관 ◀</span><span>▶ 분석</span></div></div>'
+    + '<div><div style="font-size:9px;letter-spacing:2px;color:#9a7a50;margin-bottom:8px">결정 방식</div><div style="height:6px;background:rgba(200,168,112,0.15);border-radius:3px;margin-bottom:4px"><div style="height:100%;width:' + dW + '%;background:#c8a870;border-radius:3px"></div></div><div style="display:flex;justify-content:space-between;font-size:10px;color:#9a8a6a"><span>감성 ◀</span><span>▶ 이성</span></div></div>'
+    + '<div><div style="font-size:9px;letter-spacing:2px;color:#9a7a50;margin-bottom:8px">생활 방식</div><div style="height:6px;background:rgba(200,168,112,0.15);border-radius:3px;margin-bottom:4px"><div style="height:100%;width:' + lW + '%;background:#c8a870;border-radius:3px"></div></div><div style="display:flex;justify-content:space-between;font-size:10px;color:#9a8a6a"><span>유연 ◀</span><span>▶ 계획</span></div></div>'
+    + '</div>'
+    + '<div style="margin-top:16px;padding-top:16px;border-top:1px solid rgba(200,168,112,0.15);display:flex;align-items:center;gap:12px">'
+    + '<div style="font-size:22px;font-weight:700;color:#c8a870;font-family:Georgia,serif">' + (mbti||'?') + '</div>'
+    + '<div style="font-size:12px;color:#9a8a6a;line-height:1.6">' + name + '님의 기질 유형<br><span style="color:#c8a870">설문 데이터 + 사주 기질 교차분석 기반</span></div>'
+    + '</div></div></div>';
 
-    // CH3 돈 - 수입 구조 맵
-    3: `<div style="margin-top:32px;padding-top:24px;border-top:1px solid #e0d5c5">
-      <div style="font-size:9px;letter-spacing:3px;color:#9a7a50;margin-bottom:14px">✦ 나에게 맞는 수입 구조</div>
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
-        <div style="background:#1a1510;padding:16px;border-top:3px solid #c8a870;text-align:center">
-          <div style="font-size:20px;margin-bottom:6px">💡</div>
-          <div style="font-size:10px;letter-spacing:1px;color:#c8a870;margin-bottom:4px">전문성 기반</div>
-          <div style="font-size:11px;color:#9a8a6a;line-height:1.6">지식·경험을<br>수익으로 전환</div>
-        </div>
-        <div style="background:#f0ebe0;padding:16px;border-top:3px solid #8a6a40;text-align:center">
-          <div style="font-size:20px;margin-bottom:6px">🔗</div>
-          <div style="font-size:10px;letter-spacing:1px;color:#8a6a40;margin-bottom:4px">연결 기반</div>
-          <div style="font-size:11px;color:#6a5a45;line-height:1.6">사람과 사람<br>기회 연결</div>
-        </div>
-        <div style="background:#1a1510;padding:16px;border-top:3px solid rgba(154,122,80,0.4);text-align:center;opacity:.6">
-          <div style="font-size:20px;margin-bottom:6px">📦</div>
-          <div style="font-size:10px;letter-spacing:1px;color:#9a8a6a;margin-bottom:4px">제품화</div>
-          <div style="font-size:11px;color:#6a5a45;line-height:1.6">향후 개발<br>가능 영역</div>
-        </div>
-      </div>
-    </div>`,
+  var talents = ['창의·기획력','언어·표현력','분석·통찰력','공감·소통력','실행·추진력','조직·관리력'];
+  var weights = [75,80,70,65,45,40];
+  var talentBars = '';
+  for (var ti=0; ti<talents.length; ti++) {
+    var tw = weights[ti];
+    talentBars += '<div style="display:flex;align-items:center;gap:12px">'
+      + '<div style="font-size:11px;color:#6a5a45;width:80px;flex-shrink:0">' + talents[ti] + '</div>'
+      + '<div style="flex:1;height:4px;background:#e0d5c5;border-radius:2px"><div style="height:100%;width:' + tw + '%;background:' + (tw>=70?'#c8a870':'#b0a080') + ';border-radius:2px"></div></div>'
+      + '<div style="font-size:10px;color:#9a7a50;width:30px">' + tw + '%</div></div>';
+  }
+  var viz2 = '<div style="margin-top:32px;padding-top:24px;border-top:1px solid #e0d5c5">'
+    + '<div style="font-size:9px;letter-spacing:3px;color:#9a7a50;margin-bottom:14px">✦ 재능 스펙트럼</div>'
+    + '<div style="display:flex;flex-direction:column;gap:8px">' + talentBars + '</div></div>';
 
-    // CH4 관계 - 관계 에너지 다이어그램
-    4: `<div style="margin-top:32px;padding-top:24px;border-top:1px solid #e0d5c5">
-      <div style="font-size:9px;letter-spacing:3px;color:#9a7a50;margin-bottom:14px">✦ 관계 에너지 구조</div>
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px;text-align:center">
-        ${[['핵심 관계','2~3명','#c8a870','#1a1510'],['깊은 관계','5~10명','#a89060','#1a1510'],['느슨한 연결','20~30명','#d4c4a0','#3a2a15'],['네트워크','그 이상','#e8dcc8','#6a5a45']].map(([l,n,bg,tc])=>
-          \`<div style="background:\${bg};padding:14px 8px">
-            <div style="font-size:18px;font-family:'Cormorant Garamond',serif;font-weight:700;color:\${tc}">\${n}</div>
-            <div style="font-size:9px;letter-spacing:1px;color:\${tc};opacity:.7;margin-top:4px">\${l}</div>
-          </div>\`
-        ).join('')}
-      </div>
-      <div style="background:rgba(154,122,80,0.08);border-left:3px solid #c8a870;padding:10px 14px;margin-top:10px;font-size:12px;color:#6a5a45;line-height:1.7">
-        <strong style="color:#8a6a40">핵심 원칙:</strong> 많은 관계보다 <strong>깊은 관계 소수</strong>가 ${name}님의 에너지를 지속시킵니다.
-      </div>
-    </div>`,
+  var viz3 = '<div style="margin-top:32px;padding-top:24px;border-top:1px solid #e0d5c5">'
+    + '<div style="font-size:9px;letter-spacing:3px;color:#9a7a50;margin-bottom:14px">✦ 나에게 맞는 수입 구조</div>'
+    + '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">'
+    + '<div style="background:#1a1510;padding:16px;border-top:3px solid #c8a870;text-align:center"><div style="font-size:20px;margin-bottom:6px">💡</div><div style="font-size:10px;letter-spacing:1px;color:#c8a870;margin-bottom:4px">전문성 기반</div><div style="font-size:11px;color:#9a8a6a;line-height:1.6">지식·경험을<br>수익으로 전환</div></div>'
+    + '<div style="background:#f0ebe0;padding:16px;border-top:3px solid #8a6a40;text-align:center"><div style="font-size:20px;margin-bottom:6px">🔗</div><div style="font-size:10px;letter-spacing:1px;color:#8a6a40;margin-bottom:4px">연결 기반</div><div style="font-size:11px;color:#6a5a45;line-height:1.6">사람과 사람<br>기회 연결</div></div>'
+    + '<div style="background:#1a1510;padding:16px;border-top:3px solid rgba(154,122,80,0.4);text-align:center;opacity:.6"><div style="font-size:20px;margin-bottom:6px">📦</div><div style="font-size:10px;letter-spacing:1px;color:#9a8a6a;margin-bottom:4px">제품화</div><div style="font-size:11px;color:#6a5a45;line-height:1.6">향후 개발<br>가능 영역</div></div>'
+    + '</div></div>';
 
-    // CH5 패턴 - 반복 패턴 타임라인
-    5: `<div style="margin-top:32px;padding-top:24px;border-top:1px solid #e0d5c5">
-      <div style="font-size:9px;letter-spacing:3px;color:#9a7a50;margin-bottom:14px">✦ 반복 패턴 구조</div>
-      <div style="position:relative;padding-left:24px">
-        <div style="position:absolute;left:8px;top:0;bottom:0;width:1px;background:#e0d5c5"></div>
-        ${[['촉발','특정 상황에서 에너지 소진 시작','#e8a870'],['반응','회피·완벽주의·과몰입 패턴 발동','#c89060'],['결과','번아웃·관계 단절·기회 상실','#9a7a50'],['재설정','회복 후 같은 패턴 반복','#c8a870']].map(([t,d,c])=>
-          \`<div style="margin-bottom:16px;position:relative">
-            <div style="position:absolute;left:-20px;top:4px;width:8px;height:8px;border-radius:50%;background:\${c}"></div>
-            <div style="font-size:11px;font-weight:700;color:\${c};margin-bottom:3px">\${t}</div>
-            <div style="font-size:12px;color:#6a5a45">\${d}</div>
-          </div>\`
-        ).join('')}
-      </div>
-    </div>`,
+  var relItems = [['핵심 관계','2~3명','#c8a870','#1a1510'],['깊은 관계','5~10명','#a89060','#1a1510'],['느슨한 연결','20~30명','#d4c4a0','#3a2a15'],['네트워크','그 이상','#e8dcc8','#6a5a45']];
+  var relHTML = '';
+  for (var ri=0; ri<relItems.length; ri++) {
+    relHTML += '<div style="background:' + relItems[ri][2] + ';padding:14px 8px;text-align:center">'
+      + '<div style="font-size:18px;font-family:Georgia,serif;font-weight:700;color:' + relItems[ri][3] + '">' + relItems[ri][1] + '</div>'
+      + '<div style="font-size:9px;letter-spacing:1px;color:' + relItems[ri][3] + ';opacity:.7;margin-top:4px">' + relItems[ri][0] + '</div></div>';
+  }
+  var viz4 = '<div style="margin-top:32px;padding-top:24px;border-top:1px solid #e0d5c5">'
+    + '<div style="font-size:9px;letter-spacing:3px;color:#9a7a50;margin-bottom:14px">✦ 관계 에너지 구조</div>'
+    + '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px">' + relHTML + '</div>'
+    + '<div style="background:rgba(154,122,80,0.08);border-left:3px solid #c8a870;padding:10px 14px;margin-top:10px;font-size:12px;color:#6a5a45;line-height:1.7"><strong style="color:#8a6a40">핵심 원칙:</strong> 많은 관계보다 <strong>깊은 관계 소수</strong>가 ' + name + '님의 에너지를 지속시킵니다.</div>'
+    + '</div>';
 
-    // CH6 흐름 - 인생 흐름 바
-    6: `<div style="margin-top:32px;padding-top:24px;border-top:1px solid #e0d5c5">
-      <div style="font-size:9px;letter-spacing:3px;color:#9a7a50;margin-bottom:14px">✦ 인생 흐름과 현재 위치</div>
-      <div style="background:#1a1510;padding:20px 24px">
-        <div style="display:flex;margin-bottom:16px;gap:2px">
-          ${['20대','30대','40대 ★','50대','60대+'].map((d,i)=>
-            \`<div style="flex:1;text-align:center;padding:10px 4px;background:\${i===2?'#c8a870':'rgba(200,168,112,0.1)'};border:1px solid rgba(200,168,112,0.2)">
-              <div style="font-size:11px;font-weight:\${i===2?'700':'400'};color:\${i===2?'#1a1510':'#9a8a6a'}">\${d}</div>
-            </div>\`
-          ).join('')}
-        </div>
-        <div style="font-size:12px;color:#9a8a6a;line-height:1.8">
-          현재 <strong style="color:#c8a870">전환의 시기</strong>에 있습니다. 이 시기의 핵심 과제는 <strong style="color:#c8a870">자기 재정의</strong>입니다.
-        </div>
-      </div>
-    </div>`,
+  var patternItems = [['촉발','특정 상황에서 에너지 소진 시작','#e8a870'],['반응','회피·완벽주의·과몰입 패턴 발동','#c89060'],['결과','번아웃·관계 단절·기회 상실','#9a7a50'],['재설정','회복 후 같은 패턴 반복','#c8a870']];
+  var patternHTML = '';
+  for (var pi=0; pi<patternItems.length; pi++) {
+    patternHTML += '<div style="margin-bottom:16px;position:relative">'
+      + '<div style="position:absolute;left:-20px;top:4px;width:8px;height:8px;border-radius:50%;background:' + patternItems[pi][2] + '"></div>'
+      + '<div style="font-size:11px;font-weight:700;color:' + patternItems[pi][2] + ';margin-bottom:3px">' + patternItems[pi][0] + '</div>'
+      + '<div style="font-size:12px;color:#6a5a45">' + patternItems[pi][1] + '</div></div>';
+  }
+  var viz5 = '<div style="margin-top:32px;padding-top:24px;border-top:1px solid #e0d5c5">'
+    + '<div style="font-size:9px;letter-spacing:3px;color:#9a7a50;margin-bottom:14px">✦ 반복 패턴 구조</div>'
+    + '<div style="position:relative;padding-left:24px"><div style="position:absolute;left:8px;top:0;bottom:0;width:1px;background:#e0d5c5"></div>'
+    + patternHTML + '</div></div>';
 
-    // CH7 (EPILOGUE / 90일 플랜) - 액션플랜 테이블
-    7: `<div style="margin-top:32px;padding-top:24px;border-top:1px solid #e0d5c5">
-      <div style="font-size:9px;letter-spacing:3px;color:#9a7a50;margin-bottom:14px">✦ 90일 액션플랜</div>
-      <table style="width:100%;border-collapse:collapse;border:1px solid #e0d8c8">
-        <thead>
-          <tr style="background:#1a1510">
-            <th style="padding:10px 12px;font-size:9px;letter-spacing:1px;color:#c8a870;text-align:left;width:70px">기간</th>
-            <th style="padding:10px 12px;font-size:9px;letter-spacing:1px;color:#c8a870;text-align:left">구체 행동</th>
-            <th style="padding:10px 12px;font-size:9px;color:#c8a870;width:28px">✓</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${[['1주','현재 상태 파악 및 우선순위 설정'],['2-3주','핵심 행동 1 시작'],['4주','1개월 성과 확인 및 조정'],['5-6주','핵심 행동 2 강화'],['7-8주','중간 점검'],['9-10주','핵심 행동 3 시작'],['11-12주','90일 결산 및 다음 계획 수립']].map(([period, action], i)=>
-            \`<tr style="border-bottom:1px solid #e0d8c8;background:\${i%2===0?'#fff':'#faf6ee'}">
-              <td style="padding:10px 12px;font-size:11px;color:#8a6a40;font-weight:700;white-space:nowrap">\${period}</td>
-              <td style="padding:10px 12px;font-size:12px;color:#4a3a25">\${action}</td>
-              <td style="padding:10px 12px;text-align:center;font-size:16px;color:#d4c4a0">□</td>
-            </tr>\`
-          ).join('')}
-        </tbody>
-      </table>
-    </div>`
-  };
+  var decades = ['20대','30대','40대 ★','50대','60대+'];
+  var decadeHTML = '';
+  for (var di=0; di<decades.length; di++) {
+    decadeHTML += '<div style="flex:1;text-align:center;padding:10px 4px;background:' + (di===2?'#c8a870':'rgba(200,168,112,0.1)') + ';border:1px solid rgba(200,168,112,0.2)">'
+      + '<div style="font-size:11px;font-weight:' + (di===2?'700':'400') + ';color:' + (di===2?'#1a1510':'#9a8a6a') + '">' + decades[di] + '</div></div>';
+  }
+  var viz6 = '<div style="margin-top:32px;padding-top:24px;border-top:1px solid #e0d5c5">'
+    + '<div style="font-size:9px;letter-spacing:3px;color:#9a7a50;margin-bottom:14px">✦ 인생 흐름과 현재 위치</div>'
+    + '<div style="background:#1a1510;padding:20px 24px">'
+    + '<div style="display:flex;margin-bottom:16px;gap:2px">' + decadeHTML + '</div>'
+    + '<div style="font-size:12px;color:#9a8a6a;line-height:1.8">현재 <strong style="color:#c8a870">전환의 시기</strong>에 있습니다. 핵심 과제는 <strong style="color:#c8a870">자기 재정의</strong>입니다.</div>'
+    + '</div></div>';
 
-  return vizMap[chapterIndex] || '';
+  var planRows = [['1주','현재 상태 파악 및 우선순위 설정'],['2-3주','핵심 행동 1 시작'],['4주','1개월 성과 확인 및 조정'],['5-6주','핵심 행동 2 강화'],['7-8주','중간 점검'],['9-10주','핵심 행동 3 시작'],['11-12주','90일 결산 및 다음 계획 수립']];
+  var planHTML = '';
+  for (var li=0; li<planRows.length; li++) {
+    planHTML += '<tr style="border-bottom:1px solid #e0d8c8;background:' + (li%2===0?'#fff':'#faf6ee') + '">'
+      + '<td style="padding:10px 12px;font-size:11px;color:#8a6a40;font-weight:700;white-space:nowrap">' + planRows[li][0] + '</td>'
+      + '<td style="padding:10px 12px;font-size:12px;color:#4a3a25">' + planRows[li][1] + '</td>'
+      + '<td style="padding:10px 12px;text-align:center;font-size:16px;color:#d4c4a0">&#9633;</td></tr>';
+  }
+  var viz7 = '<div style="margin-top:32px;padding-top:24px;border-top:1px solid #e0d5c5">'
+    + '<div style="font-size:9px;letter-spacing:3px;color:#9a7a50;margin-bottom:14px">✦ 90일 액션플랜</div>'
+    + '<table style="width:100%;border-collapse:collapse;border:1px solid #e0d8c8">'
+    + '<thead><tr style="background:#1a1510"><th style="padding:10px 12px;font-size:9px;letter-spacing:1px;color:#c8a870;text-align:left;width:70px">기간</th><th style="padding:10px 12px;font-size:9px;letter-spacing:1px;color:#c8a870;text-align:left">구체 행동</th><th style="padding:10px 12px;font-size:9px;color:#c8a870;width:28px">✓</th></tr></thead>'
+    + '<tbody>' + planHTML + '</tbody></table></div>';
+
+  var map = [viz0, viz1, viz2, viz3, viz4, viz5, viz6, viz7];
+  return map[idx] || '';
 }
+
 
 async function generateReport() {
   const err = document.getElementById('step2Error');
@@ -1862,7 +1804,7 @@ function fillDummySurvey() {
 
 // ===== 운영자 단축키 (Ctrl+Shift+D) - 더미 버튼 토글 =====
 document.addEventListener('keydown', e => {
-  if (e.ctrlKey && e.shiftKey && e.key === 'D') {
+  if (e.ctrlKey && e.shiftKey && e.key === 'W') {
     e.preventDefault();
     const btn = document.getElementById('dummyBtn');
     if (btn) btn.classList.toggle('hidden');
