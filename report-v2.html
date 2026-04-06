@@ -1646,11 +1646,24 @@ async function saveToSupabase() {
         'Prefer': 'return=minimal'
       },
       body: JSON.stringify({
-        name: state.name || null,
-        email: state.email || null,
-        report_text: reportHtml,
-        source: 'weros-life-v2'
-      })
+  name: state.name || null,
+  name_hanja: state.nameHanja || null,
+  gender: state.gender || null,
+  mbti: state.mbti || null,
+  birth_year: state.birthYear ? parseInt(state.birthYear) : null,
+  birth_month: state.birthMonth ? parseInt(state.birthMonth) : null,
+  birth_day: state.birthDay ? parseInt(state.birthDay) : null,
+  cal_type: state.calType || null,
+  email: state.email || null,
+  concern: state.concern || null,
+  answers: state.answers || null,
+  ko_won: state.koWon ? String(state.koWon) : null,
+  ko_hyung: state.koHyung ? String(state.koHyung) : null,
+  ko_yi: state.koYi ? String(state.koYi) : null,
+  ko_jung: state.koJung ? String(state.koJung) : null,
+  status: 'pending',
+  report_html: reportHtml || null
+})
     });
     if (res.ok) console.log('✅ 저장 완료');
     else console.error('❌ 저장 실패', await res.text());
