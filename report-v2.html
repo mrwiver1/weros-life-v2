@@ -1660,7 +1660,7 @@ async function sendAdminEmail(recordId) {
     console.error('❌ EmailJS 오류:', e);
   }
 }
-
+const APP_MODE = new URLSearchParams(window.location.search).get('mode') || 'live';
 // ===== Supabase 저장 =====
 async function saveToSupabase() {
   const SUPABASE_URL = 'https://wavhcknviozwadqyjlug.supabase.co';
