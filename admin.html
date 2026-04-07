@@ -718,6 +718,26 @@ function checkPW() {
 
 <script>
 // ══════════════════════════════════════════
+// 모드 설정 (test: 과금없음 / demo: 과금됨 / live: 실서비스)
+// ══════════════════════════════════════════
+const APP_MODE = new URLSearchParams(window.location.search).get('mode') || 'live';
+
+// 모드 배지 표시
+(function() {
+  if (APP_MODE === 'test') {
+    const d = document.createElement('div');
+    d.style.cssText = 'position:fixed;top:52px;right:0;background:#e8a030;color:#fff;font-size:10px;padding:3px 14px;letter-spacing:2px;z-index:200';
+    d.textContent = 'TEST MODE · 과금 없음';
+    document.body.appendChild(d);
+  } else if (APP_MODE === 'demo') {
+    const d = document.createElement('div');
+    d.style.cssText = 'position:fixed;top:52px;right:0;background:#3a6a3a;color:#fff;font-size:10px;padding:3px 14px;letter-spacing:2px;z-index:200';
+    d.textContent = 'DEMO MODE · 과금됨';
+    document.body.appendChild(d);
+  }
+})();
+
+// ══════════════════════════════════════════
 // Supabase 설정
 // ══════════════════════════════════════════
 const SUPABASE_URL = 'https://wavhcknviozwadqyjlug.supabase.co';
@@ -786,6 +806,26 @@ async function init() {
     );
     ALL_REQUESTS = rows.map(dbRowToRequest);
     renderPersonList();
+
+    // ── URL ?id= 파라미터로 자동선택 ──
+    const autoId = new URLSearchParams(window.location.search).get('id');
+    if (autoId) {
+      const target = ALL_REQUESTS.find(r => String(r.id) === String(autoId));
+      if (target) {
+        selectRequest(target.id);
+      } else {
+        // 목록에 없으면 DB에서 직접 조회 (최신 50건 밖에 있을 경우 대비)
+        try {
+          const single = await supabaseFetch('life_reports?id=eq.' + autoId + '&select=*');
+          if (single && single.length > 0) {
+            const r = dbRowToRequest(single[0]);
+            ALL_REQUESTS.unshift(r);
+            renderPersonList();
+            selectRequest(r.id);
+          }
+        } catch(e2) { console.error('개별 조회 오류:', e2); }
+      }
+    }
   } catch(e) {
     console.error('Supabase 로딩 오류:', e);
     showSidebarError(e.message);
@@ -1130,6 +1170,24 @@ ${profileNote || '(없음)'}
 5. **앞으로의 방향** (구체적 제안 2~3가지)
 
 각 섹션을 충분히 깊고 따뜻하게, 1000자 내외로 작성해주세요.`;
+
+  // test 모드: API 호출 없이 더미 보고서 반환
+  if (APP_MODE === 'test') {
+    const dummyHtml = '<p><strong>[TEST MODE]</strong> 이 보고서는 테스트용 더미 응답입니다.</p><p>실제 분석 내용은 demo 또는 live 모드에서 확인하세요.</p>';
+    await supabaseFetch(
+      'life_reports?id=eq.' + currentRequest.id,
+      { method: 'PATCH', body: JSON.stringify({ report_html: dummyHtml, status: 'done' }) }
+    );
+    currentRequest.status = 'done';
+    currentRequest.reportHtml = dummyHtml;
+    const idx = ALL_REQUESTS.findIndex(x => x.id === currentRequest.id);
+    if (idx >= 0) ALL_REQUESTS[idx].status = 'done';
+    renderPersonList();
+    btn.textContent = '✦ 보고서 생성';
+    btn.disabled = false;
+    alert('[TEST] 더미 보고서 생성 완료! (과금 없음)');
+    return;
+  }
 
   try {
     const apiRes = await fetch('/api/generate', {
