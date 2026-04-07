@@ -570,7 +570,21 @@ function checkPW() {
           <span class="num">03</span> 한글 이름 수리
         </div>
         <div class="suri-card">
-          <div class="suri-title">수리 (한글 기준)</div>
+          <div class="suri-title" style="display:flex;justify-content:space-between;align-items:center">
+            <span>수리 (한글 기준)</span>
+            <button onclick="adminCalcSuri()" style="background:var(--gold);color:#fff;border:none;padding:5px 14px;font-size:10px;cursor:pointer;letter-spacing:0.08em;font-family:'Noto Serif KR',serif">⚡ 수리 자동계산</button>
+          </div>
+          <!-- 이름 직접 입력 -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--border-light)">
+            <div>
+              <label style="font-size:10px;color:var(--muted);margin-bottom:4px;display:block">한글 이름 (수리계산용)</label>
+              <input type="text" id="admin-ko-name" placeholder="김지연" style="font-size:13px;padding:7px 10px;border:1px solid var(--border);background:var(--bg);width:100%">
+            </div>
+            <div>
+              <label style="font-size:10px;color:var(--muted);margin-bottom:4px;display:block">한자 이름 (수리계산용)</label>
+              <input type="text" id="admin-hj-name" placeholder="金志演" style="font-size:13px;padding:7px 10px;border:1px solid var(--border);background:var(--bg);width:100%">
+            </div>
+          </div>
 
           <!-- 오행 구성 -->
           <div class="suri-item" style="margin-bottom:14px">
@@ -824,6 +838,9 @@ function dbRowToRequest(row) {
     koHyung:  row.ko_hyung ? parseInt(row.ko_hyung) : null,
     koYi:     row.ko_yi    ? parseInt(row.ko_yi)    : null,
     koJung:   row.ko_jung  ? parseInt(row.ko_jung)  : null,
+    koGuaE:   row.ko_gua_e || null,
+    koGuaM:   row.ko_gua_m || null,
+    koGuaL:   row.ko_gua_l || null,
     status:    row.status || 'pending',
     reportHtml: row.report_html || '',
     submittedAt: row.created_at ? row.created_at.replace('T', ' ').slice(0, 16) : '',
@@ -1088,11 +1105,31 @@ function populateSuriFields() {
     }
   });
 
+  // 주역괘 자동 표시 (DB에서 가져온 값)
+  var guaFields2 = [
+    ['ko-gua-e', r.koGuaE, 'ko-gua-e-desc'],
+    ['ko-gua-m', r.koGuaM, 'ko-gua-m-desc'],
+    ['ko-gua-l', r.koGuaL, 'ko-gua-l-desc'],
+  ];
+  guaFields2.forEach(function(f) {
+    var el = document.getElementById(f[0]);
+    if (el && f[1] && !el.value) {
+      el.value = f[1];
+      showGuaDesc(f[1], f[2]);
+    }
+  });
+
   // 오행 구성 표시
   var koOhang = document.getElementById('ko-ohang-display');
   var hjOhang = document.getElementById('hj-ohang-display');
   if (koOhang) koOhang.textContent = r.koOhang || (currentSaju ? getOhangStr(currentSaju) : '—');
   if (hjOhang) hjOhang.textContent = r.hjOhang || (currentSaju ? getOhangStr(currentSaju) : '—');
+
+  // 이름 입력란 자동 채우기
+  var koNameEl = document.getElementById('admin-ko-name');
+  var hjNameEl = document.getElementById('admin-hj-name');
+  if (koNameEl && r.name)      koNameEl.value = r.name;
+  if (hjNameEl && r.nameHanja) hjNameEl.value = r.nameHanja;
 }
 
 // 사주 오행 문자열 생성
@@ -1362,6 +1399,99 @@ function showGuaDesc(val, descId) {
     num + '괘 &middot; ' + data.name + ' ' + data.hanja + '</div>' +
     '<div class="gua-meaning">' + data.meaning + '</div>' +
     '<div class="gua-desc-text">' + data.desc + '</div>';
+}
+
+// ══════════════════════════════════════════
+// 어드민 수리 자동계산
+// ══════════════════════════════════════════
+function adminCalcSuri() {
+  var koName = (document.getElementById('admin-ko-name').value || '').trim();
+  var hjName = (document.getElementById('admin-hj-name').value || '').trim();
+
+  if (!koName && !hjName) {
+    alert('이름을 입력해주세요.');
+    return;
+  }
+
+  var calcGuaFn = (typeof calcGua !== 'undefined') ? calcGua : window.calcGua;
+
+  // ── 한글 수리 계산 ──
+  if (koName && koName.length >= 2) {
+    var HANGUL_CHO = (typeof window.HANGUL_CHO !== 'undefined') ? window.HANGUL_CHO :
+      ['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
+    var CHO_STROKES = [2,2,2,3,3,5,4,4,4,2,2,1,3,3,3,3,4,4,3];
+    var JUNG_STROKES= [1,2,1,2,3,2,3,1,2,3,4,1,2,3,2,3,4,2,3,3,2];
+    var JONG_STROKES= [0,2,2,4,4,2,5,4,4,4,4,5,2,4,2,2,3,4,3,3,2,2,4,3,3,4,4,3,4,4,3,3];
+
+    function hangulStrokes(ch) {
+      var code = ch.charCodeAt(0);
+      if (code < 0xAC00 || code > 0xD7A3) return 1;
+      var idx = code - 0xAC00;
+      var jong = idx % 28;
+      var jung = Math.floor(idx / 28) % 21;
+      var cho  = Math.floor(idx / 28 / 21);
+      return (CHO_STROKES[cho] || 1) + (JUNG_STROKES[jung] || 1) + (JONG_STROKES[jong] || 0);
+    }
+
+    var chars = koName.split('');
+    var strokes = chars.map(hangulStrokes);
+    var norm = function(n) { while(n > 81) n -= 80; return n; };
+    var len = strokes.length;
+    var won, hyung, yi, jung;
+    if (len === 2) {
+      won = strokes[1]; hyung = strokes[0]+strokes[1];
+      yi  = strokes[0]+strokes[1]; jung = strokes[0]+strokes[1];
+    } else {
+      won   = norm(strokes.slice(1).reduce(function(a,b){return a+b;},0));
+      hyung = norm(strokes[0]+strokes[1]);
+      yi    = norm(strokes[0]+strokes[len-1]);
+      jung  = norm(strokes.reduce(function(a,b){return a+b;},0));
+    }
+    won=norm(won); hyung=norm(hyung); yi=norm(yi); jung=norm(jung);
+
+    document.getElementById('ko-won').value   = won;
+    document.getElementById('ko-hyung').value = hyung;
+    document.getElementById('ko-yi').value    = yi;
+    document.getElementById('ko-jung').value  = jung;
+    showSuriDesc('ko-won',   won,   'ko-won-desc');
+    showSuriDesc('ko-hyung', hyung, 'ko-hyung-desc');
+    showSuriDesc('ko-yi',    yi,    'ko-yi-desc');
+    showSuriDesc('ko-jung',  jung,  'ko-jung-desc');
+
+    // 한글 주역
+    if (calcGuaFn) {
+      var koGua = calcGuaFn(won, hyung, yi, jung);
+      if (koGua) {
+        var ge = koGua.원격 && koGua.원격.num ? koGua.원격.num : '';
+        var gm = koGua.이격 && koGua.이격.num ? koGua.이격.num : '';
+        var gl = koGua.정격 && koGua.정격.num ? koGua.정격.num : '';
+        if (ge) { document.getElementById('ko-gua-e').value = ge; showGuaDesc(ge,'ko-gua-e-desc'); }
+        if (gm) { document.getElementById('ko-gua-m').value = gm; showGuaDesc(gm,'ko-gua-m-desc'); }
+        if (gl) { document.getElementById('ko-gua-l').value = gl; showGuaDesc(gl,'ko-gua-l-desc'); }
+      }
+    }
+  }
+
+  // ── 한자 수리 계산 ──
+  if (hjName && hjName.length >= 2 && typeof calcHanjaStrokes !== 'undefined') {
+    var hjStrokes = hjName.split('').map(function(c){ return calcHanjaStrokes(c) || 1; });
+    var hn = function(n){ while(n>81) n-=80; return n; };
+    var hl = hjStrokes.length;
+    var hw = hn(hjStrokes.slice(1).reduce(function(a,b){return a+b;},0));
+    var hh = hn(hjStrokes[0]+hjStrokes[1]);
+    var hy = hn(hjStrokes[0]+hjStrokes[hl-1]);
+    var hj = hn(hjStrokes.reduce(function(a,b){return a+b;},0));
+    document.getElementById('hj-won').value   = hw;
+    document.getElementById('hj-hyung').value = hh;
+    document.getElementById('hj-yi').value    = hy;
+    document.getElementById('hj-jung').value  = hj;
+    showSuriDesc('hj-won',   hw, 'hj-won-desc');
+    showSuriDesc('hj-hyung', hh, 'hj-hyung-desc');
+    showSuriDesc('hj-yi',    hy, 'hj-yi-desc');
+    showSuriDesc('hj-jung',  hj, 'hj-jung-desc');
+  }
+
+  alert('✓ 수리 자동계산 완료!');
 }
 
 // ══════════════════════════════════════════
