@@ -383,6 +383,28 @@ body {
   .saju-grid { grid-template-columns: repeat(2,1fr); }
   .suri-row { grid-template-columns: repeat(2,1fr); }
 }
+
+/* ── 설문 답변 섹션 ── */
+.survey-answer-section { background: var(--white); border: 1px solid var(--border); margin-top: 8px; }
+.survey-answer-header {
+  padding: 10px 16px; background: #f0ebe0; border-bottom: 1px solid var(--border);
+  font-size: 9px; letter-spacing: 0.18em; color: var(--muted);
+  display: flex; justify-content: space-between; align-items: center;
+}
+.survey-answer-body { padding: 14px 16px; max-height: 400px; overflow-y: auto; }
+.survey-q-item { margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid var(--border-light); }
+.survey-q-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.survey-q-num  { font-size: 9px; color: var(--gold); letter-spacing: 0.1em; margin-bottom: 2px; }
+.survey-q-text { font-size: 11px; color: var(--text-sub); margin-bottom: 4px; }
+.survey-q-ans  { font-size: 12px; color: var(--text); line-height: 1.7; background: var(--bg); padding: 6px 10px; }
+
+/* ── 삭제 버튼 ── */
+.btn-delete {
+  background: transparent; color: var(--red); border: 1px solid var(--red);
+  padding: 6px 14px; font-size: 10px; cursor: pointer; letter-spacing: 0.08em;
+  font-family: 'Noto Serif KR', serif; transition: all 0.2s; margin-left: 8px;
+}
+.btn-delete:hover { background: var(--red); color: #fff; }
 </style>
 </head>
 <body>
@@ -464,6 +486,23 @@ function checkPW() {
           <div class="client-meta" id="clientMeta">—</div>
         </div>
         <button class="btn-regenerate" onclick="regenerateSaju()">↺ 재계산</button>
+      </div>
+
+      <!-- (0) 설문 답변 + 삭제 버튼 -->
+      <div class="section" id="surveyAnswerSection">
+        <div class="section-label" style="display:flex;justify-content:space-between;align-items:center">
+          <span><span class="num">00</span> 고객 설문 답변</span>
+          <button class="btn-delete" onclick="deleteRequest()">🗑 이 요청 삭제</button>
+        </div>
+        <div class="survey-answer-section">
+          <div class="survey-answer-header">
+            <span>26문항 응답 내용</span>
+            <span id="surveyAnswerCount" style="color:var(--gold)"></span>
+          </div>
+          <div class="survey-answer-body" id="surveyAnswerBody">
+            <div style="color:var(--muted);font-size:12px;padding:12px 0">설문 데이터 없음</div>
+          </div>
+        </div>
       </div>
 
       <!-- (1) 사주 정보 -->
@@ -878,6 +917,7 @@ function selectRequest(id) {
   renderClientSummary();
   computeAndRenderSaju();
   setTimeout(populateSuriFields, 300);
+  renderSurveyAnswers();
   renderPersonList(); // 선택 상태 업데이트
 }
 
@@ -1322,6 +1362,101 @@ function showGuaDesc(val, descId) {
     num + '괘 &middot; ' + data.name + ' ' + data.hanja + '</div>' +
     '<div class="gua-meaning">' + data.meaning + '</div>' +
     '<div class="gua-desc-text">' + data.desc + '</div>';
+}
+
+// ══════════════════════════════════════════
+// 설문 답변 렌더링
+// ══════════════════════════════════════════
+const SURVEY_QUESTIONS = [
+  {id:1,  q:'지금 가장 답답하거나 막혀있는 것은?'},
+  {id:2,  q:'지금 가장 해결하고 싶은 것을 한 줄로 써주세요'},
+  {id:3,  q:'지금 하고 있는 일(또는 공부)은?'},
+  {id:4,  q:'지금 경제적 상황은 솔직하게?'},
+  {id:5,  q:'이걸 할 때 시간 가는 줄 모른다 (최대 3개)'},
+  {id:6,  q:'에너지가 확 빠지는 상황 (1~3위)'},
+  {id:7,  q:'나는 어떤 환경에서 가장 잘한다 (최대 3개)'},
+  {id:8,  q:'새로운 일을 시작할 때 나는?'},
+  {id:9,  q:'주변 사람들이 나한테 자주 부탁하는 것 (최대 2개)'},
+  {id:10, q:'어릴 때부터 유독 잘했거나 칭찬받은 것 (최대 2개)'},
+  {id:11, q:'나의 가장 큰 강점과 나와 맞지 않는 것'},
+  {id:12, q:'돈을 버는 방식으로 나에게 맞는 것 (1~3위)'},
+  {id:13, q:'일할 때 절대 타협 못 하는 것 (최대 3개)'},
+  {id:14, q:'5년 후 어떤 모습이면 잘 살고 있다고 느낄 것 같나요? (1~3순위)'},
+  {id:15, q:'조금 더 구체적으로 한 줄로 써주세요'},
+  {id:16, q:'삶에서 중요한 것 순위 (1~3위)'},
+  {id:17, q:'머리로는 알면서 몸이 안 따라가는 것 (1~3순위)'},
+  {id:18, q:'나도 이해 안 되는, 반복되는 패턴이 있다면?'},
+  {id:19, q:'내가 무너질 때 보통 이런 모습이 된다 (최대 3개)'},
+  {id:20, q:'가장 두려운 것 (1~3위)'},
+  {id:21, q:'사람들이 처음 만났을 때 나를 어떻게 보는 것 같나요? (1~5순위)'},
+  {id:22, q:'사람들이 나에 대해 오해하는 것 (1~5순위)'},
+  {id:23, q:'나는 주로 어떻게 에너지를 충전하나요?'},
+  {id:24, q:'지금 이 순간 가장 듣고 싶은 말'},
+  {id:25, q:'이 보고서를 통해 가장 알고 싶은 것 (최대 3개)'},
+  {id:26, q:'분석가에게 꼭 전하고 싶은 말 (선택)'},
+];
+
+function renderSurveyAnswers() {
+  if (!currentRequest) return;
+  const answers = currentRequest.answers || {};
+  const body = document.getElementById('surveyAnswerBody');
+  const countEl = document.getElementById('surveyAnswerCount');
+  if (!body) return;
+
+  const answered = SURVEY_QUESTIONS.filter(q => {
+    const a = answers[q.id];
+    return a && (Array.isArray(a) ? a.length > 0 : String(a).trim().length > 0);
+  });
+
+  if (countEl) countEl.textContent = answered.length + ' / 26 응답';
+
+  if (Object.keys(answers).length === 0) {
+    body.innerHTML = '<div style="color:var(--muted);font-size:12px;padding:12px 0">설문 데이터 없음</div>';
+    return;
+  }
+
+  body.innerHTML = SURVEY_QUESTIONS.map(q => {
+    const a = answers[q.id];
+    let ansStr = '(응답 없음)';
+    if (a) {
+      if (Array.isArray(a) && a.length > 0) {
+        ansStr = a.map((v, i) => (i + 1) + '위: ' + v).join('<br>');
+      } else if (String(a).trim()) {
+        ansStr = String(a).trim();
+      }
+    }
+    const isEmpty = ansStr === '(응답 없음)';
+    return \`<div class="survey-q-item">
+      <div class="survey-q-num">Q\${String(q.id).padStart(2,'0')}</div>
+      <div class="survey-q-text">\${q.q}</div>
+      <div class="survey-q-ans" style="\${isEmpty ? 'color:var(--muted);font-style:italic' : ''}">\${ansStr}</div>
+    </div>\`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════
+// 요청 삭제
+// ══════════════════════════════════════════
+async function deleteRequest() {
+  if (!currentRequest) return;
+  const name = currentRequest.name || '이 요청';
+  if (!confirm(\`"$\{name}" 님의 데이터를 삭제하시겠어요?\n이 작업은 되돌릴 수 없습니다.\`)) return;
+
+  try {
+    await supabaseFetch(
+      'life_reports?id=eq.' + currentRequest.id,
+      { method: 'DELETE', headers: { 'Prefer': 'return=minimal' } }
+    );
+    // 로컬 목록에서 제거
+    ALL_REQUESTS = ALL_REQUESTS.filter(r => r.id !== currentRequest.id);
+    currentRequest = null;
+    renderPersonList();
+    document.getElementById('emptyState').classList.remove('hidden');
+    document.getElementById('analysisPanel').classList.add('hidden');
+    alert('✓ 삭제 완료');
+  } catch(e) {
+    alert('⚠ 삭제 오류: ' + e.message);
+  }
 }
 
 // ══════════════════════════════════════════
