@@ -530,7 +530,47 @@
       letter-spacing: 0.1em;
     }
 
-  </style>
+  
+    /* ===== 설문 파트 탭 ===== */
+    .survey-part-tab {
+      flex: 1; padding: 14px 12px; text-align: center;
+      background: var(--cream); border-right: 1px solid var(--border);
+      cursor: default; transition: all 0.2s;
+    }
+    .survey-part-tab:last-child { border-right: none; }
+    .survey-part-tab.active {
+      background: var(--dark); color: #f5f0e8;
+    }
+    .survey-part-tab.done {
+      background: rgba(154,122,80,0.12);
+    }
+    .part-tab-num {
+      font-size: 9px; letter-spacing: 0.2em; color: var(--gold); margin-bottom: 4px;
+    }
+    .survey-part-tab.active .part-tab-num { color: #c4a882; }
+    .part-tab-label { font-size: 13px; font-weight: 500; margin-bottom: 2px; }
+    .survey-part-tab.active .part-tab-label { color: #f5f0e8; }
+    .survey-part-tab.done .part-tab-label { color: var(--gold); }
+    .part-tab-range { font-size: 10px; color: var(--muted); }
+    .survey-part-tab.active .part-tab-range { color: #aaa; }
+
+    /* ===== 파트 인트로 박스 ===== */
+    .part-intro-box {
+      background: var(--cream); border: 1px solid var(--border);
+      border-left: 4px solid var(--gold);
+      padding: 18px 22px; margin-bottom: 8px;
+    }
+    .part-intro-title {
+      font-family: 'Cormorant Garamond', serif; font-size: 20px;
+      color: var(--dark); margin-bottom: 6px;
+    }
+    .part-intro-desc { font-size: 13px; color: var(--muted); line-height: 1.7; }
+    .part-cheer-box {
+      background: rgba(154,122,80,0.1); border: 1px solid rgba(154,122,80,0.3);
+      padding: 12px 18px; margin-top: 12px;
+      font-size: 13px; color: var(--gold); line-height: 1.6;
+    }
+</style>
 </head>
 <body>
 
@@ -895,12 +935,30 @@
 
 <!-- ===== STEP 2: 설문 ===== -->
 <div id="step2" class="container hidden">
-  <div class="section-header">
-    <div class="section-eyebrow">STEP 02 · 26문항 설문</div>
-    <h1 class="section-title">솔직한 당신으로</h1>
-    <p class="section-desc">정답 없이, 처음 떠오르는 것을 적어주세요.</p>
+
+  <!-- 파트 진행 탭 -->
+  <div style="display:flex;gap:0;margin-bottom:28px;border:1px solid var(--border)">
+    <div class="survey-part-tab active" id="partTab1">
+      <div class="part-tab-num">PART 1</div>
+      <div class="part-tab-label">나의 현재</div>
+      <div class="part-tab-range">Q01 – Q09</div>
+    </div>
+    <div class="survey-part-tab" id="partTab2">
+      <div class="part-tab-num">PART 2</div>
+      <div class="part-tab-label">강점과 가치</div>
+      <div class="part-tab-range">Q10 – Q18</div>
+    </div>
+    <div class="survey-part-tab" id="partTab3">
+      <div class="part-tab-num">PART 3</div>
+      <div class="part-tab-label">패턴과 본질</div>
+      <div class="part-tab-range">Q19 – Q26</div>
+    </div>
   </div>
 
+  <!-- 파트 인트로 + 응원 -->
+  <div id="partIntro" style="margin-bottom:24px"></div>
+
+  <!-- 진행률 -->
   <div class="survey-progress">
     <span class="survey-progress-text" id="surveyProgressText">0 / 26 완료</span>
     <div class="survey-progress-bar">
@@ -913,9 +971,10 @@
 
   <div id="step2Error" class="error-msg" style="margin-bottom:16px"></div>
 
-  <div style="display:flex;gap:12px">
-    <button class="btn-secondary" onclick="goBack()">← 기본 정보</button>
-    <button class="btn-primary" style="flex:1" onclick="submitRequest()">✦ 분석 요청 제출 →</button>
+  <!-- 파트 이동 버튼 -->
+  <div style="display:flex;gap:12px;margin-top:8px">
+    <button class="btn-secondary" id="partPrevBtn" onclick="goBack()">← 기본 정보</button>
+    <button class="btn-primary" style="flex:1" id="partNextBtn" onclick="surveyPartNext()">다음 파트 →</button>
   </div>
 </div>
 
@@ -1198,18 +1257,142 @@ function goToStep2() {
   // localStorage에 이메일 저장
   localStorage.setItem('weros_life_email', state.email.toLowerCase().trim());
 
+  currentPart = 1;
   renderSurvey();
+  renderPartTabs(1);
+  renderPartIntro(1);
+  updatePartNav(1);
   setStep(2);
 }
 
 function goBack() { setStep(1); }
 
 // ===== 설문 렌더링 =====
+// ══════════════════════════════════════════
+// 파트 정의
+// ══════════════════════════════════════════
+const PARTS = [
+  {
+    part: 1, label: '나의 현재', range: 'Q01 – Q09',
+    title: '지금 나는 어디에 있는가',
+    desc: '현재 상황과 에너지 패턴을 파악합니다. 정답은 없어요 — 지금 이 순간 솔직한 당신을 보여주세요.',
+    cheer: '✦ 잘 시작하셨어요! 이 질문들이 당신의 현재를 가장 정확하게 보여줄 거예요.',
+    sections: [0, 1], // vf 인덱스 (지금 나의 상황, 에너지의 방향)
+  },
+  {
+    part: 2, label: '강점과 가치', range: 'Q10 – Q18',
+    title: '나는 무엇을 잘하고 무엇을 원하는가',
+    desc: '타고난 강점과 일·돈에 대한 가치관을 탐색합니다. 절반 이상 오셨어요!',
+    cheer: '✦ 절반 넘었어요! 지금까지의 답변이 이미 많은 것을 말해주고 있어요. 조금만 더 해요.',
+    sections: [2, 3], // 강점과 재능, 돈과 일
+  },
+  {
+    part: 3, label: '패턴과 본질', range: 'Q19 – Q26',
+    title: '나는 왜 이 패턴을 반복하는가',
+    desc: '가장 깊은 곳에 있는 두려움, 욕구, 반복 패턴을 마주합니다. 거의 다 왔어요!',
+    cheer: '✦ 거의 다 왔어요! 마지막 파트가 보고서의 핵심이 됩니다. 조금만 더 힘내세요 🙏',
+    sections: [4, 5, 6], // 패턴과 반복, 나의 본질, 마무리
+  },
+];
+
+let currentPart = 1;
+
+function renderPartIntro(part) {
+  const p = PARTS[part - 1];
+  const el = document.getElementById('partIntro');
+  if (!el) return;
+  el.innerHTML = `
+    <div class="part-intro-box">
+      <div class="part-intro-title">${p.title}</div>
+      <div class="part-intro-desc">${p.desc}</div>
+      <div class="part-cheer-box">${p.cheer}</div>
+    </div>`;
+}
+
+function renderPartTabs(part) {
+  [1,2,3].forEach(i => {
+    const tab = document.getElementById('partTab' + i);
+    if (!tab) return;
+    tab.className = 'survey-part-tab' +
+      (i === part ? ' active' : i < part ? ' done' : '');
+  });
+}
+
+function updatePartNav(part) {
+  const prevBtn = document.getElementById('partPrevBtn');
+  const nextBtn = document.getElementById('partNextBtn');
+  if (!prevBtn || !nextBtn) return;
+
+  if (part === 1) {
+    prevBtn.textContent = '← 기본 정보';
+    prevBtn.onclick = () => goBack();
+  } else {
+    prevBtn.textContent = '← 이전 파트';
+    prevBtn.onclick = () => surveyPartPrev();
+  }
+
+  if (part === 3) {
+    nextBtn.textContent = '✦ 분석 요청 제출 →';
+    nextBtn.onclick = () => submitRequest();
+    nextBtn.style.background = 'var(--dark)';
+  } else {
+    nextBtn.textContent = '다음 파트 →';
+    nextBtn.onclick = () => surveyPartNext();
+    nextBtn.style.background = '';
+  }
+}
+
+function surveyPartNext() {
+  // 현재 파트 답변 검증
+  const p = PARTS[currentPart - 1];
+  const partSections = p.sections.map(i => vf[i]);
+  const partQuestions = partSections.flatMap(s => s.questions);
+  const unanswered = partQuestions.filter(q => {
+    const a = state.answers[q.id];
+    if (q.type === 'text') return q.minLength > 0 && (!a || a.trim().length < q.minLength);
+    if (q.type === 'rank' || q.type === 'multi') return !Array.isArray(a) || a.length < 1;
+    return !a || !String(a).trim();
+  });
+
+  if (unanswered.length > 0) {
+    const err = document.getElementById('step2Error');
+    err.textContent = unanswered.length + '개 문항이 아직 남아있어요. 모두 답변해주세요.';
+    // 첫 미답변 문항으로 스크롤
+    const firstQ = document.querySelector('[data-qid="' + unanswered[0].id + '"]');
+    if (firstQ) firstQ.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+
+  document.getElementById('step2Error').textContent = '';
+  if (currentPart < 3) {
+    currentPart++;
+    renderSurvey();
+    renderPartTabs(currentPart);
+    renderPartIntro(currentPart);
+    updatePartNav(currentPart);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+}
+
+function surveyPartPrev() {
+  if (currentPart > 1) {
+    currentPart--;
+    renderSurvey();
+    renderPartTabs(currentPart);
+    renderPartIntro(currentPart);
+    updatePartNav(currentPart);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+}
+
 function renderSurvey() {
   const container = document.getElementById('surveyContent');
   container.innerHTML = '';
 
-  vf.forEach(section => {
+  const p = PARTS[currentPart - 1];
+  const sectionsToShow = p.sections.map(i => vf[i]);
+
+  sectionsToShow.forEach(section => {
     const sDiv = document.createElement('div');
     sDiv.className = 'survey-section';
     sDiv.innerHTML = `
@@ -1227,6 +1410,7 @@ function renderSurvey() {
     section.questions.forEach(q => {
       const qDiv = document.createElement('div');
       qDiv.className = 'q-block';
+      qDiv.dataset.qid = q.id;
       qDiv.innerHTML = `<div class="q-label">Q${String(q.id).padStart(2,'0')}</div><div class="q-text">${q.q}</div>`;
       if (q.guide) qDiv.innerHTML += `<div class="q-guide">${q.guide}</div>`;
 
@@ -1496,7 +1680,7 @@ function getVizHTML(idx, state) {
 async function submitRequest() {
   const err = document.getElementById('step2Error');
 
-  // 필수 답변 체크
+  // 전체 26문항 완료 여부 체크
   const done = ql.filter(q => {
     const a = state.answers[q.id];
     if (q.type === 'text') return a && a.trim().length >= (q.minLength || 0);
