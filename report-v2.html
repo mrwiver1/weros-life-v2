@@ -196,27 +196,6 @@
     }
     .survey-progress-text { font-size: 12px; color: var(--muted); white-space: nowrap; }
 
-    /* ===== 한자 입력 ===== */
-    .hanja-search { margin-top: 12px; }
-    .hanja-search-input-row { display: flex; gap: 8px; margin-bottom: 12px; }
-    .hanja-search-input-row input { flex: 1; }
-    .hanja-search-input-row button {
-      background: var(--dark); color: var(--bg); border: none;
-      padding: 0 16px; cursor: pointer; font-size: 12px; white-space: nowrap;
-      font-family: 'Noto Serif KR', serif;
-    }
-    .hanja-candidates { background: var(--cream); border: 1px solid var(--border); padding: 16px; }
-    .hanja-char-group { margin-bottom: 16px; }
-    .hanja-char-label { font-size: 12px; color: var(--gold); margin-bottom: 8px; }
-    .hanja-btns { display: flex; flex-wrap: wrap; gap: 6px; }
-    .hanja-btn {
-      padding: 8px 12px; border: 1px solid var(--border); background: var(--bg);
-      cursor: pointer; font-size: 16px; transition: all 0.15s;
-    }
-    .hanja-btn:hover { border-color: var(--gold); background: rgba(154,122,80,0.1); }
-    .hanja-btn.selected { border-color: var(--dark); background: var(--dark); color: var(--bg); }
-    .hanja-btn span { display: block; font-size: 10px; color: var(--muted); }
-    .hanja-btn.selected span { color: var(--gold); }
 
     /* 사진으로 한자 찾기 */
     .photo-hanja {
@@ -596,25 +575,15 @@
       <div class="field">
         <label>한자 이름 <span style="color:var(--muted);font-size:11px">(선택 · 보고서 정밀도 향상)</span></label>
         <input type="text" id="nameHanja" placeholder="金志演" />
-        <!-- 한자 찾기 버튼: 한자 이름 바로 아래 -->
-        <div style="display:flex;gap:8px;margin-top:8px">
-          <button class="btn-secondary" style="font-size:12px;padding:7px 12px" onclick="toggleHanjaSearch()">🔍 한글로 한자 찾기</button>
+        <!-- 한자 찾기 버튼 -->
+        <div style="margin-top:8px">
           <button class="btn-secondary" style="font-size:12px;padding:7px 12px" onclick="document.getElementById('hanjaPhotoInput').click()">📷 사진으로 찾기</button>
           <input type="file" id="hanjaPhotoInput" accept="image/*" class="hidden" onchange="handleHanjaPhoto(event)">
         </div>
       </div>
     </div>
 
-    <!-- 한자 검색 박스 -->
-    <div id="hanjaSearchArea">
-      <div id="hanjaSearchBox" class="hidden hanja-search" style="margin-top:8px">
-        <div class="hanja-search-input-row">
-          <input type="text" id="hanjaSearchInput" placeholder="전체 이름 입력 (예: 김지연)" oninput="searchHanja(this.value)" />
-        </div>
-        <div id="hanjaCandidates" class="hanja-candidates hidden"></div>
-      </div>
-      <div id="hanjaPhotoLoading" class="hidden photo-hanja-loading">📷 이미지 분석 중...</div>
-    </div>
+    <div id="hanjaPhotoLoading" class="hidden photo-hanja-loading" style="margin-top:8px">📷 이미지 분석 중...</div>
 
     <div class="grid2" style="margin-top:16px">
       <div class="field">
@@ -1017,20 +986,12 @@ let state = {
   saju: null,
   // Step2
   answers: {},
-  // 한자 선택
-  selectedHanja: {},
 };
 
 // ===== 사주 계산 데이터 =====
 </script>
 
-
-
-<script>
-// ===== 81수리+주역 DB =====
-</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
-<script src="/hanja-db.js"></script>
 <script src="/suri-db.js"></script>
 <script src="/manse-db.js"></script>
 
@@ -1709,73 +1670,6 @@ async function saveToSupabase() {
   } catch(e) { console.error('❌ Supabase 오류', e); }
 }
 
-// ===== 한자 찾기 =====
-function toggleHanjaSearch() {
-  const box = document.getElementById('hanjaSearchBox');
-  box.classList.toggle('hidden');
-}
-
-function searchHanja(query) {
-  if (!query.trim()) {
-    document.getElementById('hanjaCandidates').classList.add('hidden');
-    return;
-  }
-  if (typeof Kr === 'undefined') {
-    document.getElementById('hanjaCandidates').innerHTML = '<p style="color:var(--muted);font-size:12px">한자 DB 로딩 중...</p>';
-    document.getElementById('hanjaCandidates').classList.remove('hidden');
-    return;
-  }
-  // 전체 이름 입력 기준으로 각 글자 순서대로 표시
-  // 한글 이름 입력란의 이름도 참조하여 순서 맞춤
-  const koName = document.getElementById('name').value.trim();
-  const inputChars = [...query.trim()];
-
-  // 한글 이름이 있으면 그 순서 기준으로, 없으면 입력 순서대로
-  let orderedChars;
-  if (koName && koName.length > 0) {
-    const koChars = [...koName];
-    // koName의 글자 순서대로, 입력에 있는 글자만 포함
-    orderedChars = koChars.filter(ch => inputChars.includes(ch));
-    // 입력에 있지만 koName에 없는 글자도 추가 (직접 입력한 경우)
-    inputChars.forEach(ch => { if (!orderedChars.includes(ch)) orderedChars.push(ch); });
-  } else {
-    orderedChars = inputChars;
-  }
-
-  // 중복 제거
-  orderedChars = [...new Set(orderedChars)];
-  const candidates = orderedChars.map(ch => ({ ch, list: (Kr[ch] || []).slice(0, 12) }));
-  renderHanjaCandidates(candidates);
-}
-
-function renderHanjaCandidates(candidates) {
-  const box = document.getElementById('hanjaCandidates');
-  box.classList.remove('hidden');
-  box.innerHTML = candidates.map(({ ch, list }) => `
-    <div class="hanja-char-group">
-      <div class="hanja-char-label">"${ch}" 후보:</div>
-      <div class="hanja-btns">
-        ${list.map(h => `
-          <button class="hanja-btn ${state.selectedHanja[ch] === h.h ? 'selected' : ''}"
-            onclick="selectHanja('${ch}','${h.h}')">
-            ${h.h}
-            <span>${h.s}획/${h.o}</span>
-          </button>
-        `).join('')}
-      </div>
-    </div>
-  `).join('');
-}
-
-function selectHanja(koChar, hanjaChar) {
-  state.selectedHanja[koChar] = hanjaChar;
-  // 이름 한자 필드 업데이트
-  const name = document.getElementById('name').value.trim();
-  const hanjaResult = [...name].map(ch => state.selectedHanja[ch] || ch).join('');
-  document.getElementById('nameHanja').value = hanjaResult;
-  // 재렌더링
-  searchHanja(document.getElementById('hanjaSearchInput').value);
-}
 
 // ===== 사진으로 한자 찾기 =====
 async function handleHanjaPhoto(event) {
