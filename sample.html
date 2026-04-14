@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WEROS · 김지연님의 인생 분석 리포트 · 샘플</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;500;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f5f0e8;
+  --dark: #1a1510;
+  --gold: #9a7a50;
+  --gold-light: #c4a882;
+  --cream: #faf7f2;
+  --border: #e0d5c5;
+  --text: #2c2418;
+  --muted: #8a7a65;
+  --text-sub: #5a4a38;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: 'Noto Serif KR', serif; }
+
+.top-bar {
+  background: var(--dark); padding: 0 24px;
+  display: flex; align-items: center; height: 52px;
+  justify-content: space-between;
+  position: sticky; top: 0; z-index: 100;
+}
+.logo { display:flex; align-items:center; }
+.top-badge { font-size:10px; letter-spacing:0.2em; color:var(--gold); border:1px solid rgba(154,122,80,0.4); padding:4px 12px; }
+.close-btn { background:none; border:1px solid rgba(200,168,112,0.3); color:var(--gold); font-size:11px; letter-spacing:0.1em; padding:6px 16px; cursor:pointer; font-family:'Noto Serif KR',serif; }
+.close-btn:hover { background:rgba(154,122,80,0.2); }
+
+.report-wrap { max-width: 800px; margin: 0 auto; padding: 40px 24px 80px; }
+
+.report-header { background: var(--dark); color: var(--bg); padding: 48px 40px; display: flex; align-items: flex-start; justify-content: space-between; }
+.report-header-left { flex: 1; }
+.report-eyebrow { font-size: 10px; letter-spacing: 0.25em; color: var(--gold); margin-bottom: 16px; }
+.report-name { font-family: 'Cormorant Garamond', serif; font-size: 30px; font-weight: 400; color: #f5f0e8; line-height: 1.3; margin-bottom:12px; }
+.report-meta { font-size: 13px; color: #aaa; line-height: 1.8; }
+.report-tagline { font-family: 'Cormorant Garamond', serif; font-size: 14px; color: var(--gold); font-style: italic; text-align: right; margin-left: 32px; padding-top: 8px; white-space: nowrap; }
+
+.report-body { background: var(--cream); border: 1px solid var(--border); border-top: none; }
+.report-chapter { padding: 48px 40px; border-bottom: 1px solid var(--border); }
+.report-chapter:last-child { border-bottom: none; }
+.chapter-eyebrow { font-size: 10px; letter-spacing: 0.2em; color: var(--gold); margin-bottom: 8px; }
+.chapter-title { font-family: 'Cormorant Garamond', serif; font-size: 26px; color: var(--dark); margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+.chapter-keywords { font-size:12px; color:var(--muted); margin-bottom:20px; letter-spacing:0.05em; }
+.chapter-content { font-size: 15px; line-height: 1.9; color: var(--text); }
+.chapter-content p { margin-bottom: 16px; }
+.chapter-content blockquote { border-left: 3px solid var(--gold); padding: 12px 20px; margin: 24px 0; color: var(--muted); font-style: italic; font-size: 14px; line-height: 1.8; background: rgba(154,122,80,0.05); }
+.chapter-content strong { color: var(--text); }
+
+.viz-block { margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--border); }
+.viz-label { font-size: 10px; letter-spacing: 3px; color: var(--gold); margin-bottom: 14px; font-weight: 600; }
+
+.analyst-note { background:rgba(154,122,80,0.06); border-left:3px solid var(--gold); padding:14px 18px; margin:24px 0; font-size:13px; color:var(--muted); line-height:1.8; }
+.analyst-note strong { color:var(--gold); }
+
+.report-footer { background: var(--dark); padding: 32px 40px; text-align: center; }
+.report-footer-text { font-size:11px; letter-spacing:0.15em; color:rgba(200,168,112,0.6); line-height:1.8; margin-top:12px; }
+
+.sample-watermark { position: fixed; bottom: 24px; right: 24px; background: var(--dark); color: var(--gold); font-size: 10px; letter-spacing: 0.2em; padding: 8px 16px; border: 1px solid rgba(154,122,80,0.4); pointer-events: none; z-index: 200; }
+
+@media (max-width: 600px) {
+  .report-header { padding: 32px 20px; flex-direction:column; }
+  .report-tagline { margin-left:0; margin-top:12px; text-align:left; }
+  .report-chapter { padding: 32px 16px; }
+  .chapter-title { font-size:22px; }
+  .chapter-content { font-size:14px; }
+}
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <div class="logo">
+    <svg width="110" height="30" viewBox="0 0 110 30" fill="none">
+      <path d="M2,5 L11,26 L20,8 L29,26" stroke="#d4aa6a" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      <line x1="29" y1="26" x2="43" y2="3" stroke="#d4aa6a" stroke-width="4.5" stroke-linecap="round"/>
+      <polygon points="36,0 46,0 46,10" fill="#d4aa6a"/>
+      <text x="78" y="21" font-family="Arial Black,Arial,sans-serif" font-size="11" font-weight="900" letter-spacing="3" fill="#d4c8a0" text-anchor="middle">WEROS</text>
+    </svg>
+  </div>
+  <div class="top-badge">SAMPLE REPORT</div>
+  <button class="close-btn" onclick="window.close()">✕ 닫기</button>
+</div>
+
+<div class="report-wrap">
+
+  <!-- 헤더 -->
+  <div class="report-header">
+    <div class="report-header-left">
+      <div class="report-eyebrow">WEROS · 심층 자기통찰 보고서 · LIFE STRATEGY REPORT</div>
+      <div class="report-name">김지연님의<br>인생 분석 리포트</div>
+      <div class="report-meta">양력 1978-03-15 · 여성 · INFJ<br>2026년 4월 발행 (샘플)</div>
+    </div>
+    <div class="report-tagline">See Both Sides of You</div>
+  </div>
+
+  <!-- 핵심 요약 카드 -->
+  <div style="background:var(--dark);padding:28px 32px">
+    <div style="font-size:9px;letter-spacing:3px;color:var(--gold);margin-bottom:18px">✦ 나의 인생 나침반 — 핵심 요약</div>
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div style="display:flex;gap:16px;align-items:flex-start;padding-bottom:14px;border-bottom:1px solid rgba(200,168,112,0.2)">
+        <div style="font-size:9px;letter-spacing:2px;color:var(--gold);opacity:.7;flex-shrink:0;width:100px;padding-top:2px">나의 본질</div>
+        <div style="font-size:13px;color:#e8d8b0;line-height:1.7">깊이 사유하고 통찰하지만 결국 사람과 연결되어야 빛나는, <strong style="color:#c8a870">내면형 리더</strong></div>
+      </div>
+      <div style="display:flex;gap:16px;align-items:flex-start;padding-bottom:14px;border-bottom:1px solid rgba(200,168,112,0.2)">
+        <div style="font-size:9px;letter-spacing:2px;color:var(--gold);opacity:.7;flex-shrink:0;width:100px;padding-top:2px">살아야 할 방식</div>
+        <div style="font-size:13px;color:#e8d8b0;line-height:1.7">혼자 파고드는 시간과 사람을 만나는 시간을 의도적으로 분리하며, 내 안의 통찰을 구체적 결과물로 변환하는 구조</div>
+      </div>
+      <div style="display:flex;gap:16px;align-items:flex-start;padding-bottom:14px;border-bottom:1px solid rgba(200,168,112,0.2)">
+        <div style="font-size:9px;letter-spacing:2px;color:var(--gold);opacity:.7;flex-shrink:0;width:100px;padding-top:2px">반드시 끊어야 할 것</div>
+        <div style="font-size:13px;color:#e8d8b0;line-height:1.7">완벽한 시나리오를 세우느라 시작을 미루는 습관과 타인 감정에 과도하게 공명하다 자기 에너지를 소진하는 패턴</div>
+      </div>
+      <div style="display:flex;gap:16px;align-items:flex-start">
+        <div style="font-size:9px;letter-spacing:2px;color:var(--gold);opacity:.7;flex-shrink:0;width:100px;padding-top:2px">지금 이 시기의 과제</div>
+        <div style="font-size:13px;color:#c8a870;line-height:1.7;font-weight:700">48세, 더 이상 '적응'이 아니라 '주도'로 전환하는 시점 — 내가 설계하는 일의 구조를 만들어야 할 때</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 레이더 차트 -->
+  <div style="background:var(--dark);padding:28px 32px;border-top:1px solid rgba(200,168,112,0.15)">
+    <div style="font-size:9px;letter-spacing:3px;color:var(--gold);margin-bottom:20px;text-align:center">✦ 인생 구조 레이더 분석</div>
+    <div style="display:flex;justify-content:center">
+      <canvas id="radarChart" width="340" height="320"></canvas>
+    </div>
+    <div style="background:rgba(200,168,112,0.08);border-left:3px solid var(--gold);padding:12px 16px;margin-top:16px;font-size:12px;color:#9a8a6a;line-height:1.8">
+      이 구조는 신중하고 안정적인 결정을 돕지만,<br>
+      <strong style="color:#c8a870">인생 방향성·감정 조절 영역</strong>에서 새로운 기회를 놓칠 수 있습니다.<br>
+      <span style="font-size:10px;color:#6a5a45">룩미진에서 실문 기반 질밀 분석 제공</span>
+    </div>
+  </div>
+
+  <!-- 이름 에너지 구조 -->
+  <div style="background:var(--cream);border:1px solid var(--border);border-top:none;padding:28px 32px">
+    <div style="font-size:9px;letter-spacing:3px;color:var(--gold);margin-bottom:20px">✦ 이름 에너지 구조 분석</div>
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+          <span style="font-size:12px;color:var(--text-sub)">원격 개인 에너지</span>
+          <span style="font-size:12px;color:#8a6a40;font-weight:700">8</span>
+        </div>
+        <div style="height:8px;background:#e0d8c8;border-radius:4px"><div style="height:100%;width:30%;background:linear-gradient(90deg,#8a6a40,#c8a070);border-radius:4px"></div></div>
+      </div>
+      <div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+          <span style="font-size:12px;color:var(--text-sub)">형격 대외 에너지</span>
+          <span style="font-size:12px;color:#7a70a0;font-weight:700">15</span>
+        </div>
+        <div style="height:8px;background:#e0d8c8;border-radius:4px"><div style="height:100%;width:55%;background:linear-gradient(90deg,#7060a0,#a090c0);border-radius:4px"></div></div>
+      </div>
+      <div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+          <span style="font-size:12px;color:var(--text-sub)">이격 내면 에너지</span>
+          <span style="font-size:12px;color:#608060;font-weight:700">16</span>
+        </div>
+        <div style="height:8px;background:#e0d8c8;border-radius:4px"><div style="height:100%;width:60%;background:linear-gradient(90deg,#507050,#80a080);border-radius:4px"></div></div>
+      </div>
+      <div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+          <span style="font-size:12px;color:var(--text-sub)">정격 종합 에너지</span>
+          <span style="font-size:12px;color:#8a6a40;font-weight:700">23</span>
+        </div>
+        <div style="height:8px;background:#e0d8c8;border-radius:4px"><div style="height:100%;width:85%;background:linear-gradient(90deg,#8a6a40,#c8a870);border-radius:4px"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="report-body">
+
+    <!-- PROLOGUE -->
+    <div class="report-chapter">
+      <div class="chapter-eyebrow">PROLOGUE</div>
+      <div class="chapter-title">김지연, 당신은 어떻게 살아야 하는가</div>
+      <div class="chapter-content">
+        <p>이 보고서는 당신이 태어난 순간의 시간 구조, 이름이 만들어낸 에너지 흐름, 당신이 직접 쓴 26개의 문장, 그리고 당신의 인지 프레임이 어떻게 작동하는지를 하나로 엮어 "당신은 어떻게 살아야 하는가"의 답을 찾아갑니다.</p>
+        <p>당신은 Q2에서 이렇게 말했습니다. <strong>"불안함과 동시에 이상하게 설렘도 있다. 뭔가 바뀔 것 같은 예감과 두려움이 공존한다."</strong> 48세, 지금 당신이 서 있는 이 자리는 혼란이 아니라 전환의 문턱입니다. 지금까지 당신은 누군가의 기대, 안정된 구조, 예측 가능한 경로 안에서 살아왔습니다. 그 안에서도 충분히 잘해왔고, 사람들은 당신을 믿고 의지했습니다. 하지만 당신 안의 어떤 부분은 계속 물어왔을 겁니다. "이게 정말 내 삶인가?"</p>
+        <p>당신은 Q15에서 <strong>"사람들과 깊이 연결되고 싶지만 동시에 혼자이고 싶다"</strong>고 썼습니다. 이것이 바로 당신의 핵심 모순이자 가장 큰 가능성입니다. 당신은 혼자서 깊이 사유할 때 진짜 통찰을 얻지만, 그것이 사람을 만나 표현될 때 비로소 힘을 발휘합니다. 당신은 혼자 완결되는 사람이 아니라 연결을 통해 빛나는 사람입니다.</p>
+        <p>당신은 Q24에서 가장 듣고 싶은 말로 <strong>"네가 하고 싶은 거 해도 돼"</strong>를 꼽았습니다. 이 보고서는 당신에게 그 말을 건네는 동시에, 그것을 실제로 가능하게 만드는 방법을 알려줍니다.</p>
+        <blockquote>당신에게 필요한 것은 새로운 방향이 아니라 지금 가진 통찰을 실행 가능한 단위로 쪼개는 기술입니다.</blockquote>
+      </div>
+
+      <!-- 핵심 키워드 6카드 -->
+      <div class="viz-block">
+        <div class="viz-label">✦ 핵심 키워드 요약</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
+          <div style="background:#1a1510;padding:16px 14px;border:1px solid rgba(200,168,112,0.2)"><div style="font-size:9px;letter-spacing:2px;color:#c8a870;opacity:.7;margin-bottom:6px">나의 본질</div><div style="font-size:13px;font-weight:700;color:#c8a870">깊이 있는 통찰자</div></div>
+          <div style="background:#120f0a;padding:16px 14px;border:1px solid rgba(200,168,112,0.2)"><div style="font-size:9px;letter-spacing:2px;color:#c8a870;opacity:.7;margin-bottom:6px">살아야 할 방식</div><div style="font-size:13px;font-weight:700;color:#c8a870">자율과 창의의 삶</div></div>
+          <div style="background:#0e0b07;padding:16px 14px;border:1px solid rgba(200,168,112,0.2)"><div style="font-size:9px;letter-spacing:2px;color:#9a8a6a;opacity:.7;margin-bottom:6px">핵심 과제</div><div style="font-size:13px;font-weight:700;color:#9a8a6a">완벽주의 해체</div></div>
+          <div style="background:#1a1510;padding:16px 14px;border:1px solid rgba(200,168,112,0.2)"><div style="font-size:9px;letter-spacing:2px;color:#c8a870;opacity:.7;margin-bottom:6px">돈의 방식</div><div style="font-size:13px;font-weight:700;color:#c8a870">전문성 기반 수입</div></div>
+          <div style="background:#120f0a;padding:16px 14px;border:1px solid rgba(200,168,112,0.2)"><div style="font-size:9px;letter-spacing:2px;color:#c8a870;opacity:.7;margin-bottom:6px">관계 방식</div><div style="font-size:13px;font-weight:700;color:#c8a870">깊고 선택적 연결</div></div>
+          <div style="background:#c8a870;padding:16px 14px"><div style="font-size:9px;letter-spacing:2px;color:#1a1510;opacity:.7;margin-bottom:6px">지금 이 시기</div><div style="font-size:13px;font-weight:700;color:#1a1510">전환과 자기수용</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CH1 본질 -->
+    <div class="report-chapter">
+      <div class="chapter-eyebrow">CHAPTER 1 · 본질</div>
+      <div class="chapter-title">당신의 본질: 타고난 에너지로 어떻게 살아야 하는가</div>
+      <div class="chapter-keywords">깊이 있는 통찰자 &nbsp;·&nbsp; 내면과 외면의 균형자 &nbsp;·&nbsp; 자율적 의미 추구자</div>
+      <div class="chapter-content">
+        <p>당신은 Q26에서 이렇게 말했습니다: <strong>"타인의 감정에 과하게 공감하다 나를 잃는 경우가 많다."</strong> 이 한 문장이 당신의 본질을 정확히 드러냅니다. 당신은 타고난 공감 능력과 분석력을 동시에 가진 사람입니다.</p>
+        <p>당신의 타고난 기질은 '흙의 안정성' 위에 '나무의 성장 욕구'가 겹쳐진 형태입니다. Q5에서 당신은 <strong>"무언가를 분석하고 파악할 때, 사람들과 이야기하고 연결될 때, 뭔가를 직접 만들거나 표현할 때"</strong> 시간 가는 줄 모른다고 했습니다.</p>
+        <p>당신은 혼자서도 잘 버팁니다. 그런데 사람들은 당신이 얼마나 외로운지 잘 모릅니다. 당신의 이름 에너지 구조는 금목목(金木木) — 당신이 타인과 깊이 연결될 때 에너지를 얻지만, 동시에 혼자만의 시간이 없으면 금방 소진된다는 의미입니다.</p>
+        <p>당신의 INFJ 성향은 이 에너지를 어떻게 표현하는지 결정합니다. Ni(내향 직관)는 당신에게 미래 시나리오를 그리게 하고, Fe(외향 감정)는 타인과 깊이 공감하게 만들지만, Q11에서 당신이 말한 <strong>"미래 계획을 세울 때 과도하게 시나리오를 짜다 지친다"</strong>는 고백은 이 조합이 때로 당신을 소진시킨다는 것을 보여줍니다.</p>
+        <div class="analyst-note"><strong>✦ 분석가 주석</strong><br>김지연님의 에너지 구조는 '내면의 깊이'와 '외부와의 연결' 사이에서 균형을 요구합니다. 이름 에너지는 자기 주도성과 리더십을 강하게 요구하므로, 자신만의 방식으로 일할 때 진정한 힘이 발휘됩니다.</div>
+        <blockquote>당신이 가장 잘 살 수 있는 방법은, 타인의 기대가 아니라 당신 자신의 내면 신호를 먼저 듣는 것입니다.</blockquote>
+      </div>
+
+      <!-- 기질 프로필 -->
+      <div class="viz-block">
+        <div class="viz-label">✦ 기질 프로필</div>
+        <div style="background:#1a1510;padding:24px 28px">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+            <div>
+              <div style="font-size:9px;letter-spacing:2px;color:#9a7a50;margin-bottom:8px">에너지 방향</div>
+              <div style="height:6px;background:rgba(200,168,112,0.15);border-radius:3px;margin-bottom:4px"><div style="height:100%;width:25%;background:#c8a870;border-radius:3px"></div></div>
+              <div style="display:flex;justify-content:space-between;font-size:10px;color:#9a8a6a"><span>내향 ◀</span><span>▶ 외향</span></div>
+            </div>
+            <div>
+              <div style="font-size:9px;letter-spacing:2px;color:#9a7a50;margin-bottom:8px">사고 방식</div>
+              <div style="height:6px;background:rgba(200,168,112,0.15);border-radius:3px;margin-bottom:4px"><div style="height:100%;width:30%;background:#c8a870;border-radius:3px"></div></div>
+              <div style="display:flex;justify-content:space-between;font-size:10px;color:#9a8a6a"><span>직관 ◀</span><span>▶ 분석</span></div>
+            </div>
+            <div>
+              <div style="font-size:9px;letter-spacing:2px;color:#9a7a50;margin-bottom:8px">결정 방식</div>
+              <div style="height:6px;background:rgba(200,168,112,0.15);border-radius:3px;margin-bottom:4px"><div style="height:100%;width:35%;background:#c8a870;border-radius:3px"></div></div>
+              <div style="display:flex;justify-content:space-between;font-size:10px;color:#9a8a6a"><span>감성 ◀</span><span>▶ 이성</span></div>
+            </div>
+            <div>
+              <div style="font-size:9px;letter-spacing:2px;color:#9a7a50;margin-bottom:8px">생활 방식</div>
+              <div style="height:6px;background:rgba(200,168,112,0.15);border-radius:3px;margin-bottom:4px"><div style="height:100%;width:60%;background:#c8a870;border-radius:3px"></div></div>
+              <div style="display:flex;justify-content:space-between;font-size:10px;color:#9a8a6a"><span>즉흥 ◀</span><span>▶ 계획</span></div>
+            </div>
+          </div>
+          <div style="margin-top:16px;padding-top:16px;border-top:1px solid rgba(200,168,112,0.2)">
+            <div style="font-size:9px;letter-spacing:2px;color:#9a7a50;margin-bottom:8px">한 줄 기질 요약</div>
+            <div style="font-size:13px;color:#e8d8b0;line-height:1.8;font-style:italic">"깊이 파고드는 직관형 — 혼자 있을 때 충전되고, 아이디어가 연결될 때 가장 살아있다"</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CH2 재능 -->
+    <div class="report-chapter">
+      <div class="chapter-eyebrow">CHAPTER 2 · 재능</div>
+      <div class="chapter-title">재능과 적성: 당신은 어떤 일을 해야 빛나는가</div>
+      <div class="chapter-keywords">통찰력 &nbsp;·&nbsp; 연결 설계 &nbsp;·&nbsp; 자율형 전문가</div>
+      <div class="chapter-content">
+        <p>당신은 분석가의 머리와 창작자의 손, 그리고 사람을 읽는 감각을 동시에 가진 사람입니다. 어릴 때부터 공부·분석·논리적 사고로 칭찬받았고, 동시에 그림·글·음악 등 창의적 표현에서도 두각을 나타냈습니다. 이 조합은 흔하지 않습니다.</p>
+        <p>당신의 이름 에너지 구조는 이 재능을 더욱 강화합니다. 정격 31수는 자수성가와 개화만발의 에너지로, 당신이 스스로 구조를 설계하고 만들어갈 때 가장 강력하게 작동합니다. 형격 21수는 두령의 기질로, 남을 이끌고 방향을 제시하는 역할에서 당신의 존재감이 극대화됩니다.</p>
+        <p>당신이 일할 때 절대 타협하지 못하는 것은 "내가 의미 있다고 느끼는 일이어야 한다", "자율성과 자유가 있어야 한다", "성장하고 배우는 환경이어야 한다"입니다. 이 세 가지는 당신에게 선택 사항이 아니라 생존 조건입니다.</p>
+        <div class="analyst-note"><strong>✦ 분석가 주석</strong><br>김지연님의 재능 구조는 "단일 전문성"보다 "복합 전문성"에 최적화되어 있습니다. 분석력 + 창작력 + 관계 감수성이 하나의 시스템으로 작동하는 사람이므로, "하나만 잘하는 일"보다 "여러 역할을 오가며 설계하는 일"이 적합합니다.</div>
+      </div>
+
+      <!-- 재능 스펙트럼 -->
+      <div class="viz-block">
+        <div class="viz-label">✦ 재능 스펙트럼</div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;align-items:center;gap:12px"><div style="width:100px;font-size:12px;color:var(--text);text-align:right;flex-shrink:0">창의·기획력</div><div style="flex:1;height:8px;background:#e0d8c8;border-radius:4px"><div style="height:100%;width:92%;background:linear-gradient(90deg,#8a6a40,#c8a870);border-radius:4px"></div></div><div style="width:32px;font-size:12px;font-weight:700;color:#c8a870">92</div></div>
+          <div style="display:flex;align-items:center;gap:12px"><div style="width:100px;font-size:12px;color:var(--text);text-align:right;flex-shrink:0">공감·통찰력</div><div style="flex:1;height:8px;background:#e0d8c8;border-radius:4px"><div style="height:100%;width:88%;background:linear-gradient(90deg,#8a6a40,#c8a870);border-radius:4px"></div></div><div style="width:32px;font-size:12px;font-weight:700;color:#c8a870">88</div></div>
+          <div style="display:flex;align-items:center;gap:12px"><div style="width:100px;font-size:12px;color:var(--text);text-align:right;flex-shrink:0">언어·표현력</div><div style="flex:1;height:8px;background:#e0d8c8;border-radius:4px"><div style="height:100%;width:85%;background:linear-gradient(90deg,#8a6a40,#c8a870);border-radius:4px"></div></div><div style="width:32px;font-size:12px;font-weight:700;color:#c8a870">85</div></div>
+          <div style="display:flex;align-items:center;gap:12px"><div style="width:100px;font-size:12px;color:var(--text);text-align:right;flex-shrink:0">분석·논리력</div><div style="flex:1;height:8px;background:#e0d8c8;border-radius:4px"><div style="height:100%;width:74%;background:linear-gradient(90deg,#8a6a40,#c8a870);border-radius:4px"></div></div><div style="width:32px;font-size:12px;font-weight:700;color:#c8a870">74</div></div>
+          <div style="display:flex;align-items:center;gap:12px"><div style="width:100px;font-size:12px;color:var(--text);text-align:right;flex-shrink:0">실행·추진력</div><div style="flex:1;height:8px;background:#e0d8c8;border-radius:4px"><div style="height:100%;width:52%;background:linear-gradient(90deg,#8a6a40,#c8a870);border-radius:4px"></div></div><div style="width:32px;font-size:12px;font-weight:700;color:#9a8a6a">52</div></div>
+          <div style="display:flex;align-items:center;gap:12px"><div style="width:100px;font-size:12px;color:var(--text);text-align:right;flex-shrink:0">관계·네트워크</div><div style="flex:1;height:8px;background:#e0d8c8;border-radius:4px"><div style="height:100%;width:61%;background:linear-gradient(90deg,#8a6a40,#c8a870);border-radius:4px"></div></div><div style="width:32px;font-size:12px;font-weight:700;color:#9a8a6a">61</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CH3 이름 에너지 -->
+    <div class="report-chapter">
+      <div class="chapter-eyebrow">CHAPTER 3 · 이름 에너지</div>
+      <div class="chapter-title">이름 에너지 구조: 이름이 만들어온 삶의 방향</div>
+      <div class="chapter-keywords">리더십 요구 &nbsp;·&nbsp; 독립 설계자 &nbsp;·&nbsp; 외부 활동 최적화</div>
+      <div class="chapter-content">
+        <p>당신의 이름 '김지연'은 단순한 호칭이 아니라 당신 삶의 설계도입니다. 이름 전체 에너지가 창의적 발산과 외부 활동에 최적화된 구조라는 것은, 당신이 "안에 머무는 사람"이 아니라 "밖으로 나가야 하는 사람"이라는 뜻입니다.</p>
+        <p>형격 21수는 두령의 에너지입니다. 당신은 큰 소리로 주장하지 않아도 사람들이 당신의 의견을 기다리게 만드는 사람입니다. 정격 31수는 자수성가, 개화만발의 에너지로, 당신이 스스로 길을 만들고 그 길 위에서 꽃을 피울 때 비로소 이름의 에너지가 완전히 작동합니다.</p>
+        <p>원격 14수는 이산파멸의 에너지로, 당신이 과도하게 계획을 세울 때 오히려 무산되는 패턴을 만듭니다. Q11에서 <strong>"미래 계획을 세울 때 과도하게 시나리오를 짜다 지친다"</strong>고 한 것이 바로 이 에너지의 그림자입니다. 당신의 이름 에너지는 "완벽한 계획 후 실행"이 아니라 "실행하며 방향을 잡는 구조"에서 훨씬 더 강력하게 작동합니다.</p>
+        <blockquote>당신의 이름 '김지연'은 당신이 "안전한 길"을 선택하도록 설계되지 않았습니다. 당신의 이름은 당신이 "스스로 길을 만들고, 사람들과 연결되고, 당신만의 방식으로 세상에 기여하는 삶"을 요구합니다.</blockquote>
+      </div>
+    </div>
+
+    <!-- CH4 돈과 일 -->
+    <div class="report-chapter">
+      <div class="chapter-eyebrow">CHAPTER 4 · 돈과 일</div>
+      <div class="chapter-title">돈과 일의 전략: 당신에게 맞는 부의 방식</div>
+      <div class="chapter-keywords">안정 속의 성과형 &nbsp;·&nbsp; 전문성 축적 &nbsp;·&nbsp; 관계 기반 수익 구조</div>
+      <div class="chapter-content">
+        <p>당신은 Q12에서 <strong>"안정적인 월급"</strong>을 1순위로 꼽으면서도, 동시에 "성과형"을 2순위로 선택했습니다. 이 조합이 당신의 재물 패턴을 정확하게 보여줍니다. 당신에게 돈은 단순히 '많이 버는 것'보다 '어떻게 버느냐'가 더 중요한 문제입니다.</p>
+        <p>당신에게 필요한 것은 <strong>안정적 기반 위에 성과형 수익을 쌓아가는 하이브리드 구조</strong>입니다. 일정한 수입이 보장되는 파트타임 자문 역할이나 프로젝트 베이스 작업을 유지하면서, 동시에 당신만의 콘텐츠나 프로그램을 만들어가는 방식입니다.</p>
+        <p>당신에게는 한 가지 반복되는 패턴이 있습니다. Q26에서 <strong>"타인의 감정에 과하게 공감하다 나를 잃는 경우가 많다"</strong>고 했습니다. 당신은 자신의 가치를 제대로 책정하지 못하거나, 합당한 대가를 요구하는 것을 주저할 가능성이 높습니다.</p>
+        <blockquote>"당신은 돈을 못 버는 사람이 아니라, 자신에게 맞는 방식이 아직 명확하지 않은 사람입니다."</blockquote>
+      </div>
+
+      <!-- 에너지 흐름 구조 -->
+      <div class="viz-block">
+        <div class="viz-label">✦ 에너지 흐름 구조</div>
+        <div style="display:grid;grid-template-columns:1fr 36px 1fr;gap:0;margin-bottom:0">
+          <div style="background:#1a1510;padding:20px 18px">
+            <div style="font-size:9px;letter-spacing:2px;color:#c8a870;margin-bottom:14px">▲ 에너지가 들어오는 방식</div>
+            <div style="font-size:12px;color:#d4c4a0;line-height:2">· 전문성과 깊이를 인정받을 때<br>· 신뢰 관계에서 기회가 연결될 때<br>· 창의적 아이디어를 실행에 옮길 때</div>
+            <div style="margin-top:14px;padding-top:14px;border-top:1px solid rgba(200,168,112,0.2)">
+              <div style="font-size:10px;color:#9a8a6a;margin-bottom:4px;display:flex;justify-content:space-between"><span>전략 적합도</span><span style="color:#c8a870;font-weight:700">87%</span></div>
+              <div style="height:4px;background:rgba(200,168,112,0.15);border-radius:2px"><div style="height:100%;width:87%;background:#c8a870;border-radius:2px"></div></div>
+            </div>
+          </div>
+          <div style="background:#2a2010;display:flex;align-items:center;justify-content:center;writing-mode:vertical-rl;font-size:9px;letter-spacing:2px;color:#c8a870">에너지</div>
+          <div style="background:#120f0a;padding:20px 18px">
+            <div style="font-size:9px;letter-spacing:2px;color:#9a8a6a;margin-bottom:14px">▼ 에너지가 새는 방식</div>
+            <div style="font-size:12px;color:#9a8a6a;line-height:2">· 완벽하지 않으면 시작 못 하는 패턴<br>· 타인의 감정에 과몰입하는 습관<br>· 인정받기 위한 과도한 투자</div>
+            <div style="margin-top:14px;padding-top:14px;border-top:1px solid rgba(200,168,112,0.1)">
+              <div style="font-size:10px;color:#9a8a6a;margin-bottom:4px;display:flex;justify-content:space-between"><span>누수 위험도</span><span style="color:#c07050;font-weight:700">62%</span></div>
+              <div style="height:4px;background:rgba(200,168,112,0.1);border-radius:2px"><div style="height:100%;width:62%;background:#c07050;border-radius:2px"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CH5 관계 -->
+    <div class="report-chapter">
+      <div class="chapter-eyebrow">CHAPTER 5 · 관계</div>
+      <div class="chapter-title">관계의 구조: 당신은 어떤 관계에서 빛나는가</div>
+      <div class="chapter-keywords">선택적 깊이 &nbsp;·&nbsp; 공감의 경계 &nbsp;·&nbsp; 소수 연결 전략</div>
+      <div class="chapter-content">
+        <p>당신은 Q15에서 <strong>"사람들과 깊이 연결되고 싶지만 동시에 혼자이고 싶다"</strong>고 말했습니다. 이것은 INFJ의 전형적인 딜레마이면서도, 당신에게는 더 복잡한 구조입니다. 당신의 이름 에너지는 외부 활동을 원하지만, 당신의 본질은 깊은 내면 세계를 가진 사람입니다.</p>
+        <p>당신에게 맞는 관계 전략은 '선택적 깊이'입니다. 많은 사람을 얕게 아는 것보다, 소수의 사람과 깊이 연결되는 것이 당신에게 맞습니다. Q9에서 주변 사람들이 당신에게 <strong>'조언이나 분석', '공감과 위로'</strong>를 자주 부탁한다고 했습니다. 이것은 당신이 사람들에게 깊은 영향을 주는 사람이라는 의미입니다.</p>
+        <p>하지만 Q26에서 <strong>"타인의 감정에 과하게 공감하다 나를 잃는 경우가 많다"</strong>고 했습니다. 당신은 사람을 좋아하지만, 감정 소모가 심한 관계는 견디기 힘듭니다. 그래서 당신에게는 '경계'가 필요합니다. 누구에게나 다 주는 것이 아니라, 당신이 선택한 사람들에게만 깊이 주는 것입니다.</p>
+        <blockquote>"당신의 삶에서 중요한 것은 사람의 숫자가 아니라 관계의 깊이입니다."</blockquote>
+      </div>
+
+      <!-- 관계 에너지 맵 -->
+      <div class="viz-block">
+        <div class="viz-label">✦ 관계 에너지 맵</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div style="background:#1a1510;padding:18px 20px">
+            <div style="font-size:9px;letter-spacing:2px;color:#c8a870;margin-bottom:8px">충전되는 관계</div>
+            <div style="font-size:13px;font-weight:700;color:#e8d8b0;margin-bottom:8px">깊이 있는 1:1 대화</div>
+            <div style="font-size:11px;color:#9a8a6a;line-height:1.7">서로의 내면을 나눌 수 있는 사람. 말하지 않아도 이해받는 느낌을 주는 관계에서 에너지가 생김.</div>
+            <div style="margin-top:10px;height:3px;background:rgba(200,168,112,0.2);border-radius:2px"><div style="height:100%;width:85%;background:#c8a870;border-radius:2px"></div></div>
+          </div>
+          <div style="background:#120f0a;padding:18px 20px">
+            <div style="font-size:9px;letter-spacing:2px;color:#9a8a6a;margin-bottom:8px">소진되는 관계</div>
+            <div style="font-size:13px;font-weight:700;color:#9a8a6a;margin-bottom:8px">감정 소비가 큰 관계</div>
+            <div style="font-size:11px;color:#6a5a45;line-height:1.7">일방적으로 주는 관계. 내 감정을 억누르고 상대에 맞춰야 하는 상황에서 급격히 소진됨.</div>
+            <div style="margin-top:10px;height:3px;background:rgba(200,168,112,0.1);border-radius:2px"><div style="height:100%;width:72%;background:#c07050;border-radius:2px"></div></div>
+          </div>
+          <div style="background:#0e0b07;padding:18px 20px">
+            <div style="font-size:9px;letter-spacing:2px;color:#9a8a6a;margin-bottom:8px">반복되는 패턴</div>
+            <div style="font-size:13px;font-weight:700;color:#9a8a6a;margin-bottom:8px">과도한 공감과 소진</div>
+            <div style="font-size:11px;color:#6a5a45;line-height:1.7">상대의 감정에 과몰입해 자신을 잃는 패턴이 반복됨. 관계 후 혼자만의 회복 시간이 반드시 필요.</div>
+          </div>
+          <div style="background:#f0ebe0;padding:18px 20px">
+            <div style="font-size:9px;letter-spacing:2px;color:#9a7a50;margin-bottom:8px">이상적인 관계 구조</div>
+            <div style="font-size:13px;font-weight:700;color:#1a1510;margin-bottom:8px">선택적 깊은 연결</div>
+            <div style="font-size:11px;color:#4a3a25;line-height:1.7">넓고 얕은 관계보다 좁고 깊은 관계. 소수의 신뢰하는 사람들과 진정성 있게 연결될 때 가장 행복함.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CH6 무의식 -->
+    <div class="report-chapter">
+      <div class="chapter-eyebrow">CHAPTER 6 · 무의식과 그림자</div>
+      <div class="chapter-title">무의식과 그림자: 반복을 끊고 어떻게 살 것인가</div>
+      <div class="chapter-keywords">자기희생의 덫 &nbsp;·&nbsp; 완벽한 시나리오 강박 &nbsp;·&nbsp; 감정 언어화 회피</div>
+      <div class="chapter-content">
+        <p>당신에게는 반복되는 세 개의 무의식 패턴이 있습니다. 이 패턴들은 당신을 보호하기도 했지만, 동시에 당신을 가두기도 했습니다.</p>
+        <p><strong style="color:var(--gold)">첫 번째 패턴: 타인의 감정 안에서 나를 잃는 구조</strong><br>
+        Q26에서: "타인의 감정에 과하게 공감하다 나를 잃는 경우가 많다." 당신은 타인의 감정을 흡수하고, 그것을 해결하려는 강박적 책임감으로 작동합니다. Q18에서 <strong>"내 감정을 말로 표현하는 게 어렵고, 글로 쓸 때야 비로소 진심이 나온다"</strong>고 했습니다.</p>
+        <p><strong style="color:var(--gold)">두 번째 패턴: 완벽한 시나리오 강박과 실행 마비</strong><br>
+        Q11에서: "미래 계획을 세울 때 과도하게 시나리오를 짜다 지친다." 당신의 무의식은 말합니다: "실패할 가능성이 보이면 시작하지 않는 게 낫다." Q20에서 가장 두려운 것이 "실패하고 다시 일어서지 못하는 것"이라고 했습니다. 당신의 완벽한 시나리오 강박은 사실 이 두려움의 방어기제입니다.</p>
+        <p><strong style="color:var(--gold)">세 번째 패턴: 쉬어야 하는데 못 쉬는 내면의 채찍</strong><br>
+        Q17에서 1위: "쉬어야 하는데 못 쉰다." 당신의 내면에는 늘 이런 목소리가 있습니다: "이 정도로 충분한가? 더 해야 하지 않나?"</p>
+        <blockquote>"당신의 무의식은 당신을 보호하려다 당신을 가뒀습니다. 이제 그 문을 열 때입니다."</blockquote>
+        <div class="analyst-note"><strong>✦ 분석가 주석</strong><br>이 세 가지 패턴은 서로 연결되어 있습니다. 당신이 Q24에서 가장 듣고 싶은 말로 "네가 하고 싶은 거 해도 돼"를 선택한 이유가 여기 있습니다. 당신은 스스로에게 그 허락을 주지 못하고 있습니다.</div>
+      </div>
+
+      <!-- 무의식 패턴 체크리스트 -->
+      <div class="viz-block">
+        <div class="viz-label">✦ 패턴 인식 체크리스트</div>
+        <div style="background:#1a1510;padding:20px 24px">
+          <div style="font-size:10px;letter-spacing:2px;color:#9a7a50;margin-bottom:16px">아래 항목 중 해당되는 것을 확인하세요</div>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div style="display:flex;align-items:flex-start;gap:12px;padding:10px 14px;background:rgba(200,168,112,0.08);border-left:3px solid #c8a870"><div style="font-size:16px;flex-shrink:0;color:#c8a870">✓</div><div><div style="font-size:13px;color:#e8d8b0;font-weight:600;margin-bottom:2px">완벽하지 않으면 시작을 못 미룬다</div><div style="font-size:11px;color:#9a8a6a;line-height:1.6">준비가 충분하지 않다는 이유로 기회를 놓친 경험이 반복됨</div></div></div>
+            <div style="display:flex;align-items:flex-start;gap:12px;padding:10px 14px;background:rgba(200,168,112,0.08);border-left:3px solid #c8a870"><div style="font-size:16px;flex-shrink:0;color:#c8a870">✓</div><div><div style="font-size:13px;color:#e8d8b0;font-weight:600;margin-bottom:2px">칭찬을 받아도 진심으로 받아들이지 못한다</div><div style="font-size:11px;color:#9a8a6a;line-height:1.6">내면의 기준이 높아 외부의 인정을 충분히 느끼기 어려움</div></div></div>
+            <div style="display:flex;align-items:flex-start;gap:12px;padding:10px 14px;background:rgba(200,168,112,0.08);border-left:3px solid #c8a870"><div style="font-size:16px;flex-shrink:0;color:#c8a870">✓</div><div><div style="font-size:13px;color:#e8d8b0;font-weight:600;margin-bottom:2px">나 자신에게 가장 가혹한 비평가다</div><div style="font-size:11px;color:#9a8a6a;line-height:1.6">타인에게는 너그럽지만 자신의 실수에는 극도로 엄격한 이중 기준</div></div></div>
+            <div style="display:flex;align-items:flex-start;gap:12px;padding:10px 14px;background:rgba(200,168,112,0.05);border-left:3px solid #3a3020"><div style="font-size:16px;flex-shrink:0;color:#6a5a45">□</div><div><div style="font-size:13px;color:#6a5a45;font-weight:600;margin-bottom:2px">관계에서 먼저 물러서거나 자기 방어적이 된다</div><div style="font-size:11px;color:#4a3a25;line-height:1.6">거절당할 것 같은 상황에서 먼저 거리를 두는 선제적 방어</div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CH7 힘들어지는 환경 -->
+    <div class="report-chapter">
+      <div class="chapter-eyebrow">CHAPTER 7 · 힘들어지는 환경</div>
+      <div class="chapter-title">당신이 힘들어지는 환경: 그래서 그때 그랬구나</div>
+      <div class="chapter-keywords">통제된 틀 &nbsp;·&nbsp; 감정 소진 &nbsp;·&nbsp; 의미 없는 반복</div>
+      <div class="chapter-content">
+        <p>당신은 Q6에서 에너지가 빠르게 고갈되는 상황 1순위로 <strong>'내 의견이 무시되거나 통제받을 때'</strong>를 꼽았습니다. 이것은 당신의 내면에 강력한 방향성과 통찰이 존재하는데, 그것이 무시되거나 외부의 틀에 끼워 맞춰져야 할 때 당신은 자신이 사라지는 느낌을 받기 때문입니다.</p>
+        <p>두 번째는 <strong>'결과가 보이지 않는 반복 작업'</strong>입니다. 당신은 무언가를 분석하고 파악하는 사람입니다. 그 과정에서 의미를 찾고, 그 의미가 어디로 향하는지를 보고 싶어 합니다. 그런데 매일 똑같은 업무를 반복하고, 그것이 어디로 가는지 보이지 않을 때 당신은 무너집니다.</p>
+        <p>세 번째는 <strong>'감정 소모가 심한 사람을 오래 상대할 때'</strong>입니다. 끊임없이 불평하지만 절대 변하지 않는 사람, 당신에게 공감과 위로를 요구하지만 당신의 이야기는 듣지 않는 사람. 이런 사람들과 오래 있으면 당신은 물리적으로도 지치지만, 더 심각한 것은 당신 자신을 잃어버린다는 점입니다.</p>
+        <blockquote>"그래서 나는 그때 그렇게 힘들었구나. 내가 약해서가 아니라, 나에게 맞지 않는 환경에서 나답지 않은 방식으로 살고 있었기 때문이다."</blockquote>
+        <p>앞으로 당신이 피해야 할 삶의 방식은 세 가지입니다. 첫째, 안정만을 기준으로 선택하는 삶. 둘째, 타인의 기대에 맞춰 사는 삶. 셋째, 혼자서 모든 것을 감당하려는 삶.</p>
+      </div>
+    </div>
+
+    <!-- CH8 인생 성장 패턴 -->
+    <div class="report-chapter">
+      <div class="chapter-eyebrow">CHAPTER 8 · 인생 성장 패턴</div>
+      <div class="chapter-title">인생 성장 패턴: 시기별로 어떻게 살아야 하는가</div>
+      <div class="chapter-keywords">초기 탐색과 흡수 &nbsp;·&nbsp; 중기 재정립과 확장 &nbsp;·&nbsp; 후기 통합과 전달</div>
+      <div class="chapter-content">
+        <p>당신의 인생은 세 번의 성장 곡선을 그립니다. 그리고 지금, 당신은 가장 중요한 전환점에 서 있습니다.</p>
+        <p><strong>초기 탐색기(~30대 후반):</strong> 당신의 20~30대는 '나는 누구인가'를 찾기 위해 수많은 것을 경험하고 흡수하는 시기였습니다. 안정적인 틀 안에서 움직이며 생존 전략을 짰습니다. 하지만 당신의 이름 에너지 구조는 '창의적 발산과 외부 활동'에 최적화되어 있어 내면과 외면의 긴장이 이 시기를 관통했습니다.</p>
+        <p><strong>중기 재정립과 확장기(40~50대):</strong> 지금 당신은 40대 후반에 들어섰습니다. Q2에서 당신이 말한 "뭔가 바뀔 것 같은 예감"은 우연이 아닙니다. 중기는 '재정립'의 시기입니다. 지금까지 당신이 해온 것들을 돌아보고, "이게 정말 나인가?"라는 질문을 던지는 시기입니다.</p>
+        <p><strong>후기 안정과 통합기(60대~):</strong> 당신의 60대 이후는 '통합'의 시기입니다. 지금까지 경험하고 배우고 만들어온 모든 것을 하나로 모아서 다음 세대에게 전달하는 시기입니다.</p>
+        <blockquote>"당신의 40~50대는 '나를 증명하는 시기'가 아니라 '나를 펼치는 시기'입니다."</blockquote>
+      </div>
+
+      <!-- 인생 흐름 타임라인 -->
+      <div class="viz-block">
+        <div class="viz-label">✦ 인생 흐름 타임라인</div>
+        <div style="position:relative;padding-left:36px;margin-bottom:24px">
+          <div style="position:absolute;left:10px;top:0;bottom:0;width:1px;background:linear-gradient(180deg,#c8a870,rgba(200,168,112,0.1))"></div>
+          <div style="position:relative;margin-bottom:24px"><div style="position:absolute;left:-28px;top:4px;width:12px;height:12px;border-radius:50%;background:var(--bg);border:2px solid #c8a870"></div><div style="font-size:10px;letter-spacing:2px;color:#9a7a50;margin-bottom:4px">20대 · 탐색기</div><div style="font-size:14px;font-weight:700;color:var(--dark);margin-bottom:6px">정체성을 찾아 헤매는 시간</div><div style="font-size:12px;color:#4a3a25;line-height:1.8">타인의 기대에 맞추느라 진짜 원하는 것을 알지 못했습니다.</div></div>
+          <div style="position:relative;margin-bottom:24px"><div style="position:absolute;left:-28px;top:4px;width:12px;height:12px;border-radius:50%;background:var(--bg);border:2px solid #c8a870"></div><div style="font-size:10px;letter-spacing:2px;color:#9a7a50;margin-bottom:4px">30대 · 구축기</div><div style="font-size:14px;font-weight:700;color:var(--dark);margin-bottom:6px">성과를 쌓되 에너지를 소진한 시기</div><div style="font-size:12px;color:#4a3a25;line-height:1.8">외부적으로 성공과 인정을 얻었지만, 번아웃과 감정적 피로가 누적됐습니다.</div></div>
+          <div style="position:relative;margin-bottom:24px"><div style="position:absolute;left:-28px;top:4px;width:12px;height:12px;border-radius:50%;background:#c8a870;border:2px solid #c8a870"></div><div style="font-size:10px;letter-spacing:2px;color:#c8a870;margin-bottom:4px">40대 · 전환기 ← 현재</div><div style="font-size:14px;font-weight:700;color:#c8a870;margin-bottom:6px">내면의 목소리를 따르는 선택의 시간</div><div style="font-size:12px;color:#4a3a25;line-height:1.8">외부 인정보다 내면의 기준으로 결정할 수 있는 힘이 생기고 있습니다.</div></div>
+          <div style="position:relative"><div style="position:absolute;left:-28px;top:4px;width:12px;height:12px;border-radius:50%;background:var(--bg);border:2px solid #9a8a6a"></div><div style="font-size:10px;letter-spacing:2px;color:#9a7a50;margin-bottom:4px">50대 · 완성기 (예측)</div><div style="font-size:14px;font-weight:700;color:#8a7a60;margin-bottom:6px">자신만의 방식으로 영향력을 발휘하는 시기</div><div style="font-size:12px;color:#8a7a60;line-height:1.8">지금의 전환이 뿌리를 내리면, 소모되던 에너지가 창조적 영향력으로 바뀝니다.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CH9 지금 이 시기 -->
+    <div class="report-chapter">
+      <div class="chapter-eyebrow">CHAPTER 9 · 지금 이 시기</div>
+      <div class="chapter-title">지금 이 시기: 지금 당신은 무엇을 해야 하는가</div>
+      <div class="chapter-keywords">내 브랜드 씨앗 심기 &nbsp;·&nbsp; 에너지 경계선 긋기 &nbsp;·&nbsp; 작은 실험 시작하기</div>
+      <div class="chapter-content">
+        <p>지금 이 시기는 당신 인생에서 가장 중요한 분기점입니다. 당신은 Q3에서 현재 "쉬는 중 / 공백기"라고 답했습니다. Q4에서는 경제적 상황이 "안정적이다"고 답했습니다. 이것은 매우 중요한 조합입니다. <strong>경제적으로 안정되어 있고, 동시에 시간적 여유가 있다는 것. 지금이 바로 당신이 새로운 것을 시작할 수 있는 최적의 타이밍입니다.</strong></p>
+        <p><strong>돈: 내 브랜드의 씨앗을 지금 심어라</strong><br>향후 3개월 동안 당신만의 콘텐츠를 주 1회 발행하세요. 블로그든, 뉴스레터든, SNS든 형식은 상관없습니다. Q18에서 당신은 "글로 쓸 때야 비로소 진심이 나온다"고 했습니다. 그렇다면 당신이 관심 있는 주제를 분석하고 그것을 글로 풀어내세요.</p>
+        <p><strong>일: 에너지 경계선을 명확하게 그어라</strong><br>향후 1개월 동안 '에너지 소진 일기'를 작성하세요. 매일 저녁, 오늘 어떤 상황에서 에너지가 빠졌는지 구체적으로 기록하세요. 그리고 1개월 후 패턴을 분석하세요.</p>
+        <p><strong>관계: 작은 실험을 시작하라</strong><br>향후 3개월 동안 한 달에 한 번, 당신이 관심 있는 주제로 3~5명 정도의 소규모 모임을 직접 만들어보세요. 중요한 것은 '당신이 주도하는' 모임이어야 한다는 것입니다.</p>
+        <blockquote>"당신의 삶에서 중요한 것은 규모가 아니라 깊이입니다."</blockquote>
+      </div>
+
+      <!-- 지금 시기의 과제 -->
+      <div class="viz-block">
+        <div class="viz-label">✦ 지금 시기의 과제</div>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div style="background:#fff;border:1px solid var(--border);padding:16px 18px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><span style="font-size:13px;font-weight:700;color:var(--dark)">완벽주의 패턴 인식</span><span style="font-size:9px;padding:2px 8px;background:#c07050;color:#fff;letter-spacing:1px">지금 당장</span></div><div style="height:5px;background:#e8e0d0;border-radius:2px;margin-bottom:8px"><div style="height:100%;width:15%;background:#c07050;border-radius:2px"></div></div><div style="font-size:12px;color:#6a5a45;line-height:1.7">완벽하지 않으면 시작하지 않는 패턴이 가장 많은 기회를 막아왔습니다.</div></div>
+          <div style="background:#fff;border:1px solid var(--border);padding:16px 18px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><span style="font-size:13px;font-weight:700;color:var(--dark)">감정 경계선 세우기</span><span style="font-size:9px;padding:2px 8px;background:#c8a870;color:#fff;letter-spacing:1px">진행 중</span></div><div style="height:5px;background:#e8e0d0;border-radius:2px;margin-bottom:8px"><div style="height:100%;width:45%;background:#c8a870;border-radius:2px"></div></div><div style="font-size:12px;color:#6a5a45;line-height:1.7">타인의 감정에 과하게 반응해 자신을 잃는 패턴. 이미 일부 인식하고 있는 상태입니다.</div></div>
+          <div style="background:#fff;border:1px solid var(--border);padding:16px 18px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><span style="font-size:13px;font-weight:700;color:var(--dark)">자기 주도적 선택 훈련</span><span style="font-size:9px;padding:2px 8px;background:#7a9a80;color:#fff;letter-spacing:1px">준비 단계</span></div><div style="height:5px;background:#e8e0d0;border-radius:2px;margin-bottom:8px"><div style="height:100%;width:28%;background:#7a9a80;border-radius:2px"></div></div><div style="font-size:12px;color:#6a5a45;line-height:1.7">남의 눈치가 아닌 자신의 기준으로 결정하는 근육을 기르는 단계입니다.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CH10 총결산 -->
+    <div class="report-chapter">
+      <div class="chapter-eyebrow">CHAPTER 10 · 인생통찰 총결산</div>
+      <div class="chapter-title">당신은 어떻게 살아야 하는가: 인생통찰 총결산</div>
+      <div class="chapter-content">
+        <p>당신의 본질은 <strong>'깊이 보는 사람'</strong>입니다. INFJ 특성과 당신의 타고난 분석력이 만나 당신은 표면 아래의 진실을 읽어냅니다. 그러나 Q26에서 당신이 고백했듯 "타인의 감정에 과하게 공감하다 나를 잃는 경우가 많다"는 것이 당신의 가장 큰 모순입니다. 당신은 다른 사람의 세계에는 깊이 들어가지만, 정작 자신의 세계를 지키는 데는 서툽니다.</p>
+        <blockquote>"당신은 안전한 곳에 있으면서도 계속 창밖을 바라보는 사람입니다."</blockquote>
+        <p>당신이 Q5에서 "무언가를 분석하고 파악할 때, 사람들과 이야기하고 연결될 때, 뭔가를 직접 만들거나 표현할 때" 시간 가는 줄 모른다고 한 것을 보면, 당신은 '생각'과 '연결'과 '창조'가 모두 필요한 사람입니다. 분석만 하면 답답하고, 사람만 만나면 지치고, 혼자만 창작하면 외롭습니다. 당신은 이 세 가지를 순환시킬 수 있는 구조가 필요합니다.</p>
+        <blockquote>당신은 지금까지 "해야 하는 일"을 해왔습니다. 이제는 "하고 싶은 일"을 할 시간입니다. 당신의 48년은 준비였습니다.</blockquote>
+      </div>
+
+      <!-- 강점·약점 매트릭스 -->
+      <div class="viz-block">
+        <div class="viz-label">✦ 강점·약점 매트릭스</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;margin-bottom:16px">
+          <div style="background:#1a1510;padding:20px"><div style="font-size:9px;letter-spacing:2px;color:#c8a870;margin-bottom:12px">✦ 강점 — 살릴 것</div><div style="font-size:12px;color:#d4c4a0;line-height:2">· 깊은 공감력과 통찰력<br>· 아이디어 연결 능력<br>· 글과 언어 표현력<br>· 신뢰를 쌓는 관계 방식</div></div>
+          <div style="background:#120f0a;padding:20px"><div style="font-size:9px;letter-spacing:2px;color:#9a8a6a;margin-bottom:12px">△ 기회 — 개발할 것</div><div style="font-size:12px;color:#9a8a6a;line-height:2">· 실행 속도 개선<br>· 자기 홍보·노출<br>· 구조적 계획 수립<br>· 협력 네트워크 확장</div></div>
+          <div style="background:#f0ebe0;padding:20px"><div style="font-size:9px;letter-spacing:2px;color:#9a7a50;margin-bottom:12px">▽ 주의 — 인식할 것</div><div style="font-size:12px;color:#3a2a15;line-height:2">· 완벽주의로 인한 지연<br>· 타인 감정 과몰입<br>· 새 시작 후 흥미 이탈</div></div>
+          <div style="background:#ede8dc;padding:20px"><div style="font-size:9px;letter-spacing:2px;color:#9a7a50;margin-bottom:12px">✗ 낭비 — 줄일 것</div><div style="font-size:12px;color:#3a2a15;line-height:2">· 불필요한 설명과 해명<br>· 인정받지 못할 관계 투자<br>· 과도한 시나리오 계획</div></div>
+        </div>
+
+        <!-- 에너지 사이클 -->
+        <div class="viz-label">✦ 에너지 사이클 패턴</div>
+        <div style="display:flex;align-items:stretch">
+          <div style="display:flex;align-items:stretch;flex:1"><div style="background:#1a1510;padding:14px 10px;text-align:center;flex:1"><div style="font-size:20px;color:#c8a870;font-style:italic;font-family:'Cormorant Garamond',serif;margin-bottom:2px">1</div><div style="font-size:11px;font-weight:700;color:#e8d8b0;margin-bottom:2px">충전기</div><div style="font-size:9px;color:#e8d8b0;opacity:.7">혼자 재충전</div></div><div style="display:flex;align-items:center;justify-content:center;background:#2a2010;color:#c8a870;padding:0 6px;font-size:12px">→</div></div>
+          <div style="display:flex;align-items:stretch;flex:1"><div style="background:#c8a870;padding:14px 10px;text-align:center;flex:1"><div style="font-size:20px;color:#1a1510;font-style:italic;font-family:'Cormorant Garamond',serif;margin-bottom:2px">2</div><div style="font-size:11px;font-weight:700;color:#1a1510;margin-bottom:2px">폭발기 ★</div><div style="font-size:9px;color:#1a1510;opacity:.7">아이디어</div></div><div style="display:flex;align-items:center;justify-content:center;background:#2a2010;color:#c8a870;padding:0 6px;font-size:12px">→</div></div>
+          <div style="display:flex;align-items:stretch;flex:1"><div style="background:#1a1510;padding:14px 10px;text-align:center;flex:1"><div style="font-size:20px;color:#c8a870;font-style:italic;font-family:'Cormorant Garamond',serif;margin-bottom:2px">3</div><div style="font-size:11px;font-weight:700;color:#e8d8b0;margin-bottom:2px">실행기</div><div style="font-size:9px;color:#e8d8b0;opacity:.7">추진 완성</div></div><div style="display:flex;align-items:center;justify-content:center;background:#2a2010;color:#c8a870;padding:0 6px;font-size:12px">→</div></div>
+          <div style="display:flex;align-items:stretch;flex:1"><div style="background:#0e0b07;padding:14px 10px;text-align:center;flex:1"><div style="font-size:20px;color:#c8a870;font-style:italic;font-family:'Cormorant Garamond',serif;margin-bottom:2px">4</div><div style="font-size:11px;font-weight:700;color:#6a5a45;margin-bottom:2px">소진기 ⚠</div><div style="font-size:9px;color:#6a5a45;opacity:.7">번아웃</div></div><div style="display:flex;align-items:center;justify-content:center;background:#2a2010;color:#c8a870;padding:0 6px;font-size:12px">→</div></div>
+          <div style="flex:1;background:#1a1510;padding:14px 10px;text-align:center"><div style="font-size:20px;color:#c8a870;font-style:italic;font-family:'Cormorant Garamond',serif;margin-bottom:2px">1</div><div style="font-size:11px;font-weight:700;color:#e8d8b0;margin-bottom:2px">충전기</div><div style="font-size:9px;color:#e8d8b0;opacity:.7">반복</div></div>
+        </div>
+        <div style="background:rgba(200,168,112,0.08);border-left:3px solid #c8a870;padding:12px 16px;margin-top:10px;font-size:12px;color:#6a5a45;line-height:1.8"><strong style="color:#8a6a40">패턴 인식:</strong> 현재 <strong>소진기(4단계)</strong>에서 <strong>충전기(1단계)</strong>로 넘어가는 전환점입니다.</div>
+      </div>
+    </div>
+
+    <!-- CH11 AI 시대 -->
+    <div class="report-chapter">
+      <div class="chapter-eyebrow">CHAPTER 11 · AI 시대 전략</div>
+      <div class="chapter-title">AI 시대, 당신은 어떻게 살아야 하는가</div>
+      <div class="chapter-keywords">맥락 통찰자 &nbsp;·&nbsp; 감정 번역가 &nbsp;·&nbsp; 의미 설계자</div>
+      <div class="chapter-content">
+        <p>당신 같은 유형은 AI 시대에 오히려 유리합니다. 당신이 가진 강점은 AI가 절대 복제할 수 없는 영역에 정확히 위치해 있기 때문입니다. AI는 데이터를 처리하고 패턴을 찾고 답을 생성할 수 있지만, 당신처럼 사람의 숨은 맥락을 읽고 감정의 결을 번역하고 의미를 설계하는 일은 할 수 없습니다.</p>
+        <blockquote>"당신은 사람의 맥락을 읽고, 의미를 설계하고, 진심을 번역하는 사람입니다. AI가 도구라면, 당신은 방향입니다."</blockquote>
+        <p>당신에게 맞는 AI 활용 전략은 단순히 '효율'이 아니라 '확장'입니다. AI는 반복 작업을 처리하면서 당신에게 통찰할 시간을 돌려줍니다. 당신의 분석 능력을 AI로 증폭시키고, 표현 능력을 AI로 확장하고, 연결 능력을 AI로 배가시키세요. 당신에게 AI는 경쟁자가 아니라 증폭기입니다.</p>
+        <blockquote>"AI 시대에 당신은 더 이상 혼자가 아닙니다. 당신에게는 이제 24시간 함께 일하는, 지치지 않는 파트너가 생겼습니다."</blockquote>
+      </div>
+
+      <!-- AI 포지셔닝 매트릭스 -->
+      <div class="viz-block">
+        <div class="viz-label">✦ AI 시대 나의 포지셔닝</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div style="background:#1a1510;padding:18px 20px;border-top:3px solid #c8a870"><div style="font-size:9px;letter-spacing:2px;color:#c8a870;margin-bottom:8px">AI가 대체 못하는 나만의 강점</div><div style="font-size:13px;font-weight:700;color:#e8d8b0;margin-bottom:10px">인간적 통찰과 공감력</div><div style="font-size:12px;color:#9a8a6a;line-height:1.8">AI는 데이터를 분석하지만, 당신은 사람의 내면을 읽습니다. 이 능력은 AI 시대에 오히려 희소해집니다.</div></div>
+          <div style="background:#1a1510;padding:18px 20px;border-top:3px solid #c8a870"><div style="font-size:9px;letter-spacing:2px;color:#c8a870;margin-bottom:8px">AI를 활용할 최적 영역</div><div style="font-size:13px;font-weight:700;color:#e8d8b0;margin-bottom:10px">반복 작업 자동화</div><div style="font-size:12px;color:#9a8a6a;line-height:1.8">완벽주의로 인한 반복 수정, 자료 조사, 초안 작성 등을 AI에 맡기고 핵심에 집중합니다.</div></div>
+          <div style="background:#f0ebe0;padding:18px 20px;border-top:3px solid #8a6a40"><div style="font-size:9px;letter-spacing:2px;color:#8a6a40;margin-bottom:8px">AI 시대 핵심 포지션</div><div style="font-size:13px;font-weight:700;color:#1a1510;margin-bottom:10px">AI + 인간 통찰 큐레이터</div><div style="font-size:12px;color:#4a3a25;line-height:1.8">AI 결과물에 인간적 맥락과 감성을 더하는 역할. 창의 기획, 코칭, 콘텐츠 분야에서 독보적 위치 가능.</div></div>
+          <div style="background:#f0ebe0;padding:18px 20px;border-top:3px solid #8a6a40"><div style="font-size:9px;letter-spacing:2px;color:#8a6a40;margin-bottom:8px">지금 당장 시작할 것</div><div style="font-size:13px;font-weight:700;color:#1a1510;margin-bottom:10px">AI 협업 루틴 만들기</div><div style="font-size:12px;color:#4a3a25;line-height:1.8">하루 30분, AI와 대화하며 아이디어를 발전시키는 습관. 완벽한 결과보다 빠른 실험에 집중합니다.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CH12 + EPILOGUE -->
+    <div class="report-chapter">
+      <div class="chapter-eyebrow">CHAPTER 12 · 90일 ACTION PLAN + EPILOGUE</div>
+      <div class="chapter-title">앞으로 어떻게 살 것인가: 인생 방향성 전략</div>
+      <div class="chapter-content">
+        <p>당신은 지금 인생에서 가장 중요한 전환점에 서 있습니다. 48세의 당신에게 필요한 것은 '새로운 시작'이 아니라 '올바른 재배치'입니다. 지금까지 쌓아온 것들을 버리는 게 아니라, 당신에게 맞는 방식으로 다시 정렬하는 것입니다.</p>
+        <p>일의 방향성: 당신에게 맞는 일은 혼자서 깊이 사고하고 분석하는 시간, 소수의 신뢰할 수 있는 사람들과 나누며 다듬는 시간, 최종적으로 더 많은 사람들에게 전달하는 시간, 이 세 단계가 모두 포함된 구조여야 합니다.</p>
+        <p>돈의 방향성: 안정적인 기반을 확보하면서 성과형 수입 구조를 테스트하고, 궁극적으로 '내 브랜드형'으로 전환하는 단계적 구조가 당신에게 맞습니다.</p>
+        <p>관계의 방향성: 많은 사람과 얕게 만나는 것이 아니라, 소수의 사람과 깊게 연결되는 '선택적 깊이' 전략이 당신에게 맞습니다.</p>
+      </div>
+
+      <!-- 90일 액션플랜 -->
+      <div class="viz-block">
+        <div class="viz-label">✦ 90일 액션플랜</div>
+        <table style="width:100%;border-collapse:collapse;border:1px solid var(--border);margin-bottom:24px">
+          <thead><tr style="background:#1a1510"><th style="padding:10px 12px;font-size:9px;letter-spacing:1px;color:#c8a870;text-align:left;width:70px">기간</th><th style="padding:10px 12px;font-size:9px;letter-spacing:1px;color:#c8a870;text-align:left">구체 행동</th><th style="padding:10px 12px;font-size:9px;color:#c8a870;width:28px">✓</th></tr></thead>
+          <tbody>
+            <tr style="border-bottom:1px solid var(--border);background:#fff"><td style="padding:10px 12px;font-size:11px;color:#8a6a40;font-weight:700;white-space:nowrap">1-2주</td><td style="padding:10px 12px;font-size:12px;color:#4a3a25"><strong>전문성을 글로 정리하기</strong> — 일주일에 2회, 깊이 파고든 주제를 1,000자로 정리</td><td style="padding:10px 12px;text-align:center;font-size:16px;color:#d4c4a0">□</td></tr>
+            <tr style="border-bottom:1px solid var(--border);background:var(--cream)"><td style="padding:10px 12px;font-size:11px;color:#8a6a40;font-weight:700;white-space:nowrap">3-4주</td><td style="padding:10px 12px;font-size:12px;color:#4a3a25"><strong>소수와 진짜 대화 시작하기</strong> — 진짜 연결되고 싶은 3명을 선택해 깊은 대화 나누기</td><td style="padding:10px 12px;text-align:center;font-size:16px;color:#d4c4a0">□</td></tr>
+            <tr style="border-bottom:1px solid var(--border);background:#fff"><td style="padding:10px 12px;font-size:11px;color:#8a6a40;font-weight:700;white-space:nowrap">5-6주</td><td style="padding:10px 12px;font-size:12px;color:#4a3a25"><strong>하루 30분 나만의 시간 확보</strong> — 매일 아침 또는 저녁, 아무도 방해하지 않는 시간</td><td style="padding:10px 12px;text-align:center;font-size:16px;color:#d4c4a0">□</td></tr>
+            <tr style="border-bottom:1px solid var(--border);background:var(--cream)"><td style="padding:10px 12px;font-size:11px;color:#8a6a40;font-weight:700;white-space:nowrap">7-8주</td><td style="padding:10px 12px;font-size:12px;color:#4a3a25"><strong>작은 실험 하나 시작하기</strong> — 강의든, 콘텐츠든, 프로젝트든 가장 작은 것 하나</td><td style="padding:10px 12px;text-align:center;font-size:16px;color:#d4c4a0">□</td></tr>
+            <tr style="border-bottom:1px solid var(--border);background:#fff"><td style="padding:10px 12px;font-size:11px;color:#8a6a40;font-weight:700;white-space:nowrap">9-10주</td><td style="padding:10px 12px;font-size:12px;color:#4a3a25"><strong>경계 연습 시작하기</strong> — 에너지를 빼앗는 상황에 "아니요"라고 말하는 연습</td><td style="padding:10px 12px;text-align:center;font-size:16px;color:#d4c4a0">□</td></tr>
+            <tr style="background:var(--cream)"><td style="padding:10px 12px;font-size:11px;color:#8a6a40;font-weight:700;white-space:nowrap">11-12주</td><td style="padding:10px 12px;font-size:12px;color:#4a3a25"><strong>90일 결산</strong> — 변화한 것, 배운 것, 다음 90일 방향 정리</td><td style="padding:10px 12px;text-align:center;font-size:16px;color:#d4c4a0">□</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- EPILOGUE -->
+      <div style="margin-top:40px;padding-top:32px;border-top:2px solid var(--border)">
+        <div style="font-size:10px;letter-spacing:0.25em;color:var(--gold);margin-bottom:12px">EPILOGUE</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--dark);margin-bottom:20px">지금 당신에게 드리는 한 문장</div>
+        <div class="chapter-content">
+          <p>지연님, 당신은 Q24에서 이렇게 말했습니다: <strong>"네가 하고 싶은 거 해도 돼."</strong> 이 말을 지금 제가 당신에게 전합니다. 네가 하고 싶은 거 해도 돼요. 정말로요.</p>
+          <p>당신은 48년 동안 충분히 잘 살아왔습니다. 사람들의 기대에 부응하고, 책임을 다하고, 남들이 괜찮다고 하는 길을 걸어왔습니다. 그런데 지금, 당신의 내면이 "이제 내 방식대로 살고 싶다"고 말하고 있습니다.</p>
+          <p>당신은 분석하고, 통찰하고, 그것을 사람들과 나누는 사람입니다. Q10에서 어릴 때부터 '공부·분석·논리적 사고'와 '그림·글·음악 등 창의적 표현'을 모두 잘했다고 한 것처럼, 당신은 깊이 사고하는 사람이면서 동시에 그것을 표현하는 사람입니다. 이 두 가지가 만나는 지점, 그곳이 당신의 자리입니다.</p>
+          <blockquote>"당신은 누군가의 기준으로 사는 사람이 아니라, 당신만의 길을 만들어가는 사람입니다. 이제 그 길을 걸으세요."<br><br>— WEROS · See Both Sides of You</blockquote>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end report-body -->
+
+  <!-- 푸터 -->
+  <div class="report-footer">
+    <svg width="130" height="34" viewBox="0 0 130 34" fill="none" style="margin-bottom:12px">
+      <path d="M2,5 L11,28 L20,9 L29,28" stroke="#c8a870" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      <line x1="29" y1="28" x2="42" y2="4" stroke="#c8a870" stroke-width="4" stroke-linecap="round"/>
+      <polygon points="35,0 44,0 44,9" fill="#c8a870"/>
+      <text x="88" y="23" font-family="Arial Black,Arial,sans-serif" font-size="11" font-weight="900" letter-spacing="3" fill="#c8a870" text-anchor="middle">WEROS</text>
+    </svg>
+    <div class="report-footer-text">
+      WEROS · See Both Sides of You<br>
+      © 2026 WEROS · THEWEROS.COM<br>
+      본 보고서는 인생 방향성 탐색을 위한 참고 자료입니다. 전문적인 심리상담이나 의료 진단을 대체하지 않습니다.
+    </div>
+  </div>
+
+</div><!-- end report-wrap -->
+
+<div class="sample-watermark">✦ SAMPLE REPORT</div>
+
+<script>
+// 레이더 차트
+window.addEventListener('load', function() {
+  var canvas = document.getElementById('radarChart');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var cx = 170, cy = 155, r = 120;
+  var labels = ['나의 본질','관계 에너지','돈과 일','무의식 패턴','지금 시기 과제','감정 조절','창의성','실행력','회복 탄력성','AI 시대 적합도','자기 이해','인생 방향성'];
+  var values = [0.88, 0.72, 0.65, 0.70, 0.58, 0.62, 0.85, 0.52, 0.75, 0.80, 0.78, 0.60];
+  var n = labels.length;
+
+  // 배경 원
+  for (var g = 1; g <= 5; g++) {
+    ctx.beginPath();
+    for (var i = 0; i < n; i++) {
+      var angle = (i / n) * Math.PI * 2 - Math.PI / 2;
+      var x = cx + Math.cos(angle) * r * g / 5;
+      var y = cy + Math.sin(angle) * r * g / 5;
+      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    }
+    ctx.closePath();
+    ctx.strokeStyle = 'rgba(200,168,112,0.15)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+
+  // 축선
+  for (var i = 0; i < n; i++) {
+    var angle = (i / n) * Math.PI * 2 - Math.PI / 2;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + Math.cos(angle) * r, cy + Math.sin(angle) * r);
+    ctx.strokeStyle = 'rgba(200,168,112,0.2)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+
+  // 데이터 폴리곤
+  ctx.beginPath();
+  for (var i = 0; i < n; i++) {
+    var angle = (i / n) * Math.PI * 2 - Math.PI / 2;
+    var x = cx + Math.cos(angle) * r * values[i];
+    var y = cy + Math.sin(angle) * r * values[i];
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  }
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(200,168,112,0.15)';
+  ctx.fill();
+  ctx.strokeStyle = '#c8a870';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // 점
+  for (var i = 0; i < n; i++) {
+    var angle = (i / n) * Math.PI * 2 - Math.PI / 2;
+    var x = cx + Math.cos(angle) * r * values[i];
+    var y = cy + Math.sin(angle) * r * values[i];
+    ctx.beginPath();
+    ctx.arc(x, y, 4, 0, Math.PI * 2);
+    ctx.fillStyle = '#c8a870';
+    ctx.fill();
+  }
+
+  // 레이블
+  ctx.font = '10px Noto Serif KR, serif';
+  ctx.fillStyle = '#9a8a6a';
+  ctx.textAlign = 'center';
+  for (var i = 0; i < n; i++) {
+    var angle = (i / n) * Math.PI * 2 - Math.PI / 2;
+    var x = cx + Math.cos(angle) * (r + 18);
+    var y = cy + Math.sin(angle) * (r + 18);
+    ctx.fillText(labels[i], x, y + 4);
+  }
+});
+</script>
+
+</body>
+</html>
