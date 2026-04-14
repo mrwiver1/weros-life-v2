@@ -502,7 +502,18 @@ function goToReport() {
         </div>
 
         <!-- 메인 컨텐츠 -->
-        <div style="background:var(--bg);height:560px;overflow-y:scroll;scrollbar-width:thin;scrollbar-color:rgba(154,122,64,0.4) transparent;">
+        <div style="position:relative;">
+<div style="background:var(--bg);height:560px;overflow-y:scroll;scrollbar-width:thin;scrollbar-color:rgba(154,122,64,0.4) transparent;position:relative;">
+<div style="position:sticky;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:10;height:100%;width:100%;overflow:hidden;position:absolute;inset:0">
+  <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" style="position:absolute;inset:0;pointer-events:none">
+    <defs>
+      <pattern id="wm" x="0" y="0" width="220" height="120" patternUnits="userSpaceOnUse" patternTransform="rotate(-35)">
+        <text x="10" y="60" font-family="Cormorant Garamond,serif" font-size="18" fill="rgba(154,122,64,0.08)" letter-spacing="6" font-weight="300">SAMPLE</text>
+      </pattern>
+    </defs>
+    <rect width="100%" height="100%" fill="url(#wm)"/>
+  </svg>
+</div>
 
           <!-- PROLOGUE -->
           <div style="padding:24px 28px 18px;border-bottom:1px solid var(--border)">
@@ -667,15 +678,20 @@ function goToReport() {
           </div>
 
         </div><!-- end scroll div -->
+</div><!-- end relative wrapper -->
 
-        <!-- 하단 전체보기 버튼 -->
-      <div style="background:var(--dark);padding:20px 32px;display:flex;align-items:center;justify-content:center;gap:32px;flex-wrap:wrap">
-        <div style="font-size:12px;color:rgba(200,168,112,.45);letter-spacing:.05em;white-space:nowrap">12챕터 · 30페이지 이상 · AI 시대 전략 포함</div>
-        <a href="#" onclick="window.open('sample.html','_blank','width=960,height=800,scrollbars=yes,resizable=yes');return false;"
-           style="display:inline-block;background:transparent;color:#c8a870;font-size:12px;padding:10px 28px;letter-spacing:.15em;text-decoration:none;border:1px solid rgba(200,168,112,.4);font-family:var(--serif);white-space:nowrap"
-           onmouseover="this.style.background='rgba(200,168,112,.08)'" onmouseout="this.style.background='transparent'">
-          ✦ 전체 샘플 리포트 보기
-        </a>
+        <!-- 하단 전체보기 버튼 - 사이드바|오른쪽 구조 맞춤 -->
+      <div style="display:grid;grid-template-columns:240px 1fr;background:var(--dark);border-top:1px solid rgba(200,168,112,.1)">
+        <div style="padding:16px 22px;border-right:1px solid rgba(200,168,112,.1)">
+          <div style="font-size:10px;color:rgba(200,168,112,.4);line-height:1.7">12챕터 · 30페이지 이상<br>AI 시대 전략 포함</div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:center;padding:16px 28px">
+          <a href="#" onclick="window.open('sample.html','_blank','width=960,height=800,scrollbars=yes,resizable=yes');return false;"
+             style="display:inline-block;background:transparent;color:#c8a870;font-size:12px;padding:10px 28px;letter-spacing:.15em;text-decoration:none;border:1px solid rgba(200,168,112,.4);font-family:var(--serif);white-space:nowrap"
+             onmouseover="this.style.background='rgba(200,168,112,.1)'" onmouseout="this.style.background='transparent'">
+            ✦ 전체 샘플 리포트 보기
+          </a>
+        </div>
       </div>
 
     </div><!-- end inline-sample -->
