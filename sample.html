@@ -76,15 +76,10 @@ body { background: var(--bg); color: var(--text); font-family: 'Noto Serif KR', 
 
 <div class="top-bar">
   <div class="logo">
-    <svg width="110" height="30" viewBox="0 0 110 30" fill="none">
-      <path d="M2,5 L11,26 L20,8 L29,26" stroke="#d4aa6a" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-      <line x1="29" y1="26" x2="43" y2="3" stroke="#d4aa6a" stroke-width="4.5" stroke-linecap="round"/>
-      <polygon points="36,0 46,0 46,10" fill="#d4aa6a"/>
-      <text x="78" y="21" font-family="Arial Black,Arial,sans-serif" font-size="11" font-weight="900" letter-spacing="3" fill="#d4c8a0" text-anchor="middle">WEROS</text>
-    </svg>
+    <img src="/images/weroslogo_white.png" alt="WEROS" style="height:32px;width:auto;object-fit:contain;">
   </div>
   <div class="top-badge">SAMPLE REPORT</div>
-  <button class="close-btn" onclick="window.close()">✕ 닫기</button>
+  <button class="close-btn" onclick="if(window.parent&&window.parent.closeSampleModal)window.parent.closeSampleModal();else window.close()">✕ 닫기</button>
 </div>
 
 <!-- SAMPLE 워터마크 고정 오버레이 -->
