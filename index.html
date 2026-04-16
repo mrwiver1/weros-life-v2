@@ -236,12 +236,15 @@ section { padding: 100px 52px; }
 .final-meta { font-size: 12px; color: rgba(200,168,112,.65); letter-spacing: .12em; display: flex; justify-content: center; gap: 20px; margin-top: 20px; }
 .final-meta span + span::before { content: '·'; margin-right: 12px; }
 
-footer { background: #120e08; padding: 48px 52px; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid rgba(200,168,112,.1); }
+footer { background: #120e08; padding: 56px 52px 40px; text-align: center; border-top: 1px solid rgba(200,168,112,.1); }
+.footer-logo { margin-bottom: 32px; }
 .footer-logo img { height: 88px; object-fit: contain; opacity: .9; }
-.footer-links { display: flex; gap: 28px; }
-.footer-links a { font-size: 12px; color: rgba(200,168,112,.7); text-decoration: none; letter-spacing: .1em; transition: color .2s; }
-.footer-links a:hover { color: rgba(200,168,112,.8); }
-.footer-copy { font-size: 11px; color: rgba(200,168,112,.5); letter-spacing: .12em; }
+.footer-links { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-bottom: 32px; }
+.footer-links a { font-size: 12px; color: rgba(200,168,112,.8); text-decoration: none; letter-spacing: .08em; border: 1px solid rgba(200,168,112,.3); padding: 10px 20px; border-radius: 2px; transition: all .2s; }
+.footer-links a:hover { color: rgba(200,168,112,1); border-color: rgba(200,168,112,.7); background: rgba(200,168,112,.08); }
+.footer-legal { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin-bottom: 0; }
+.footer-legal a, .footer-legal span { font-size: 11px; color: rgba(200,168,112,.4); text-decoration: none; letter-spacing: .08em; cursor: pointer; transition: color .2s; }
+.footer-legal a:hover, .footer-legal span:hover { color: rgba(200,168,112,.7); }
 
 @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 .reveal { opacity: 0; transform: translateY(24px); transition: opacity .7s ease, transform .7s ease; }
@@ -256,8 +259,8 @@ footer { background: #120e08; padding: 48px 52px; display: flex; align-items: ce
   .pain-grid, .steps-grid, .report-grid, .test-grid { grid-template-columns: 1fr; }
   .inline-sample-body { grid-template-columns: 1fr; }
   .pricing-grid { grid-template-columns: 1fr; max-width: 100%; }
-  footer { flex-direction: column; gap: 20px; text-align: center; }
-  .footer-links { flex-wrap: wrap; justify-content: center; }
+  .footer-links { gap: 10px; }
+  .footer-legal { gap: 12px; }
 }
 
 /* ── 샘플 모달 ── */
@@ -878,10 +881,15 @@ function goToReport() {
 <footer>
   <div class="footer-logo"><img src="/images/weroslogo_white.png" alt="WEROS"></div>
   <div class="footer-links">
-    <a href="https://store.theweros.com">소상공인 매출 전략 설계 리포트</a>
-    <a href="https://company.theweros.com">기업 브랜드 구조 진단 리포트</a>
+    <a href="https://store.theweros.com">소상공인 매출 전략 설계 리포트 →</a>
+    <a href="https://company.theweros.com">기업 브랜드 구조 진단 리포트 →</a>
   </div>
-  <div class="footer-copy">© 2026 WEROS</div>
+  <div class="footer-legal">
+    <a href="#">이용약관</a>
+    <a href="#">개인정보처리방침</a>
+    <a href="#">환불정책</a>
+    <span onclick="openContactModal()">문의하기</span>
+  </div>
 </footer>
 
 <!-- 사업자 정보 -->
@@ -924,7 +932,7 @@ function goToReport() {
     </a>
 
   </div>
-  <div style="font-size:12px;color:rgba(255,255,255,.45);margin-bottom:10px;letter-spacing:.05em">© WEROS All rights reserved.</div>
+  <div style="font-size:12px;color:rgba(255,255,255,.45);margin-bottom:10px;letter-spacing:.05em">© 2026 WEROS All rights reserved.</div>
   <div style="font-size:12px;color:rgba(255,255,255,.35);line-height:1.9;letter-spacing:.03em">
     주식회사 위버플레인 | 대표이사 이정운 | 경기도 김포시 김포한강11로 322 138-P44호 (운양동, 더 파크뷰테라스 상업시설)
   </div>
@@ -940,6 +948,84 @@ const observer = new IntersectionObserver((entries) => {
   });
 }, { threshold: 0.1 });
 document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+
+
+<!-- 문의하기 모달 -->
+<div id="contact-modal-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:9100;align-items:center;justify-content:center;padding:24px;backdrop-filter:blur(6px)" onclick="if(event.target===this)closeContactModal()">
+  <div style="background:#141210;border:1px solid rgba(201,169,110,.2);max-width:520px;width:100%;padding:52px 44px;position:relative;border-radius:2px" onclick="event.stopPropagation()">
+    <button onclick="closeContactModal()" style="position:absolute;top:20px;right:24px;background:none;border:none;font-size:22px;color:#b8b0a4;cursor:pointer;line-height:1">✕</button>
+    <div id="contact-sent-msg" style="display:none;text-align:center;padding:20px 0">
+      <div style="font-size:40px;margin-bottom:16px">✓</div>
+      <p style="font-family:Georgia,serif;font-size:20px;color:#fff">문의가 전송되었습니다</p>
+      <p style="font-size:13px;color:rgba(255,255,255,.4);margin-top:8px">빠른 시일 내에 답변 드리겠습니다.</p>
+    </div>
+    <div id="contact-form-content">
+      <span style="font-size:10px;letter-spacing:4px;color:#c9a96e;text-transform:uppercase;margin-bottom:16px;display:block">Contact</span>
+      <h2 style="font-family:'Playfair Display',Georgia,serif;font-size:26px;color:#fff;font-weight:400;margin-bottom:8px">문의하기</h2>
+      <p style="font-size:13px;color:rgba(255,255,255,.4);margin-bottom:36px;line-height:1.7">인생 리포트, 서비스, 협업 문의 등 편하게 보내주세요.</p>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">
+        <label style="font-size:11px;letter-spacing:2px;color:#b8b0a4;text-transform:uppercase">이름</label>
+        <input id="contact-name" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:#fff;padding:14px 16px;font-size:14px;outline:none;width:100%;box-sizing:border-box" placeholder="홍길동">
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">
+        <label style="font-size:11px;letter-spacing:2px;color:#b8b0a4;text-transform:uppercase">이메일</label>
+        <input id="contact-email" type="email" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:#fff;padding:14px 16px;font-size:14px;outline:none;width:100%;box-sizing:border-box" placeholder="example@email.com">
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">
+        <label style="font-size:11px;letter-spacing:2px;color:#b8b0a4;text-transform:uppercase">문의 내용</label>
+        <textarea id="contact-message" rows="5" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:#fff;padding:14px 16px;font-size:14px;outline:none;resize:none;width:100%;box-sizing:border-box" placeholder="문의 내용을 입력해주세요"></textarea>
+      </div>
+      <button id="contact-submit-btn" onclick="submitContactForm()" style="width:100%;margin-top:8px;padding:16px;background:#c9a96e;color:#000;font-size:12px;font-weight:700;letter-spacing:3px;text-transform:uppercase;border:none;cursor:pointer">보내기 →</button>
+    </div>
+  </div>
+</div>
+
+<script>
+function openContactModal() {
+  document.getElementById('contact-modal-overlay').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+function closeContactModal() {
+  document.getElementById('contact-modal-overlay').style.display = 'none';
+  document.body.style.overflow = '';
+  document.getElementById('contact-sent-msg').style.display = 'none';
+  document.getElementById('contact-form-content').style.display = 'block';
+  document.getElementById('contact-name').value = '';
+  document.getElementById('contact-email').value = '';
+  document.getElementById('contact-message').value = '';
+}
+async function submitContactForm() {
+  const name = document.getElementById('contact-name').value;
+  const email = document.getElementById('contact-email').value;
+  const message = document.getElementById('contact-message').value;
+  if (!name || !email || !message) return;
+  const btn = document.getElementById('contact-submit-btn');
+  btn.textContent = '전송 중...';
+  btn.disabled = true;
+  try {
+    await fetch('https://api.emailjs.com/api/v1.0/email/send', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        service_id: 'service_efyhv3m',
+        template_id: 'template_ae4yz8e',
+        user_id: 'XtQjgmwTBrg29gJnf',
+        template_params: { from_name: name, from_email: email, message: message }
+      })
+    });
+    document.getElementById('contact-form-content').style.display = 'none';
+    document.getElementById('contact-sent-msg').style.display = 'block';
+    setTimeout(closeContactModal, 3000);
+  } catch(e) {
+    alert('전송 중 오류가 발생했습니다.');
+    btn.textContent = '보내기 →';
+    btn.disabled = false;
+  }
+}
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeContactModal();
+});
 </script>
 
 <!-- 샘플 리포트 모달 -->
