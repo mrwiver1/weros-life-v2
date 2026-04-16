@@ -259,6 +259,60 @@ footer { background: #120e08; padding: 48px 52px; display: flex; align-items: ce
   footer { flex-direction: column; gap: 20px; text-align: center; }
   .footer-links { flex-wrap: wrap; justify-content: center; }
 }
+
+/* ── 샘플 모달 ── */
+#sample-modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(8,6,4,0.88);
+  z-index: 9000;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+#sample-modal-overlay.open {
+  display: flex;
+}
+#sample-modal-box {
+  background: #0e0c0a;
+  border: 1px solid rgba(200,168,112,.2);
+  width: 100%;
+  max-width: 900px;
+  max-height: calc(100vh - 40px);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  border-radius: 2px;
+  overflow: hidden;
+}
+#sample-modal-header {
+  background: #080604;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(200,168,112,.15);
+  flex-shrink: 0;
+}
+#sample-modal-body {
+  overflow-y: auto;
+  flex: 1;
+}
+#sample-modal-close {
+  background: none;
+  border: 1px solid rgba(200,168,112,.2);
+  color: #a09080;
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 2px;
+}
+#sample-modal-close:hover { color: #fff; border-color: rgba(200,168,112,.5); }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -304,7 +358,7 @@ function goToReport() {
     <p class="hero-desc">당신의 데이터를 분석해 반복되는 선택 패턴을 구조적으로 해석하고, 당신에게 맞는 전략을 도출합니다.</p>
     <div class="hero-btns">
       <a href="#" onclick="goToReport()" class="btn-main">무료로 시작하기 <span class="arr">→</span></a>
-      <a href="#" onclick="window.open('sample.html','_blank','width=960,height=800,scrollbars=yes,resizable=yes');return false;" class="btn-sub">리포트 예시 보기</a>
+      <a href="#" onclick="openSampleModal();return false;" class="btn-sub">리포트 예시 보기</a>
     </div>
     <div class="hero-meta">
       <span>기본 정보만으로 즉시 확인</span>
@@ -688,7 +742,7 @@ function goToReport() {
         </div>
         <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:18px 28px;gap:8px">
           <div style="font-size:12px;color:#c8a870;letter-spacing:.1em;font-weight:600">샘플 전체 분량을 확인하세요</div>
-          <a href="#" onclick="window.open('sample.html','_blank','width=960,height=800,scrollbars=yes,resizable=yes');return false;"
+          <a href="#" onclick="openSampleModal();return false;"
              style="display:inline-block;background:#c8a870;color:#1a1510;font-size:13px;font-weight:600;padding:12px 32px;letter-spacing:.12em;text-decoration:none;font-family:var(--serif);white-space:nowrap;border:none"
              onmouseover="this.style.background='#d4b47c'" onmouseout="this.style.background='#c8a870'">
             ✦ 전체 샘플 리포트 보기
@@ -824,8 +878,8 @@ function goToReport() {
 <footer>
   <div class="footer-logo"><img src="/images/weros-logo-2.png" alt="WEROS"></div>
   <div class="footer-links">
-    <a href="https://weros.vercel.app">소상공인 매출 전략 설계 리포트</a>
-    <a href="https://weros.vercel.app/enterprise">중소기업 사업 전략 설계 리포트</a>
+    <a href="https://store.theweros.com">소상공인 매출 전략 설계 리포트</a>
+    <a href="https://company.theweros.com">기업 브랜드 구조 진단 리포트</a>
   </div>
   <div class="footer-copy">© 2026 WEROS</div>
 </footer>
@@ -872,7 +926,7 @@ function goToReport() {
   </div>
   <div style="font-size:12px;color:rgba(255,255,255,.45);margin-bottom:10px;letter-spacing:.05em">© WEROS All rights reserved.</div>
   <div style="font-size:12px;color:rgba(255,255,255,.35);line-height:1.9;letter-spacing:.03em">
-    주식회사 위버플레인 | 대표이사 이정윤 | 경기도 김포시 김포한강11로 322 138-P44호 (운양동, 더 파크뷰테라스 상업시설)
+    주식회사 위버플레인 | 대표이사 이정운 | 경기도 김포시 김포한강11로 322 138-P44호 (운양동, 더 파크뷰테라스 상업시설)
   </div>
   <div style="font-size:12px;color:rgba(255,255,255,.35);letter-spacing:.03em">
     사업자등록번호 128-86-27688 | 통신판매업번호 2018-경기김포-0227호
@@ -886,6 +940,33 @@ const observer = new IntersectionObserver((entries) => {
   });
 }, { threshold: 0.1 });
 document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+
+<!-- 샘플 리포트 모달 -->
+<div id="sample-modal-overlay" onclick="if(event.target===this)closeSampleModal()">
+  <div id="sample-modal-box">
+    <div id="sample-modal-header">
+      <span style="font-size:10px;letter-spacing:.3em;color:rgba(200,168,112,.7)">WEROS · 인생 전략 설계 리포트 · 샘플</span>
+      <button id="sample-modal-close" onclick="closeSampleModal()">✕</button>
+    </div>
+    <div id="sample-modal-body">
+      <iframe src="sample.html" style="width:100%;height:100%;min-height:calc(100vh - 120px);border:none;background:#0e0c0a;" scrolling="yes"></iframe>
+    </div>
+  </div>
+</div>
+
+<script>
+function openSampleModal() {
+  document.getElementById('sample-modal-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeSampleModal() {
+  document.getElementById('sample-modal-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeSampleModal();
+});
 </script>
 </body>
 </html>
