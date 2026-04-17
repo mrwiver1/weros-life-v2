@@ -509,6 +509,15 @@
       letter-spacing: 0.1em;
     }
 
+  
+    @media print {
+      .progress-bar { display: none !important; }
+      .report-actions.no-print { display: none !important; }
+      .no-print { display: none !important; }
+      #reportBanner { display: none !important; }
+      .generating-overlay { display: none !important; }
+      #step1, #stepPayment, #step2 { display: none !important; }
+    }
   </style>
 </head>
 <body>
@@ -1031,7 +1040,31 @@
 
     <div class="report-body" id="reportBody"></div>
 
-    <div class="report-actions">
+    <!-- 리포트 보관 배너 -->
+    <div id="reportBanner" style="display:none;margin:0 0 24px;background:var(--cream);border:1px solid var(--border);border-left:4px solid var(--gold);padding:20px 24px">
+      <div style="font-size:9px;letter-spacing:3px;color:var(--gold);text-transform:uppercase;margin-bottom:10px">리포트 보관 안내</div>
+      <p style="font-size:13px;color:var(--muted);line-height:1.8;margin-bottom:12px">
+        이 리포트는 아래 링크에서 언제든 다시 확인할 수 있습니다.<br>
+        이메일로도 링크를 발송해드렸습니다.
+      </p>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px">
+        <input id="reportLinkInput" readonly style="flex:1;min-width:200px;background:#fff;border:1px solid var(--border);padding:8px 12px;font-size:12px;color:var(--muted);font-family:monospace">
+        <button class="btn-secondary" style="flex-shrink:0;padding:8px 16px;font-size:12px"
+          onclick="navigator.clipboard.writeText(document.getElementById('reportLinkInput').value).then(()=>alert('링크가 복사되었습니다!'))">
+          복사
+        </button>
+      </div>
+      <div id="reportEmailConfirm" style="font-size:12px;color:#4a7a50;margin-bottom:16px"></div>
+      <div style="padding-top:14px;border-top:1px solid var(--border)">
+        <p style="font-size:12px;color:var(--muted);margin-bottom:8px">📄 PDF로 저장하려면</p>
+        <button class="btn-secondary" onclick="window.print()" style="font-size:12px;padding:8px 16px">
+          📄 PDF로 저장하기
+        </button>
+        <span style="font-size:11px;color:var(--muted);margin-left:10px">저장 창에서 'PDF로 저장' 선택</span>
+      </div>
+    </div>
+
+    <div class="report-actions no-print">
       <button class="btn-secondary" onclick="window.print()">🖨 PDF 저장</button>
       <button class="btn-secondary" onclick="location.reload()">새 보고서</button>
     </div>
@@ -1728,6 +1761,41 @@ async function generateReport() {
   }
 }
 
+// ===== 리포트 링크 이메일 발송 =====
+async function sendReportLinkEmail(email, name, link) {
+  if (!email) return;
+  try {
+    await fetch('https://api.emailjs.com/api/v1.0/email/send', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        service_id: 'service_efyhv3m',
+        template_id: 'template_1j9jh1s',
+        user_id: 'XtQjgmwTBrg29gJnf',
+        template_params: {
+          to_email: email,
+          brand_name: name,
+          category: '인생 전략 설계 리포트',
+          concerns: '리포트가 생성되었습니다',
+          data_link: link,
+          message: `안녕하세요. ${name}님,\n\nWEROS 인생 전략 설계 리포트가 완성되었습니다.\n\n아래 링크에서 언제든지 다시 확인하실 수 있습니다.\n${link}\n\n감사합니다.\nWEROS 팀`
+        }
+      })
+    });
+    console.log('✅ 리포트 링크 이메일 발송 완료');
+  } catch(e) { console.error('❌ 이메일 발송 실패', e); }
+}
+
+// ===== 리포트 보관 배너 표시 =====
+function showReportBanner(link, email) {
+  const banner = document.getElementById('reportBanner');
+  const linkInput = document.getElementById('reportLinkInput');
+  const emailConfirm = document.getElementById('reportEmailConfirm');
+  if (banner) banner.style.display = 'block';
+  if (linkInput) linkInput.value = link;
+  if (emailConfirm && email) emailConfirm.textContent = `✓ ${email} 로 링크를 발송했습니다`;
+}
+
 // ===== Supabase 저장 =====
 // ══════════════════════════════════════════
 // EmailJS — 어드민 알림 이메일 발송
@@ -1758,6 +1826,41 @@ async function sendAdminEmail(recordId) {
   }
 }
 const APP_MODE = new URLSearchParams(window.location.search).get('mode') || 'live';
+// ===== 리포트 링크 이메일 발송 =====
+async function sendReportLinkEmail(email, name, link) {
+  if (!email) return;
+  try {
+    await fetch('https://api.emailjs.com/api/v1.0/email/send', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        service_id: 'service_efyhv3m',
+        template_id: 'template_1j9jh1s',
+        user_id: 'XtQjgmwTBrg29gJnf',
+        template_params: {
+          to_email: email,
+          brand_name: name,
+          category: '인생 전략 설계 리포트',
+          concerns: '리포트가 생성되었습니다',
+          data_link: link,
+          message: `안녕하세요. ${name}님,\n\nWEROS 인생 전략 설계 리포트가 완성되었습니다.\n\n아래 링크에서 언제든지 다시 확인하실 수 있습니다.\n${link}\n\n감사합니다.\nWEROS 팀`
+        }
+      })
+    });
+    console.log('✅ 리포트 링크 이메일 발송 완료');
+  } catch(e) { console.error('❌ 이메일 발송 실패', e); }
+}
+
+// ===== 리포트 보관 배너 표시 =====
+function showReportBanner(link, email) {
+  const banner = document.getElementById('reportBanner');
+  const linkInput = document.getElementById('reportLinkInput');
+  const emailConfirm = document.getElementById('reportEmailConfirm');
+  if (banner) banner.style.display = 'block';
+  if (linkInput) linkInput.value = link;
+  if (emailConfirm && email) emailConfirm.textContent = `✓ ${email} 로 링크를 발송했습니다`;
+}
+
 // ===== Supabase 저장 =====
 async function saveToSupabase() {
   const SUPABASE_URL = 'https://wavhcknviozwadqyjlug.supabase.co';
@@ -1801,6 +1904,12 @@ async function saveToSupabase() {
       console.log('✅ 저장 완료, id:', recordId);
       if (APP_MODE !== 'test' && recordId) {
         await sendAdminEmail(recordId);
+      }
+      // 고유 링크 발급 및 배너 표시
+      if (recordId) {
+        const reportLink = `${window.location.origin}/report-v2.html?id=${recordId}`;
+        showReportBanner(reportLink, state.email);
+        sendReportLinkEmail(state.email, state.name, reportLink);
       }
     } else {
       console.error('❌ 저장 실패', await res.text());
