@@ -337,7 +337,7 @@ async function saveLifeReport(email, inputData, resultData) {
 function goToReport() {
   const emailEl = document.querySelector('input[type="email"]');
   if (emailEl && emailEl.value) localStorage.setItem('weros_life_email', emailEl.value.toLowerCase().trim());
-  window.location.href = 'https://weros-life-v2.vercel.app/report-v2.html';
+  window.location.href = 'https://life.theweros.com';
 }
 </script>
 </head>
@@ -372,12 +372,12 @@ function goToReport() {
   <div class="hero-right" style="position:relative">
     <div style="position:absolute;inset:0;background-image:url('/images/image-01.jpg');background-size:cover;background-position:center;opacity:0.25;border-radius:0;z-index:0"></div>
     <div class="hero-card" style="position:relative;z-index:1">
-      <div class="hc-label">인생 전략 설계 리포트 · 전문가 수작업 분석</div>
+      <div class="hc-label">인생 전략 설계 리포트 · 무료 미리보기</div>
       <div class="hc-title">입력 후 핵심 패턴을<br>먼저 무료로 확인합니다<br><span style="font-size:14px;color:var(--gold-light);font-weight:300">결제는 그 다음입니다</span></div>
       <div class="hc-items">
         <div class="hc-item"><div class="hc-item-icon">✦</div><div class="hc-item-text"><strong>기본 정보 입력 (1분)</strong>사주 · 이름 · MBTI — 반복 패턴의 구조 데이터</div></div>
         <div class="hc-item"><div class="hc-item-icon">✦</div><div class="hc-item-text"><strong>심리 설문 26문항 (10분)</strong>패턴의 원인을 추출하는 심층 질문</div></div>
-        <div class="hc-item"><div class="hc-item-icon">✦</div><div class="hc-item-text"><strong>전문가 직접 분석</strong>AI 자동 생성이 아닌 수작업 개인화 리포트</div></div>
+        <div class="hc-item"><div class="hc-item-icon">✦</div><div class="hc-item-text"><strong>무료 미리보기 제공</strong>핵심 유형 + 반복 패턴 확인 → 전략은 풀 리포트로</div></div>
       </div>
       <div class="hc-divider"></div>
       <div class="hc-spec">
@@ -443,7 +443,7 @@ function goToReport() {
 <section>
   <div class="section-inner">
     <p class="sec-label">진행 방식</p>
-    <h2 class="sec-title reveal">신청부터 발송까지<br>3단계로 진행됩니다</h2>
+    <h2 class="sec-title reveal">4단계로 당신의<br>인생 구조를 분석합니다</h2>
     <div class="steps-grid">
       <div class="step-card reveal">
         <div class="step-num">1</div>
@@ -459,15 +459,15 @@ function goToReport() {
       </div>
       <div class="step-card reveal">
         <div class="step-num">3</div>
-        <div class="step-title">결제 및 접수</div>
-        <p class="step-desc">분석 신청이 접수되면 전문가가 직접 분석을 시작합니다. AI 자동 생성이 아닌 수작업 리포트입니다.</p>
-        <span class="step-tag tag-paid">49,000원 · 1회 결제</span>
+        <div class="step-title">무료 미리보기 확인</div>
+        <p class="step-desc">핵심 유형과 반복 패턴을 먼저 확인합니다. 해결 전략은 풀 리포트에 담겨 있습니다.</p>
+        <span class="step-tag tag-free">즉시 제공 · 무료</span>
       </div>
       <div class="step-card reveal">
         <div class="step-num">4</div>
-        <div class="step-title">리포트 이메일 발송</div>
-        <p class="step-desc">접수 후 1~3 영업일 내 이메일로 발송됩니다. 12챕터 · 30페이지 이상의 개인화 리포트.</p>
-        <span class="step-tag tag-free">1~3 영업일 내 발송</span>
+        <div class="step-title">전체 리포트 확인</div>
+        <p class="step-desc">12챕터, 30페이지 이상의 개인화된 인생 전략 설계 리포트. 무의식 패턴부터 AI 시대 전략까지.</p>
+        <span class="step-tag tag-paid">AI 심층 분석 · 유료</span>
       </div>
     </div>
   </div>
