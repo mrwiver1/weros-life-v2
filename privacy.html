@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>개인정보처리방침 · WEROS 인생 전략 설계 리포트</title>
+<style>
+  :root { --gold: #c9a96e; --gold-light: rgba(200,168,112,.7); --border: rgba(200,168,112,.15); }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #faf8f4; color: #1a1410; font-family: 'Georgia', serif; line-height: 1.9; }
+  header { background: #120e08; padding: 18px 48px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+  .back-link { font-size: 13px; color: rgba(200,168,112,.7); text-decoration: none; letter-spacing: .05em; transition: color .2s; }
+  .back-link:hover { color: var(--gold); }
+  main { max-width: 760px; margin: 0 auto; padding: 64px 32px 100px; }
+  .badge { font-size: 10px; letter-spacing: .4em; color: var(--gold); text-transform: uppercase; margin-bottom: 16px; display: block; }
+  h1 { font-size: 34px; font-weight: 400; color: #1a1410; margin-bottom: 8px; }
+  .date { font-size: 13px; color: #9a8a70; margin-bottom: 48px; }
+  .summary-box { background: #120e08; padding: 24px 28px; margin-bottom: 48px; }
+  .summary-box p { color: rgba(200,168,112,.8); font-size: 14px; line-height: 1.9; margin: 0; }
+  .info-box { background: #fff; border: 1px solid #e0d4c0; border-left: 4px solid var(--gold); padding: 20px 24px; margin-bottom: 48px; border-radius: 0 4px 4px 0; }
+  .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 24px; }
+  .info-item { font-size: 13px; color: #3a2a18; }
+  .info-label { color: #8a7a65; margin-right: 8px; }
+  h2 { font-size: 17px; font-weight: 600; color: #1a1410; margin: 40px 0 12px; }
+  p { font-size: 15px; color: #3a2a18; line-height: 1.9; margin-bottom: 14px; }
+  footer { background: #120e08; padding: 28px 48px; text-align: center; border-top: 1px solid var(--border); }
+  .footer-links { display: flex; justify-content: center; gap: 24px; margin-bottom: 16px; flex-wrap: wrap; }
+  .footer-links a { font-size: 12px; color: var(--gold-light); text-decoration: none; }
+  .footer-links a:hover { color: var(--gold); }
+  .footer-text { font-size: 11px; color: rgba(200,168,112,.4); line-height: 1.9; }
+  @media (max-width: 640px) { main { padding: 40px 20px; } header { padding: 16px 20px; } .info-grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<header>
+  <img src="/images/weroslogo_white.png" alt="WEROS" style="height:48px;object-fit:contain;opacity:.9">
+  <a href="/" class="back-link">← 홈으로</a>
+</header>
+
+<main>
+  <span class="badge">Legal</span>
+  <h1>개인정보처리방침</h1>
+  <p class="date">시행일: 2026년 1월 1일 &nbsp;·&nbsp; 최종 수정: 2026년 4월 1일</p>
+
+  <div class="summary-box">
+    <p>WEROS는 이용자가 입력한 개인 정보를 리포트 생성 목적으로만 사용하며, 마케팅 목적의 제3자 제공이나 광고 활용을 하지 않습니다. 이메일 주소는 리포트 전달 외 다른 용도로 사용하지 않습니다.</p>
+  </div>
+
+  <div class="info-box">
+    <div style="font-size:10px;letter-spacing:3px;color:var(--gold);text-transform:uppercase;margin-bottom:12px">개인정보 처리자</div>
+    <div class="info-grid">
+      <div class="info-item"><span class="info-label">회사명</span>주식회사 위버플레인</div>
+      <div class="info-item"><span class="info-label">대표자</span>이정운</div>
+      <div class="info-item"><span class="info-label">사업자등록번호</span>128-86-27688</div>
+      <div class="info-item"><span class="info-label">이메일</span>mrwiver@naver.com</div>
+      <div class="info-item" style="grid-column:1/-1"><span class="info-label">주소</span>경기도 김포시 김포한강11로 322 138-P44호</div>
+    </div>
+  </div>
+
+  <h2>제1조 (개인정보의 처리 목적)</h2>
+  <p>회사는 다음의 목적을 위하여 개인정보를 처리합니다.</p>
+  <p>① 리포트 생성: 입력된 사주·이름·MBTI·설문 데이터를 기반으로 AI 인생 전략 리포트 생성</p>
+  <p>② 리포트 전달: 생성된 리포트 링크 이메일 발송</p>
+  <p>③ 서비스 개선: 서비스 품질 향상을 위한 통계 분석 (비식별화 후 활용)</p>
+  <p>④ 고객 문의 응대: 이용자의 문의 및 불만 처리</p>
+
+  <h2>제2조 (처리하는 개인정보의 항목)</h2>
+  <p>① 필수 수집 항목</p>
+  <p>- 이메일 주소: 리포트 링크 전달 목적</p>
+  <p>② 선택 수집 항목 (서비스 이용 중 입력하는 정보)</p>
+  <p>- 이름, 생년월일, 성별, MBTI, 심리설문 응답</p>
+  <p>- 위 정보는 리포트 생성 목적 외에는 사용되지 않습니다.</p>
+  <p>③ 자동 수집 항목</p>
+  <p>- 서비스 이용 기록, 접속 IP, 브라우저 종류 (서비스 운영 및 보안 목적)</p>
+
+  <h2>제3조 (개인정보의 처리 및 보유 기간)</h2>
+  <p>① 이메일 주소: 서비스 이용 종료 후 1년</p>
+  <p>② 진단 입력 데이터(리포트): 생성일로부터 1년</p>
+  <p>③ 서비스 이용 기록: 3개월</p>
+  <p>④ 관련 법령에 따라 보존해야 하는 경우 해당 기간 동안 보관합니다.</p>
+  <p>- 소비자의 불만 또는 분쟁처리 기록: 3년 (전자상거래법)</p>
+  <p>- 계약 또는 청약철회 기록: 5년 (전자상거래법)</p>
+
+  <h2>제4조 (개인정보의 제3자 제공)</h2>
+  <p>① 회사는 이용자의 개인정보를 원칙적으로 제3자에게 제공하지 않습니다.</p>
+  <p>② 서비스 제공을 위해 아래 업체에 개인정보를 위탁합니다.</p>
+  <p>- Supabase (데이터베이스 저장): 리포트 데이터 보관</p>
+  <p>- Anthropic (AI 분석 처리): 리포트 생성 목적의 데이터 전달 (분석 후 미보관)</p>
+  <p>- EmailJS (이메일 발송): 리포트 링크 전달 목적</p>
+
+  <h2>제5조 (개인정보의 파기)</h2>
+  <p>① 회사는 보유기간 경과, 처리목적 달성 시 지체없이 개인정보를 파기합니다.</p>
+  <p>② 전자적 파일 형태: 복구 불가능한 방법으로 영구 삭제</p>
+
+  <h2>제6조 (이용자의 권리)</h2>
+  <p>이용자는 언제든지 개인정보 열람, 정정, 삭제, 처리 정지를 요구할 수 있습니다. 요청은 이메일(mrwiver@naver.com)로 접수하시면 지체없이 처리합니다.</p>
+
+  <h2>제7조 (개인정보 보호 담당자)</h2>
+  <p>성명: 이정운 &nbsp;·&nbsp; 이메일: mrwiver@naver.com &nbsp;·&nbsp; 운영시간: 평일 10:00~18:00</p>
+  <p>개인정보 침해 신고: 개인정보침해신고센터 privacy.kisa.or.kr (국번없이 118)</p>
+
+  <h2>제8조 (개인정보 처리방침의 변경)</h2>
+  <p>이 처리방침은 시행일로부터 적용되며, 변경 내용이 있을 경우 시행 7일 전부터 서비스 내 공지합니다.</p>
+</main>
+
+<footer>
+  <div class="footer-links">
+    <a href="/terms.html">이용약관</a>
+    <a href="/refund.html">환불정책</a>
+    <a href="/">홈으로</a>
+  </div>
+  <div class="footer-text">
+    © 2026 WEROS All rights reserved.<br>
+    주식회사 위버플레인 | 대표이사 이정운 | 사업자등록번호 128-86-27688
+  </div>
+</footer>
+
+</body>
+</html>

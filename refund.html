@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>환불정책 · WEROS 인생 전략 설계 리포트</title>
+<style>
+  :root { --gold: #c9a96e; --gold-light: rgba(200,168,112,.7); --border: rgba(200,168,112,.15); }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #faf8f4; color: #1a1410; font-family: 'Georgia', serif; line-height: 1.9; }
+  header { background: #120e08; padding: 18px 48px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+  .back-link { font-size: 13px; color: rgba(200,168,112,.7); text-decoration: none; letter-spacing: .05em; transition: color .2s; }
+  .back-link:hover { color: var(--gold); }
+  main { max-width: 760px; margin: 0 auto; padding: 64px 32px 100px; }
+  .badge { font-size: 10px; letter-spacing: .4em; color: var(--gold); text-transform: uppercase; margin-bottom: 16px; display: block; }
+  h1 { font-size: 34px; font-weight: 400; color: #1a1410; margin-bottom: 8px; }
+  .date { font-size: 13px; color: #9a8a70; margin-bottom: 48px; }
+  .notice-box { background: #120e08; padding: 24px 28px; margin-bottom: 48px; }
+  .notice-box p { color: rgba(200,168,112,.8); font-size: 14px; line-height: 1.9; margin: 0; }
+  .case-box { border-left: 4px solid; padding: 20px 24px; margin-bottom: 16px; border-radius: 0 4px 4px 0; }
+  .case-box.ok { border-color: #4a7a50; background: #f0f7f0; }
+  .case-box.no { border-color: #a04030; background: #fdf3f0; }
+  .case-label { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .case-label span { font-size: 15px; font-weight: 700; }
+  .case-label span.ok { color: #4a7a50; }
+  .case-label span.no { color: #a04030; }
+  ul { padding-left: 20px; display: flex; flex-direction: column; gap: 8px; margin-bottom: 0; }
+  ul li { font-size: 14px; color: #2a1a10; line-height: 1.75; }
+  h2 { font-size: 17px; font-weight: 600; color: #1a1410; margin: 40px 0 12px; }
+  p { font-size: 15px; color: #3a2a18; line-height: 1.9; margin-bottom: 14px; }
+  .step-wrap { display: flex; flex-direction: column; gap: 0; }
+  .step { display: flex; gap: 24px; padding-bottom: 24px; position: relative; }
+  .step-num { width: 36px; height: 36px; background: #120e08; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .step-num span { font-size: 11px; color: var(--gold); font-weight: 700; }
+  .step-line { width: 1px; flex: 1; background: #d8cfc4; min-height: 24px; margin: 0 auto; }
+  .step-content { padding-top: 6px; padding-bottom: 24px; }
+  .step-title { font-size: 15px; font-weight: 700; color: #1a1410; margin-bottom: 8px; }
+  .step-desc { font-size: 14px; color: #3a2a18; line-height: 1.85; white-space: pre-line; }
+  footer { background: #120e08; padding: 28px 48px; text-align: center; border-top: 1px solid var(--border); }
+  .footer-links { display: flex; justify-content: center; gap: 24px; margin-bottom: 16px; flex-wrap: wrap; }
+  .footer-links a { font-size: 12px; color: var(--gold-light); text-decoration: none; }
+  .footer-links a:hover { color: var(--gold); }
+  .footer-text { font-size: 11px; color: rgba(200,168,112,.4); line-height: 1.9; }
+  @media (max-width: 640px) { main { padding: 40px 20px; } header { padding: 16px 20px; } }
+</style>
+</head>
+<body>
+
+<header>
+  <img src="/images/weroslogo_white.png" alt="WEROS" style="height:48px;object-fit:contain;opacity:.9">
+  <a href="/" class="back-link">← 홈으로</a>
+</header>
+
+<main>
+  <span class="badge">Legal</span>
+  <h1>환불정책</h1>
+  <p class="date">시행일: 2026년 1월 1일 &nbsp;·&nbsp; 최종 수정: 2026년 4월 1일</p>
+
+  <div class="notice-box">
+    <p>WEROS 인생 전략 설계 리포트는 이용자의 입력 데이터를 기반으로 즉시 생성되는 <strong style="color:#fff">디지털 콘텐츠 상품</strong>입니다. 전자상거래법 제17조에 따라, 콘텐츠를 열람한 이후에는 청약철회가 제한됩니다.</p>
+  </div>
+
+  <h2>제1조 (법적 근거)</h2>
+  <p>본 환불정책은 「전자상거래 등에서의 소비자보호에 관한 법률」 제17조(청약철회 등) 및 동법 시행령의 규정에 따릅니다.</p>
+
+  <h2>제2조 (환불 가능 및 불가 기준)</h2>
+
+  <div class="case-box ok">
+    <div class="case-label">
+      <span class="ok">✓ 환불 가능</span>
+    </div>
+    <ul>
+      <li>결제 완료 후 리포트가 생성되지 않은 경우 (시스템 오류 포함)</li>
+      <li>결제 완료 후 7일 이내, 리포트를 열람하지 않은 경우</li>
+      <li>동일 내용으로 중복 결제된 경우 (즉시 전액 환불)</li>
+    </ul>
+  </div>
+
+  <div class="case-box no">
+    <div class="case-label">
+      <span class="no">✕ 환불 불가</span>
+    </div>
+    <ul>
+      <li>리포트를 1회 이상 열람한 경우 (디지털 콘텐츠 특성상)</li>
+      <li>결제 완료 후 7일이 경과한 경우</li>
+      <li>이용자가 허위 정보를 입력하여 결과의 질이 낮다고 주장하는 경우</li>
+      <li>단순 변심 또는 기대치와 다르다는 이유 (단, 내용 오류가 확인된 경우 제외)</li>
+    </ul>
+  </div>
+
+  <h2>제3조 (환불 신청 절차)</h2>
+  <div class="step-wrap">
+    <div class="step">
+      <div style="display:flex;flex-direction:column;align-items:center;flex-shrink:0">
+        <div class="step-num"><span>01</span></div>
+        <div class="step-line"></div>
+      </div>
+      <div class="step-content">
+        <div class="step-title">환불 신청</div>
+        <div class="step-desc">이메일(mrwiver@naver.com)로 아래 정보와 함께 신청
+· 결제자 이메일
+· 결제일 및 결제 금액
+· 환불 사유</div>
+      </div>
+    </div>
+    <div class="step">
+      <div style="display:flex;flex-direction:column;align-items:center;flex-shrink:0">
+        <div class="step-num"><span>02</span></div>
+        <div class="step-line"></div>
+      </div>
+      <div class="step-content">
+        <div class="step-title">검토 (1~2 영업일)</div>
+        <div class="step-desc">신청 내용 확인 후 환불 가능 여부를 이메일로 안내합니다.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div style="display:flex;flex-direction:column;align-items:center;flex-shrink:0">
+        <div class="step-num"><span>03</span></div>
+      </div>
+      <div class="step-content">
+        <div class="step-title">환불 처리 (3~5 영업일)</div>
+        <div class="step-desc">환불 승인 시 결제 수단으로 전액 환불 처리됩니다. 카드사 정책에 따라 반영 시점이 다를 수 있습니다.</div>
+      </div>
+    </div>
+  </div>
+
+  <h2>제4조 (환불 문의)</h2>
+  <p>이메일: mrwiver@naver.com</p>
+  <p>운영시간: 평일 10:00~18:00 (주말·공휴일 휴무)</p>
+  <p>처리기간: 문의 접수 후 1~2 영업일 내 답변</p>
+
+  <h2>제5조 (소비자 분쟁 해결)</h2>
+  <p>회사와 협의가 이루어지지 않을 경우 아래 기관에 도움을 요청하실 수 있습니다.</p>
+  <p>- 한국소비자원: www.kca.go.kr (국번없이 1372)</p>
+  <p>- 공정거래위원회 전자거래분쟁조정위원회: www.ecmc.or.kr</p>
+</main>
+
+<footer>
+  <div class="footer-links">
+    <a href="/terms.html">이용약관</a>
+    <a href="/privacy.html">개인정보처리방침</a>
+    <a href="/">홈으로</a>
+  </div>
+  <div class="footer-text">
+    © 2026 WEROS All rights reserved.<br>
+    주식회사 위버플레인 | 대표이사 이정운 | 사업자등록번호 128-86-27688
+  </div>
+</footer>
+
+</body>
+</html>
