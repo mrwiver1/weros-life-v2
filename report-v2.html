@@ -857,7 +857,85 @@
   </div>
 
   <div id="step1Error" class="error-msg" style="margin-bottom:16px"></div>
-  <button class="btn-primary" onclick="goToStep2()">다음 단계 · 26문항 설문 →</button>
+  <button class="btn-primary" onclick="goToPayment()">내 인생 분석 시작하기 →</button>
+</div>
+
+
+<!-- ===== STEP 결제 ===== -->
+<div id="stepPayment" class="container hidden" style="max-width:600px">
+  <div class="section-header" style="text-align:center">
+    <div class="section-eyebrow">STEP 02 · 결제</div>
+    <h1 class="section-title" style="font-size:32px" id="paymentName">—</h1>
+    <p class="section-desc">기본 분석이 완료됐습니다.<br>심층 설문 26문항 + 풀 리포트를 받아보세요.</p>
+  </div>
+
+  <!-- 포함 내용 -->
+  <div style="background:var(--cream);border:1px solid var(--border);padding:28px 32px;margin-bottom:28px">
+    <div style="font-size:9px;letter-spacing:0.25em;color:var(--gold);margin-bottom:20px;text-transform:uppercase">풀 리포트 구성 · 12챕터 · 30페이지 이상</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div style="display:flex;align-items:flex-start;gap:10px">
+        <span style="color:var(--gold);font-size:14px;flex-shrink:0;margin-top:2px">✦</span>
+        <div style="font-size:13px;color:var(--text);line-height:1.7">본질 · 에너지 구조</div>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:10px">
+        <span style="color:var(--gold);font-size:14px;flex-shrink:0;margin-top:2px">✦</span>
+        <div style="font-size:13px;color:var(--text);line-height:1.7">재능 · 적성 분석</div>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:10px">
+        <span style="color:var(--gold);font-size:14px;flex-shrink:0;margin-top:2px">✦</span>
+        <div style="font-size:13px;color:var(--text);line-height:1.7">이름 에너지 구조</div>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:10px">
+        <span style="color:var(--gold);font-size:14px;flex-shrink:0;margin-top:2px">✦</span>
+        <div style="font-size:13px;color:var(--text);line-height:1.7">돈과 일의 전략</div>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:10px">
+        <span style="color:var(--gold);font-size:14px;flex-shrink:0;margin-top:2px">✦</span>
+        <div style="font-size:13px;color:var(--text);line-height:1.7">관계 패턴 심층 분석</div>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:10px">
+        <span style="color:var(--gold);font-size:14px;flex-shrink:0;margin-top:2px">✦</span>
+        <div style="font-size:13px;color:var(--text);line-height:1.7">무의식 · 그림자 분석</div>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:10px">
+        <span style="color:var(--gold);font-size:14px;flex-shrink:0;margin-top:2px">✦</span>
+        <div style="font-size:13px;color:var(--text);line-height:1.7">인생 흐름 · 지금의 과제</div>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:10px">
+        <span style="color:var(--gold);font-size:14px;flex-shrink:0;margin-top:2px">✦</span>
+        <div style="font-size:13px;color:var(--text);line-height:1.7">AI 시대 전략</div>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:10px;grid-column:1/-1">
+        <span style="color:var(--gold);font-size:14px;flex-shrink:0;margin-top:2px">✦</span>
+        <div style="font-size:13px;color:var(--text);line-height:1.7">90일 ACTION PLAN</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 가격 -->
+  <div style="background:var(--dark);color:#f5f0e8;padding:28px 32px;text-align:center;margin-bottom:24px">
+    <div style="font-size:11px;letter-spacing:0.2em;color:rgba(200,168,112,.6);margin-bottom:8px;text-transform:uppercase">테스트 기간 특별가</div>
+    <div style="display:flex;align-items:baseline;justify-content:center;gap:12px;margin-bottom:4px">
+      <span style="font-size:16px;color:rgba(255,255,255,.3);text-decoration:line-through">99,000원</span>
+      <span style="font-family:'Cormorant Garamond',serif;font-size:48px;font-weight:400;color:#f5f0e8">49,000</span>
+      <span style="font-size:18px;color:rgba(255,255,255,.6)">원</span>
+    </div>
+    <div style="font-size:12px;color:rgba(200,168,112,.5)">VAT 포함 · 1회 결제 · 영구 열람</div>
+  </div>
+
+  <!-- 결제 버튼 (토스페이먼츠 연동 전 임시) -->
+  <button class="btn-primary" onclick="proceedToSurvey()" style="margin-bottom:16px">
+    결제하고 심층 설문 시작하기 →
+  </button>
+
+  <div style="display:flex;gap:12px">
+    <button class="btn-secondary" style="flex:1" onclick="setStep(1)">← 기본 정보 수정</button>
+  </div>
+
+  <div style="margin-top:20px;padding:16px;background:var(--cream);border:1px solid var(--border);font-size:12px;color:var(--muted);line-height:1.8;text-align:center">
+    결제 완료 후 26문항 심층 설문으로 이동합니다.<br>
+    설문 완료 즉시 리포트가 생성됩니다.
+  </div>
 </div>
 
 <!-- ===== STEP 2: 설문 ===== -->
@@ -1101,14 +1179,74 @@ ${surveyText}`;
 // ===== 스텝 이동 =====
 function setStep(n) {
   document.getElementById('step1').classList.toggle('hidden', n !== 1);
+  document.getElementById('stepPayment').classList.toggle('hidden', n !== 'payment');
   document.getElementById('step2').classList.toggle('hidden', n !== 2);
   document.getElementById('step3').classList.toggle('hidden', n !== 3);
   ['1','2','3'].forEach(s => {
     const el = document.getElementById(`step-ind-${s}`);
+    if (!el) return;
     el.classList.toggle('active', s === String(n));
     el.classList.toggle('done', parseInt(s) < n);
   });
   window.scrollTo({top: 0, behavior: 'instant'});
+}
+
+
+// ===== STEP1 → 결제 =====
+function goToPayment() {
+  const err = document.getElementById('step1Error');
+  state.name = document.getElementById('name').value.trim();
+  state.nameHanja = document.getElementById('nameHanja').value.trim();
+  state.gender = document.getElementById('gender').value;
+  state.mbti = document.getElementById('mbti').value;
+  state.concern = document.getElementById('concern').value.trim();
+  state.birthYear = document.getElementById('birthYear').value;
+  state.birthMonth = document.getElementById('birthMonth').value;
+  state.birthDay = document.getElementById('birthDay').value;
+  state.calType = document.getElementById('calType').value;
+  state.birthAmPm = document.getElementById('birthAmPm').value;
+  state.birthHour = document.getElementById('birthHour').value;
+  state.birthMin = document.getElementById('birthMin').value;
+  state.email = document.getElementById('email').value.trim();
+  state.phone = document.getElementById('phone').value.trim();
+  state.consentPrivacy = document.getElementById('consentPrivacy').checked;
+
+  if (!state.name) { err.textContent = '이름을 입력해주세요.'; return; }
+  if (!state.gender) { err.textContent = '성별을 선택해주세요.'; return; }
+  if (!state.birthYear || !state.birthMonth || !state.birthDay) { err.textContent = '생년월일을 입력해주세요.'; return; }
+  if (!state.email || !state.email.includes('@')) { err.textContent = '이메일 주소를 정확히 입력해주세요.'; return; }
+  if (!state.consentPrivacy) { err.textContent = '개인정보 수집·이용에 동의해주셔야 진행할 수 있습니다.'; return; }
+  err.textContent = '';
+
+  // 사주 계산
+  try {
+    let y = parseInt(state.birthYear), m = parseInt(state.birthMonth), d = parseInt(state.birthDay);
+    let h = 12, min = 0;
+    if (state.birthAmPm !== '모름' && state.birthHour) {
+      h = parseInt(state.birthHour);
+      if (state.birthAmPm === '오후' && h < 12) h += 12;
+      if (state.birthAmPm === '오전' && h === 12) h = 0;
+      min = parseInt(state.birthMin || '0');
+    }
+    state.saju = calcSaju(y, m, d, h, min, state.calType === '음력', state.gender);
+    document.getElementById('sajuResult').textContent =
+      `✦ 사주: ${state.saju.year.full}년 ${state.saju.month.full}월 ${state.saju.day.full}일 ${state.saju.time.full}시`;
+  } catch(e) {}
+
+  localStorage.setItem('weros_life_email', state.email.toLowerCase().trim());
+
+  // 결제 페이지 이름 표시
+  const payName = document.getElementById('paymentName');
+  if (payName) payName.textContent = state.name + '님의 인생 전략 설계 리포트';
+
+  setStep('payment');
+}
+
+// ===== 결제 완료 → 설문 =====
+function proceedToSurvey() {
+  // 토스페이먼츠 연동 전 임시: 바로 설문으로 이동
+  renderSurvey();
+  setStep(2);
 }
 
 // ===== STEP1 → STEP2 =====
