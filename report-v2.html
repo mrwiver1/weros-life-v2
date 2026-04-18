@@ -1846,20 +1846,27 @@ const EMAILJS_PUBLIC_KEY  = 'XtQjgmwTBrg29gJnf';
 
 async function sendAdminEmail(recordId) {
   try {
-    if (typeof emailjs === 'undefined') { console.warn('EmailJS SDK 미로딩'); return; }
     const adminUrl = window.location.origin + '/admin.html?id=' + recordId;
-    const params = {
-      title:      'WEROS Life Report 새 접수 — ' + (state.name || ''),
-      name:       state.name || '',
-      brand_name: state.name + (state.nameHanja ? ' (' + state.nameHanja + ')' : ''),
-      category:   state.calType + ' ' + state.birthYear + '.' +
-                  String(state.birthMonth).padStart(2,'0') + '.' +
-                  String(state.birthDay).padStart(2,'0') + ' · ' + state.gender,
-      concerns:   state.concern || '(없음)',
-      email:      state.email || '',
-      data_link:  adminUrl,
-    };
-    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, params, EMAILJS_PUBLIC_KEY);
+    await fetch('https://api.emailjs.com/api/v1.0/email/send', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        service_id: EMAILJS_SERVICE_ID,
+        template_id: EMAILJS_TEMPLATE_ID,
+        user_id: EMAILJS_PUBLIC_KEY,
+        template_params: {
+          title:      'WEROS Life Report 새 접수 — ' + (state.name || ''),
+          name:       state.name || '',
+          brand_name: state.name + (state.nameHanja ? ' (' + state.nameHanja + ')' : ''),
+          category:   state.calType + ' ' + state.birthYear + '.' +
+                      String(state.birthMonth).padStart(2,'0') + '.' +
+                      String(state.birthDay).padStart(2,'0') + ' · ' + state.gender,
+          concerns:   state.concern || '(없음)',
+          email:      state.email || '',
+          data_link:  adminUrl,
+        }
+      })
+    });
     console.log('✅ 어드민 이메일 발송 완료:', adminUrl);
   } catch(e) {
     console.error('❌ EmailJS 오류:', e);
