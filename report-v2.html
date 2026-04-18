@@ -1307,7 +1307,7 @@ function proceedToSurvey() {
 }
 
 // ===== 결제 완료 → 접수완료 =====
-function proceedToSubmit() {
+async function proceedToSubmit() {
   const nameEl = document.getElementById('rptNameComplete');
   if (nameEl && state.name) nameEl.textContent = state.name;
   const sumEl = document.getElementById('submitSummary');
@@ -1320,6 +1320,8 @@ function proceedToSubmit() {
     `;
   }
   setStep(3);
+  // Supabase 저장 + 이메일 발송
+  await saveToSupabase();
 }
 
 // ===== STEP1 → STEP2 =====
