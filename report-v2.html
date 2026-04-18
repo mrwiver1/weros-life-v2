@@ -2147,7 +2147,7 @@ function fillDummySurvey() {
 
 // ===== 운영자 단축키 (Ctrl+Shift+D) - 더미 버튼 토글 =====
 document.addEventListener('keydown', e => {
-  if (e.ctrlKey && e.shiftKey && e.key === 'Z') {
+  if (e.ctrlKey && e.shiftKey && e.key === '8') {
     e.preventDefault();
     const btn = document.getElementById('dummyBtn');
     if (btn) btn.classList.toggle('hidden');
