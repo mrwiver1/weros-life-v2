@@ -430,18 +430,19 @@ body {
 
 <script>
 (function() {
-  // 세션 동안 잠금 해제 유지
   if (sessionStorage.getItem('weros_admin_auth') === 'true') {
     document.getElementById('lockScreen').style.display = 'none';
+    // 세션 유지 시 자동으로 데이터 로드
+    window.addEventListener('DOMContentLoaded', function() { init(); });
   }
 })();
 
 function checkPW() {
   var pw = document.getElementById('pwInput').value;
-  // 비밀번호: weros2026 (변경 원하시면 말씀해 주세요)
   if (pw === 'weros2026') {
     sessionStorage.setItem('weros_admin_auth', 'true');
     document.getElementById('lockScreen').style.display = 'none';
+    init(); // 로그인 후 데이터 로드
   } else {
     document.getElementById('pwError').textContent = '비밀번호가 틀렸습니다.';
     document.getElementById('pwInput').value = '';
