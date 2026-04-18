@@ -1320,8 +1320,8 @@ async function proceedToSubmit() {
     `;
   }
   setStep(3);
-  // Supabase 저장 + 이메일 발송
-  await saveToSupabase();
+  // 저장 및 이메일 발송
+  await submitRequest();
 }
 
 // ===== STEP1 → STEP2 =====
