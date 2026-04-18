@@ -1651,11 +1651,11 @@ function renderSurveyAnswers() {
       }
     }
     const isEmpty = ansStr === '(응답 없음)';
-    return \`<div class="survey-q-item">
-      <div class="survey-q-num">Q\${String(q.id).padStart(2,'0')}</div>
-      <div class="survey-q-text">\${q.q}</div>
-      <div class="survey-q-ans" style="\${isEmpty ? 'color:var(--muted);font-style:italic' : ''}">\${ansStr}</div>
-    </div>\`;
+    return `<div class="survey-q-item">
+      <div class="survey-q-num">Q${String(q.id).padStart(2,'0')}</div>
+      <div class="survey-q-text">${q.q}</div>
+      <div class="survey-q-ans" style="${isEmpty ? 'color:var(--muted);font-style:italic' : ''}">${ansStr}</div>
+    </div>`;
   }).join('');
 }
 
