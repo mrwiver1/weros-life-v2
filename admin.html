@@ -432,8 +432,12 @@ body {
 (function() {
   if (sessionStorage.getItem('weros_admin_auth') === 'true') {
     document.getElementById('lockScreen').style.display = 'none';
-    // 세션 유지 시 자동으로 데이터 로드
-    window.addEventListener('DOMContentLoaded', function() { init(); });
+    // 세션 유지 시 자동으로 데이터 로드 (DOMContentLoaded 타이밍 무관하게)
+    if (document.readyState === 'loading') {
+      window.addEventListener('DOMContentLoaded', function() { init(); });
+    } else {
+      init();
+    }
   }
 })();
 
