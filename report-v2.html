@@ -1793,51 +1793,6 @@ async function generateReport() {
     clearInterval(msgTimer);
     overlay.classList.add('hidden');
 
-    // Supabase 저장
-    saveToSupabase();
-
-  } catch(e) {
-    clearInterval(msgTimer);
-    overlay.classList.add('hidden');
-    alert('보고서 생성 중 오류가 발생했습니다: ' + e.message);
-  }
-}
-
-// ===== 리포트 링크 이메일 발송 =====
-async function sendReportLinkEmail(email, name, link) {
-  if (!email) return;
-  try {
-    await fetch('https://api.emailjs.com/api/v1.0/email/send', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        service_id: 'service_efyhv3m',
-        template_id: 'template_1j9jh1s',
-        user_id: 'XtQjgmwTBrg29gJnf',
-        template_params: {
-          to_email: email,
-          brand_name: name,
-          category: '인생 전략 설계 리포트',
-          concerns: '리포트가 생성되었습니다',
-          data_link: link,
-          message: `안녕하세요. ${name}님,\n\nWEROS 인생 전략 설계 리포트가 완성되었습니다.\n\n아래 링크에서 언제든지 다시 확인하실 수 있습니다.\n${link}\n\n감사합니다.\nWEROS 팀`
-        }
-      })
-    });
-    console.log('✅ 리포트 링크 이메일 발송 완료');
-  } catch(e) { console.error('❌ 이메일 발송 실패', e); }
-}
-
-// ===== 리포트 보관 배너 표시 =====
-function showReportBanner(link, email) {
-  const banner = document.getElementById('reportBanner');
-  const linkInput = document.getElementById('reportLinkInput');
-  const emailConfirm = document.getElementById('reportEmailConfirm');
-  if (banner) banner.style.display = 'block';
-  if (linkInput) linkInput.value = link;
-  if (emailConfirm && email) emailConfirm.textContent = `✓ ${email} 로 링크를 발송했습니다`;
-}
-
 // ===== Supabase 저장 =====
 // ══════════════════════════════════════════
 // EmailJS — 어드민 알림 이메일 발송
