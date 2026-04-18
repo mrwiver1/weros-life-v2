@@ -2109,9 +2109,11 @@ function fillDummy1() {
     if (typeof fillDummySurvey === 'function') fillDummySurvey();
   }, 500);
 
-  // 더미 버튼 다시 숨기기
-  var btn = document.getElementById('dummyBtn');
-  if (btn) btn.classList.add('hidden');
+  // 더미 버튼 유지
+
+  // 개인정보 동의 자동 체크
+  var consent = document.getElementById('consentPrivacy');
+  if (consent) consent.checked = true;
 
   alert('✓ 더미 데이터 채우기 완료!');
 }
