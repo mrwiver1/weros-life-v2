@@ -1954,7 +1954,7 @@ async function saveToSupabase() {
       }
       // 고유 링크 발급 및 배너 표시
       if (recordId) {
-        const reportLink = `${window.location.origin}/report-v2.html?id=${recordId}`;
+        const reportLink = `${window.location.origin}/admin.html?id=${recordId}`;
         showReportBanner(reportLink, state.email);
         sendReportLinkEmail(state.email, state.name, reportLink);
       }
