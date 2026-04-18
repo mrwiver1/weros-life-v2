@@ -2212,5 +2212,14 @@ document.addEventListener('keydown', e => {
   </div>
 </div>
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script>
+    // EmailJS 초기화
+    window.addEventListener('load', function() {
+      if (typeof emailjs !== 'undefined') {
+        emailjs.init('XtQjgmwTBrg29gJnf');
+        console.log('✅ EmailJS 초기화 완료');
+      }
+    });
+  </script>
 </body>
 </html>
