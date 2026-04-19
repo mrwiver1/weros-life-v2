@@ -560,7 +560,7 @@
 </script>
 
 <!-- ===== STEP 1: 기본정보 ===== -->
-<div id="step1" class="container">
+<div id="step1" class="container hidden">
   <div class="section-header">
     <div class="section-eyebrow">WEROS · 인생 패턴 분석 리포트</div>
     <h1 class="section-title">나는 어떻게<br>살아야 하는가</h1>
@@ -1299,7 +1299,12 @@ function proceedToSurvey() {
 }
 
 // ===== 결제 완료 → 접수완료 =====
+let _isSubmitting = false;
 async function proceedToSubmit() {
+  if (_isSubmitting) return;
+  _isSubmitting = true;
+  const _submitBtn = document.querySelector('[onclick="proceedToSubmit()"]');
+  if (_submitBtn) { _submitBtn.disabled = true; _submitBtn.textContent = '처리 중…'; }
   const nameEl = document.getElementById('rptNameComplete');
   if (nameEl && state.name) nameEl.textContent = state.name;
   const sumEl = document.getElementById('submitSummary');
@@ -1311,8 +1316,7 @@ async function proceedToSubmit() {
       <div>이메일: <strong>${state.email || '—'}</strong></div>
     `;
   }
-  setStep('complete');
-  // 저장 및 이메일 발송
+  // 저장 및 이메일 발송 (submitRequest 안에서 setStep('complete') 호출)
   await submitRequest();
 }
 
@@ -1688,7 +1692,13 @@ async function submitRequest() {
     `이메일: <strong>${state.email}</strong>`;
 
   // Supabase 저장
-  await saveToSupabase();
+  try {
+    await saveToSupabase();
+  } finally {
+    _isSubmitting = false;
+    const _submitBtn = document.querySelector('[onclick="proceedToSubmit()"]');
+    if (_submitBtn) { _submitBtn.disabled = false; _submitBtn.textContent = '결제하고 분석 신청하기 →'; }
+  }
 }
 
 async function generateReport() {
@@ -1891,7 +1901,6 @@ async function saveToSupabase() {
       status:      'pending',
       report_html: reportHtml
     };
-    console.log('📤 Supabase 저장 시도:', payload.name, payload.email);
     const res = await fetch(`${SUPABASE_URL}/rest/v1/life_reports`, {
       method: 'POST',
       headers: {
@@ -1903,30 +1912,18 @@ async function saveToSupabase() {
       body: JSON.stringify(payload)
     });
     const resText = await res.text();
-    console.log('📥 Supabase 응답 status:', res.status, res.statusText);
-    console.log('📥 Supabase 응답 body:', resText);
     if (res.ok) {
       let data;
       try { data = JSON.parse(resText); } catch(e) { data = null; }
       const recordId = Array.isArray(data) ? data[0]?.id : data?.id;
-      console.log('✅ 저장 완료, id:', recordId);
-      // ── RLS 진단: 저장 직후 같은 id로 SELECT 테스트 ──
-      if (recordId) {
-        const verifyRes = await fetch(`${SUPABASE_URL}/rest/v1/life_reports?id=eq.${recordId}&select=id,name,status`, {
-          headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` }
-        });
-        const verifyData = await verifyRes.json();
-        console.log('🔍 SELECT 검증 (RLS 확인):', verifyRes.status, JSON.stringify(verifyData));
-      }
       if (APP_MODE !== 'test' && recordId) {
         await sendAdminEmail(recordId);
       }
-      // 고유 링크 발급 및 배너 표시 (사용자용 링크는 report-v2.html)
       if (recordId) {
         const reportLink = `${window.location.origin}/report-v2.html?id=${recordId}`;
-        // sessionStorage에 state 저장 (RLS 우회용 fallback)
+        // sessionStorage에 state 저장 (RLS 차단 시 fallback용)
         try {
-          sessionStorage.setItem('weros_last_state_' + recordId, JSON.stringify({
+          sessionStorage.setItem('weros_state_' + recordId, JSON.stringify({
             name: state.name, nameHanja: state.nameHanja, gender: state.gender,
             mbti: state.mbti, concern: state.concern,
             birthYear: state.birthYear, birthMonth: state.birthMonth, birthDay: state.birthDay,
@@ -1935,8 +1932,6 @@ async function saveToSupabase() {
         } catch(e) {}
         showReportBanner(reportLink, state.email);
         sendReportLinkEmail(state.email, state.name, reportLink);
-      } else {
-        console.error('❌ recordId 없음 — 저장은 됐지만 id를 못 받음. 응답:', resText);
       }
     } else {
       console.error('❌ 저장 실패 — HTTP', res.status, ':', resText);
@@ -2204,6 +2199,8 @@ document.addEventListener('keydown', e => {
       const urlId = new URLSearchParams(window.location.search).get('id');
       if (urlId) {
         loadReportById(urlId);
+      } else {
+        document.getElementById('step1').classList.remove('hidden');
       }
     });
 
@@ -2211,33 +2208,23 @@ document.addEventListener('keydown', e => {
     async function loadReportById(id) {
       const SUPABASE_URL = 'https://wavhcknviozwadqyjlug.supabase.co';
       const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indhdmhja252aW96d2FkcXlqbHVnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ4NTQ5NjksImV4cCI6MjA5MDQzMDk2OX0.frq_z3GgL8BEjHCRuVcdOqPLe0DhJp0k-joOXYVK_Ws';
-
       let rowData = null;
 
-      // 1) Supabase에서 먼저 시도
+      // 1) Supabase SELECT 시도 (RLS 정책 설정 필요)
       try {
         const res = await fetch(`${SUPABASE_URL}/rest/v1/life_reports?id=eq.${id}&select=*`, {
           headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` }
         });
         if (res.ok) {
           const data = await res.json();
-          if (data && data.length > 0) {
-            rowData = data[0];
-            console.log('✅ Supabase SELECT 성공');
-          } else {
-            console.warn('⚠️ Supabase SELECT 빈 결과 (RLS 차단 가능성) — sessionStorage fallback');
-          }
-        } else {
-          console.warn('⚠️ Supabase 오류:', res.status, '— sessionStorage fallback');
+          if (data && data.length > 0) rowData = data[0];
         }
-      } catch(e) {
-        console.warn('⚠️ Supabase fetch 실패:', e.message, '— sessionStorage fallback');
-      }
+      } catch(e) {}
 
-      // 2) Supabase 실패 시 sessionStorage fallback
+      // 2) Supabase 실패 시 sessionStorage fallback (같은 브라우저에서 방금 제출한 경우)
       if (!rowData) {
         try {
-          const cached = sessionStorage.getItem('weros_last_state_' + id);
+          const cached = sessionStorage.getItem('weros_state_' + id);
           if (cached) {
             const p = JSON.parse(cached);
             rowData = {
@@ -2245,15 +2232,11 @@ document.addEventListener('keydown', e => {
               concern: p.concern, birth_year: p.birthYear, birth_month: p.birthMonth,
               birth_day: p.birthDay, cal_type: p.calType, email: p.email, answers: p.answers
             };
-            console.log('✅ sessionStorage fallback 성공');
           }
         } catch(e) {}
       }
 
-      if (!rowData) {
-        console.error('❌ 데이터 없음 — Supabase RLS 정책 확인 필요');
-        return; // 조용히 step1 유지 (alert 없음)
-      }
+      if (!rowData) return; // 데이터 없으면 step1 유지
 
       // state 복원
       state.name       = rowData.name        || '';
@@ -2280,10 +2263,8 @@ document.addEventListener('keydown', e => {
           `성별: <strong>${state.gender}</strong>${state.mbti ? ' · MBTI: <strong>' + state.mbti + '</strong>' : ''}<br>` +
           `이메일: <strong>${state.email}</strong>`;
       }
-
       showReportBanner(window.location.href, state.email);
       setStep('complete');
-      console.log('✅ 접수완료 화면 표시, id:', id);
     }
   </script>
 </body>
