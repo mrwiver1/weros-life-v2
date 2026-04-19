@@ -2016,19 +2016,19 @@ function onBirthChange() {
   } catch(e) {}
 }
 
-function autoCalcSuri() {
+function autoCalcSuri(silent) {
   const hanja = document.getElementById('nameHanja').value.trim();
   if (!hanja || hanja.length < 2) {
-    alert('한자 이름을 먼저 입력해주세요. (예: 金志演)');
+    if (!silent) alert('한자 이름을 먼저 입력해주세요. (예: 金志演)');
     return;
   }
   if (typeof calcGua === 'undefined' && typeof window.calcGua === 'undefined') {
-    alert('수리 DB 로딩 중입니다. 잠시 후 다시 시도해주세요.');
+    if (!silent) alert('수리 DB 로딩 중입니다. 잠시 후 다시 시도해주세요.');
     return;
   }
   // 한자 획수 계산
   if (typeof calcHanjaStrokes === 'undefined') {
-    alert('한자 획수 DB가 로드되지 않았습니다.');
+    if (!silent) alert('한자 획수 DB가 로드되지 않았습니다.');
     return;
   }
   const strokes = hanja.split('').map(c => calcHanjaStrokes(c));
@@ -2126,8 +2126,14 @@ function fillDummy1() {
   // 이메일
   document.getElementById('email').value = 'test@weros.com';
 
-  // 수리 자동계산
-  setTimeout(autoCalcSuri, 200);
+  // 수리 자동계산 — DB 로드 대기 후 실행 (silent: alert 없음)
+  (function waitAndCalc(tries) {
+    if (typeof calcHanjaStrokes !== 'undefined' && typeof calcGua !== 'undefined') {
+      autoCalcSuri(true);
+    } else if (tries > 0) {
+      setTimeout(function() { waitAndCalc(tries - 1); }, 300);
+    }
+  })(20);
 
   // 개인정보 동의 자동 체크
   var consent = document.getElementById('consentPrivacy');
