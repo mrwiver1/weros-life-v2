@@ -405,6 +405,100 @@ body {
   font-family: 'Noto Serif KR', serif; transition: all 0.2s; margin-left: 8px;
 }
 .btn-delete:hover { background: var(--red); color: #fff; }
+
+/* ── 탭 네비게이션 ── */
+.tab-nav {
+  background: #232018;
+  display: flex;
+  align-items: center;
+  padding: 0 28px;
+  gap: 0;
+  border-bottom: 1px solid #3a3020;
+}
+.tab-btn {
+  padding: 12px 24px;
+  font-family: 'Noto Serif KR', serif;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  color: rgba(240,232,216,0.45);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.tab-btn:hover { color: rgba(240,232,216,0.75); }
+.tab-btn.active { color: #d4aa6a; border-bottom-color: #d4aa6a; }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* ── 작명 접수 전용 ── */
+.naming-detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+.naming-field {
+  background: var(--white);
+  border: 1px solid var(--border);
+  padding: 14px 16px;
+}
+.naming-field-label {
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+.naming-field-value {
+  font-size: 14px;
+  color: var(--text);
+  font-weight: 500;
+}
+.naming-field-value.price {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  color: var(--gold);
+}
+.status-select {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  padding: 10px 12px;
+  font-family: 'Noto Serif KR', serif;
+  font-size: 13px;
+  color: var(--text);
+  outline: none;
+  cursor: pointer;
+}
+.status-select:focus { border-color: var(--gold); }
+.naming-note-area {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--border-light);
+  padding: 12px 13px;
+  font-family: 'Noto Serif KR', serif;
+  font-size: 13px;
+  line-height: 1.9;
+  color: var(--text);
+  resize: vertical;
+  outline: none;
+  min-height: 90px;
+  transition: border-color 0.2s;
+}
+.naming-note-area:focus { border-color: var(--gold); }
+.btn-save-status {
+  background: var(--dark);
+  color: #f0e8d8;
+  border: none;
+  padding: 12px 24px;
+  font-family: 'Noto Serif KR', serif;
+  font-size: 12px;
+  cursor: pointer;
+  letter-spacing: 0.1em;
+  transition: opacity 0.2s;
+}
+.btn-save-status:hover { opacity: 0.82; }
 </style>
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <script>emailjs.init('XtQjgmwTBrg29gJnf');</script>
@@ -461,6 +555,15 @@ function checkPW() {
   <div class="badge">ADMIN PANEL</div>
 </div>
 
+<!-- ── 탭 네비게이션 ── -->
+<div class="tab-nav">
+  <button class="tab-btn active" onclick="switchTab('life')">인생 통찰 보고서</button>
+  <button class="tab-btn" onclick="switchTab('naming')">힐링네임 작명 접수</button>
+  <button class="tab-btn" onclick="switchTab('board')">게시판 관리</button>
+</div>
+
+<!-- ══ 탭 1: 인생 통찰 보고서 (기존) ══ -->
+<div id="tab-life" class="tab-panel active">
 <div class="admin-layout">
 
   <!-- ── 사이드바: 제출자 목록 ── -->
@@ -771,6 +874,239 @@ function checkPW() {
     </div><!-- /analysisPanel -->
   </div><!-- /main-panel -->
 </div><!-- /admin-layout -->
+</div><!-- /tab-life -->
+
+<!-- ══ 탭 2: 힐링네임 작명 접수 ══ -->
+<div id="tab-naming" class="tab-panel">
+<div class="admin-layout">
+
+  <!-- 사이드바: 작명 접수 목록 -->
+  <div class="sidebar">
+    <div class="sidebar-header">
+      작명 접수 목록
+      <span class="count" id="namingPendingCount">0</span>
+    </div>
+    <div id="namingList">
+      <div style="padding:24px 18px;text-align:center;color:var(--muted);font-size:11px;letter-spacing:0.1em">로딩 중…</div>
+    </div>
+  </div>
+
+  <!-- 메인 패널: 작명 접수 상세 -->
+  <div class="main-panel">
+
+    <div class="empty-state" id="namingEmptyState">
+      <div class="icon">✦</div>
+      <p>좌측에서 접수 건을 선택하세요</p>
+    </div>
+
+    <div id="namingDetailPanel" class="hidden">
+
+      <!-- 요약 헤더 -->
+      <div class="client-summary">
+        <div>
+          <div class="client-name" id="nClientName">—</div>
+          <div class="client-meta" id="nClientMeta">—</div>
+        </div>
+        <button class="btn-regenerate" onclick="loadNamingApplications()">↺ 새로고침</button>
+      </div>
+
+      <!-- 서비스 정보 -->
+      <div class="section">
+        <div class="section-label"><span class="num">01</span> 서비스 정보</div>
+        <div class="naming-detail-grid">
+          <div class="naming-field">
+            <div class="naming-field-label">서비스 유형</div>
+            <div class="naming-field-value" id="n-svc-type">—</div>
+          </div>
+          <div class="naming-field">
+            <div class="naming-field-label">등급</div>
+            <div class="naming-field-value" id="n-tier">—</div>
+          </div>
+          <div class="naming-field">
+            <div class="naming-field-label">결제 금액</div>
+            <div class="naming-field-value price" id="n-price">—</div>
+          </div>
+          <div class="naming-field">
+            <div class="naming-field-label">결제 방식 / 입금자</div>
+            <div class="naming-field-value" id="n-payment">—</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 신청자 정보 -->
+      <div class="section">
+        <div class="section-label"><span class="num">02</span> 신청자 정보</div>
+        <div class="naming-detail-grid">
+          <div class="naming-field">
+            <div class="naming-field-label">이름</div>
+            <div class="naming-field-value" id="n-name">—</div>
+          </div>
+          <div class="naming-field">
+            <div class="naming-field-label">연락처</div>
+            <div class="naming-field-value" id="n-phone">—</div>
+          </div>
+          <div class="naming-field">
+            <div class="naming-field-label">이메일</div>
+            <div class="naming-field-value" id="n-email">—</div>
+          </div>
+          <div class="naming-field">
+            <div class="naming-field-label">결과 전달 방식</div>
+            <div class="naming-field-value" id="n-delivery">—</div>
+          </div>
+          <div class="naming-field">
+            <div class="naming-field-label">카카오톡 ID</div>
+            <div class="naming-field-value" id="n-kakao">—</div>
+          </div>
+          <div class="naming-field">
+            <div class="naming-field-label">유입 경로</div>
+            <div class="naming-field-value" id="n-referral">—</div>
+          </div>
+        </div>
+        <div class="naming-field" style="margin-bottom:14px;">
+          <div class="naming-field-label">주소</div>
+          <div class="naming-field-value" id="n-address">—</div>
+        </div>
+      </div>
+
+      <!-- 접수 정보 -->
+      <div class="section">
+        <div class="section-label"><span class="num">03</span> 접수 원본 데이터</div>
+        <div class="naming-field" style="margin-bottom:14px;">
+          <div class="naming-field-label">신청 양식 전체 (form_data)</div>
+          <pre id="n-formdata" style="font-size:11px;color:var(--text-sub);line-height:1.8;white-space:pre-wrap;word-break:break-all;margin-top:6px;">—</pre>
+        </div>
+      </div>
+
+      <!-- 상태 관리 -->
+      <div class="section">
+        <div class="section-label"><span class="num">04</span> 진행 상태 관리</div>
+        <div style="background:var(--white);border:1px solid var(--border);padding:20px;margin-bottom:14px;">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;">
+            <div>
+              <label style="display:block;font-size:9px;letter-spacing:0.18em;color:var(--muted);margin-bottom:8px;">진행 상태</label>
+              <select class="status-select" id="n-status-select">
+                <option value="pending">접수 대기</option>
+                <option value="confirmed">입금 확인</option>
+                <option value="in_progress">작명 진행 중</option>
+                <option value="completed">작명 완료</option>
+                <option value="delivered">전달 완료</option>
+              </select>
+            </div>
+            <div>
+              <label style="display:block;font-size:9px;letter-spacing:0.18em;color:var(--muted);margin-bottom:8px;">고급 작명장</label>
+              <div class="naming-field-value" id="n-cert" style="padding-top:10px;">—</div>
+            </div>
+          </div>
+          <div style="margin-bottom:14px;">
+            <label style="display:block;font-size:9px;letter-spacing:0.18em;color:var(--muted);margin-bottom:8px;">운영 메모</label>
+            <textarea class="naming-note-area" id="n-memo" placeholder="작명 진행 메모, 이름 후보, 고객 피드백 등 자유롭게 작성..."></textarea>
+          </div>
+          <div style="display:flex;gap:10px;align-items:center;">
+            <button class="btn-save-status" onclick="saveNamingStatus()">✓ 상태 저장</button>
+            <button class="btn-delete" onclick="deleteNamingApp()">🗑 삭제</button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /namingDetailPanel -->
+  </div><!-- /main-panel -->
+</div><!-- /admin-layout -->
+</div><!-- /tab-naming -->
+
+<!-- ══ 탭 3: 게시판 관리 ══ -->
+<div id="tab-board" class="tab-panel">
+<div style="max-width:1100px;margin:0 auto;padding:32px 28px;">
+
+  <!-- 서브 탭 -->
+  <div style="display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:28px;">
+    <button class="board-sub-btn active" onclick="switchBoard('notice')" id="btab-notice"
+      style="padding:10px 20px;font-family:'Noto Serif KR',serif;font-size:12px;letter-spacing:0.1em;background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;color:var(--muted);transition:all 0.2s;margin-bottom:-2px;">공지사항</button>
+    <button class="board-sub-btn" onclick="switchBoard('faq')" id="btab-faq"
+      style="padding:10px 20px;font-family:'Noto Serif KR',serif;font-size:12px;letter-spacing:0.1em;background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;color:var(--muted);transition:all 0.2s;margin-bottom:-2px;">FAQ</button>
+    <button class="board-sub-btn" onclick="switchBoard('review')" id="btab-review"
+      style="padding:10px 20px;font-family:'Noto Serif KR',serif;font-size:12px;letter-spacing:0.1em;background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;color:var(--muted);transition:all 0.2s;margin-bottom:-2px;">고객 리뷰</button>
+    <button class="board-sub-btn" onclick="switchBoard('qna')" id="btab-qna"
+      style="padding:10px 20px;font-family:'Noto Serif KR',serif;font-size:12px;letter-spacing:0.1em;background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;color:var(--muted);transition:all 0.2s;margin-bottom:-2px;">질문과 답변</button>
+  </div>
+
+  <!-- 공지사항 관리 -->
+  <div id="board-notice">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+      <div style="font-size:9px;letter-spacing:0.2em;color:var(--muted);">NOTICE MANAGEMENT</div>
+      <button onclick="showNoticeForm()" class="btn-save-status">+ 공지 등록</button>
+    </div>
+    <div id="noticeFormWrap" style="display:none;background:var(--cream);border:1px solid var(--border);padding:20px;margin-bottom:20px;">
+      <div style="display:grid;grid-template-columns:1fr auto;gap:12px;margin-bottom:12px;">
+        <input id="a-notice-title" type="text" placeholder="공지 제목" style="border:1px solid var(--border);padding:9px 12px;font-family:'Noto Serif KR',serif;font-size:13px;background:var(--bg);outline:none;">
+        <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer;">
+          <input type="checkbox" id="a-notice-pinned" style="accent-color:var(--gold);"> 상단 고정
+        </label>
+      </div>
+      <textarea id="a-notice-content" placeholder="공지 내용" style="width:100%;min-height:100px;border:1px solid var(--border);padding:10px 12px;font-family:'Noto Serif KR',serif;font-size:13px;background:var(--bg);outline:none;resize:vertical;line-height:1.7;margin-bottom:12px;"></textarea>
+      <div style="display:flex;gap:8px;">
+        <button onclick="saveNotice()" class="btn-save-status">등록</button>
+        <button onclick="document.getElementById('noticeFormWrap').style.display='none'" style="background:none;border:1px solid var(--border);padding:10px 16px;font-size:11px;cursor:pointer;font-family:'Noto Serif KR',serif;">취소</button>
+      </div>
+    </div>
+    <table style="width:100%;border-collapse:collapse;font-size:12px;">
+      <thead><tr style="background:var(--dark);color:#d4aa6a;">
+        <th style="padding:10px 14px;text-align:left;font-weight:300;letter-spacing:0.1em;">제목</th>
+        <th style="padding:10px 14px;width:80px;">고정</th>
+        <th style="padding:10px 14px;width:100px;">등록일</th>
+        <th style="padding:10px 14px;width:80px;">관리</th>
+      </tr></thead>
+      <tbody id="adminNoticeList"><tr><td colspan="4" style="padding:20px;text-align:center;color:var(--muted);">불러오는 중…</td></tr></tbody>
+    </table>
+  </div>
+
+  <!-- FAQ 관리 -->
+  <div id="board-faq" style="display:none;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+      <div style="font-size:9px;letter-spacing:0.2em;color:var(--muted);">FAQ MANAGEMENT</div>
+      <button onclick="showFaqForm()" class="btn-save-status">+ FAQ 등록</button>
+    </div>
+    <div id="faqFormWrap" style="display:none;background:var(--cream);border:1px solid var(--border);padding:20px;margin-bottom:20px;">
+      <input id="a-faq-q" type="text" placeholder="질문" style="width:100%;border:1px solid var(--border);padding:9px 12px;font-family:'Noto Serif KR',serif;font-size:13px;background:var(--bg);outline:none;margin-bottom:10px;">
+      <textarea id="a-faq-a" placeholder="답변" style="width:100%;min-height:90px;border:1px solid var(--border);padding:10px 12px;font-family:'Noto Serif KR',serif;font-size:13px;background:var(--bg);outline:none;resize:vertical;line-height:1.7;margin-bottom:10px;"></textarea>
+      <input id="a-faq-cat" type="text" placeholder="카테고리 (예: 신청방법, 비용, 기간)" style="width:100%;border:1px solid var(--border);padding:9px 12px;font-family:'Noto Serif KR',serif;font-size:13px;background:var(--bg);outline:none;margin-bottom:12px;">
+      <div style="display:flex;gap:8px;">
+        <button onclick="saveFaq()" class="btn-save-status">등록</button>
+        <button onclick="document.getElementById('faqFormWrap').style.display='none'" style="background:none;border:1px solid var(--border);padding:10px 16px;font-size:11px;cursor:pointer;font-family:'Noto Serif KR',serif;">취소</button>
+      </div>
+    </div>
+    <table style="width:100%;border-collapse:collapse;font-size:12px;">
+      <thead><tr style="background:var(--dark);color:#d4aa6a;">
+        <th style="padding:10px 14px;text-align:left;font-weight:300;letter-spacing:0.1em;">질문</th>
+        <th style="padding:10px 14px;width:100px;">카테고리</th>
+        <th style="padding:10px 14px;width:80px;">관리</th>
+      </tr></thead>
+      <tbody id="adminFaqList"><tr><td colspan="3" style="padding:20px;text-align:center;color:var(--muted);">불러오는 중…</td></tr></tbody>
+    </table>
+  </div>
+
+  <!-- 고객 리뷰 관리 -->
+  <div id="board-review" style="display:none;">
+    <div style="font-size:9px;letter-spacing:0.2em;color:var(--muted);margin-bottom:20px;">REVIEW MANAGEMENT · 승인 대기 리뷰를 검토하세요</div>
+    <table style="width:100%;border-collapse:collapse;font-size:12px;">
+      <thead><tr style="background:var(--dark);color:#d4aa6a;">
+        <th style="padding:10px 14px;text-align:left;font-weight:300;letter-spacing:0.1em;">작성자 / 서비스</th>
+        <th style="padding:10px 14px;text-align:left;font-weight:300;">내용</th>
+        <th style="padding:10px 14px;width:60px;">별점</th>
+        <th style="padding:10px 14px;width:80px;">상태</th>
+        <th style="padding:10px 14px;width:100px;">관리</th>
+      </tr></thead>
+      <tbody id="adminReviewList"><tr><td colspan="5" style="padding:20px;text-align:center;color:var(--muted);">불러오는 중…</td></tr></tbody>
+    </table>
+  </div>
+
+  <!-- Q&A 관리 -->
+  <div id="board-qna" style="display:none;">
+    <div style="font-size:9px;letter-spacing:0.2em;color:var(--muted);margin-bottom:20px;">Q&A MANAGEMENT · 답변이 필요한 질문에 답변을 달아주세요</div>
+    <div id="adminQnaList"><div style="padding:20px;text-align:center;color:var(--muted);font-size:12px;">불러오는 중…</div></div>
+  </div>
+
+</div>
+</div><!-- /tab-board -->
 
 
 <script src="/hanja-db.js"></script>
@@ -1681,6 +2017,315 @@ async function deleteRequest() {
     alert('✓ 삭제 완료');
   } catch(e) {
     alert('⚠ 삭제 오류: ' + e.message);
+  }
+}
+
+// ══════════════════════════════════════════
+// 게시판 관리
+// ══════════════════════════════════════════
+let currentBoard = 'notice';
+
+function switchBoard(board) {
+  currentBoard = board;
+  ['notice','faq','review','qna'].forEach(b => {
+    document.getElementById('board-' + b).style.display = b === board ? 'block' : 'none';
+    const btn = document.getElementById('btab-' + b);
+    if (btn) {
+      btn.style.color = b === board ? 'var(--gold)' : 'var(--muted)';
+      btn.style.borderBottomColor = b === board ? 'var(--gold)' : 'transparent';
+    }
+  });
+  if (board === 'notice') loadAdminNotices();
+  if (board === 'faq')    loadAdminFaqs();
+  if (board === 'review') loadAdminReviews();
+  if (board === 'qna')    loadAdminQnas();
+}
+
+function switchTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  event.target.classList.add('active');
+  if (tab === 'naming' && ALL_NAMING.length === 0) loadNamingApplications();
+  if (tab === 'board') { switchBoard('notice'); }
+}
+
+// ── 공지사항 ──
+function showNoticeForm() {
+  const w = document.getElementById('noticeFormWrap');
+  w.style.display = w.style.display === 'none' ? 'block' : 'none';
+}
+async function loadAdminNotices() {
+  const tbody = document.getElementById('adminNoticeList');
+  try {
+    const rows = await supabaseFetch('notices?order=is_pinned.desc,created_at.desc');
+    if (!rows.length) { tbody.innerHTML = '<tr><td colspan="4" style="padding:16px;text-align:center;color:var(--muted);">등록된 공지가 없습니다</td></tr>'; return; }
+    tbody.innerHTML = rows.map(n => `
+      <tr style="border-bottom:1px solid var(--border-light);">
+        <td style="padding:10px 14px;color:var(--text);">${n.is_pinned ? '📌 ' : ''}${n.title}</td>
+        <td style="padding:10px 14px;text-align:center;">${n.is_pinned ? '✓' : ''}</td>
+        <td style="padding:10px 14px;text-align:center;color:var(--muted);">${n.created_at.slice(0,10)}</td>
+        <td style="padding:10px 14px;text-align:center;">
+          <button onclick="deleteBoard('notices','${n.id}')" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:11px;">삭제</button>
+        </td>
+      </tr>`).join('');
+  } catch(e) { tbody.innerHTML = '<tr><td colspan="4" style="padding:16px;color:var(--red);">로딩 오류</td></tr>'; }
+}
+async function saveNotice() {
+  const title   = document.getElementById('a-notice-title').value.trim();
+  const content = document.getElementById('a-notice-content').value.trim();
+  const pinned  = document.getElementById('a-notice-pinned').checked;
+  if (!title || !content) { alert('제목과 내용을 입력해주세요.'); return; }
+  await supabaseFetch('notices', { method:'POST', headers:{'Prefer':'return=minimal'}, body: JSON.stringify({title, content, is_pinned: pinned, is_published: true}) });
+  document.getElementById('a-notice-title').value = '';
+  document.getElementById('a-notice-content').value = '';
+  document.getElementById('noticeFormWrap').style.display = 'none';
+  loadAdminNotices();
+}
+
+// ── FAQ ──
+function showFaqForm() {
+  const w = document.getElementById('faqFormWrap');
+  w.style.display = w.style.display === 'none' ? 'block' : 'none';
+}
+async function loadAdminFaqs() {
+  const tbody = document.getElementById('adminFaqList');
+  try {
+    const rows = await supabaseFetch('faqs?order=sort_order.asc,created_at.asc');
+    if (!rows.length) { tbody.innerHTML = '<tr><td colspan="3" style="padding:16px;text-align:center;color:var(--muted);">등록된 FAQ가 없습니다</td></tr>'; return; }
+    tbody.innerHTML = rows.map(f => `
+      <tr style="border-bottom:1px solid var(--border-light);">
+        <td style="padding:10px 14px;color:var(--text);">${f.question}</td>
+        <td style="padding:10px 14px;text-align:center;color:var(--muted);">${f.category || '—'}</td>
+        <td style="padding:10px 14px;text-align:center;">
+          <button onclick="deleteBoard('faqs','${f.id}')" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:11px;">삭제</button>
+        </td>
+      </tr>`).join('');
+  } catch(e) { tbody.innerHTML = '<tr><td colspan="3" style="padding:16px;color:var(--red);">로딩 오류</td></tr>'; }
+}
+async function saveFaq() {
+  const q   = document.getElementById('a-faq-q').value.trim();
+  const a   = document.getElementById('a-faq-a').value.trim();
+  const cat = document.getElementById('a-faq-cat').value.trim();
+  if (!q || !a) { alert('질문과 답변을 입력해주세요.'); return; }
+  await supabaseFetch('faqs', { method:'POST', headers:{'Prefer':'return=minimal'}, body: JSON.stringify({question:q, answer:a, category:cat||null, is_published:true}) });
+  document.getElementById('a-faq-q').value = '';
+  document.getElementById('a-faq-a').value = '';
+  document.getElementById('a-faq-cat').value = '';
+  document.getElementById('faqFormWrap').style.display = 'none';
+  loadAdminFaqs();
+}
+
+// ── 리뷰 ──
+async function loadAdminReviews() {
+  const tbody = document.getElementById('adminReviewList');
+  try {
+    const rows = await supabaseFetch('reviews?order=created_at.desc');
+    if (!rows.length) { tbody.innerHTML = '<tr><td colspan="5" style="padding:16px;text-align:center;color:var(--muted);">등록된 리뷰가 없습니다</td></tr>'; return; }
+    tbody.innerHTML = rows.map(r => `
+      <tr style="border-bottom:1px solid var(--border-light);${!r.is_approved ? 'background:#faf8f0;' : ''}">
+        <td style="padding:10px 14px;"><strong style="font-size:13px;">${r.author_name}</strong><br><span style="font-size:11px;color:var(--muted);">${r.service_type||''}</span></td>
+        <td style="padding:10px 14px;font-size:12px;color:var(--text-sub);max-width:300px;">${r.content.slice(0,60)}${r.content.length>60?'…':''}</td>
+        <td style="padding:10px 14px;text-align:center;color:var(--gold);">${'★'.repeat(r.rating)}</td>
+        <td style="padding:10px 14px;text-align:center;font-size:11px;">${r.is_approved ? '<span style="color:var(--green)">승인됨</span>' : '<span style="color:var(--gold)">대기중</span>'}</td>
+        <td style="padding:10px 14px;text-align:center;display:flex;gap:6px;justify-content:center;">
+          ${!r.is_approved ? `<button onclick="approveReview('${r.id}')" style="background:var(--green);color:#fff;border:none;padding:4px 10px;font-size:10px;cursor:pointer;">승인</button>` : ''}
+          <button onclick="deleteBoard('reviews','${r.id}')" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:11px;">삭제</button>
+        </td>
+      </tr>`).join('');
+  } catch(e) { tbody.innerHTML = '<tr><td colspan="5" style="padding:16px;color:var(--red);">로딩 오류</td></tr>'; }
+}
+async function approveReview(id) {
+  await supabaseFetch('reviews?id=eq.'+id, { method:'PATCH', headers:{'Prefer':'return=minimal'}, body: JSON.stringify({is_approved:true}) });
+  loadAdminReviews();
+}
+
+// ── Q&A ──
+async function loadAdminQnas() {
+  const wrap = document.getElementById('adminQnaList');
+  try {
+    const rows = await supabaseFetch('qnas?order=created_at.desc');
+    if (!rows.length) { wrap.innerHTML = '<div style="padding:20px;text-align:center;color:var(--muted);font-size:12px;">등록된 질문이 없습니다</div>'; return; }
+    wrap.innerHTML = rows.map(q => `
+      <div style="background:var(--white);border:1px solid var(--border);margin-bottom:12px;padding:18px;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
+          <div>
+            <span style="font-size:13px;font-weight:600;color:var(--text);">${q.title}</span>
+            <span style="font-size:11px;color:var(--muted);margin-left:10px;">${q.author_name} · ${q.created_at.slice(0,10)}</span>
+            ${q.is_secret ? '<span style="font-size:10px;background:var(--dark);color:rgba(255,255,255,0.6);padding:2px 8px;margin-left:6px;">비밀글</span>' : ''}
+          </div>
+          <button onclick="deleteBoard('qnas','${q.id}')" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:11px;">삭제</button>
+        </div>
+        <div style="font-size:12px;color:var(--text-sub);background:var(--bg);padding:10px 12px;margin-bottom:12px;line-height:1.7;">${q.content}</div>
+        ${q.answer
+          ? `<div style="font-size:12px;color:var(--green);background:#e8f4ec;padding:10px 12px;border-left:3px solid var(--green);line-height:1.7;">${q.answer}</div>`
+          : `<div style="display:flex;gap:8px;">
+               <textarea id="ans-${q.id}" placeholder="답변을 입력해주세요" style="flex:1;border:1px solid var(--border);padding:8px 10px;font-family:'Noto Serif KR',serif;font-size:12px;background:var(--bg);outline:none;resize:none;min-height:60px;line-height:1.7;"></textarea>
+               <button onclick="saveAnswer('${q.id}')" class="btn-save-status" style="align-self:flex-end;white-space:nowrap;">답변 등록</button>
+             </div>`
+        }
+      </div>`).join('');
+  } catch(e) { wrap.innerHTML = '<div style="padding:20px;color:var(--red);font-size:12px;">로딩 오류</div>'; }
+}
+async function saveAnswer(id) {
+  const ans = document.getElementById('ans-' + id)?.value?.trim();
+  if (!ans) { alert('답변을 입력해주세요.'); return; }
+  await supabaseFetch('qnas?id=eq.'+id, { method:'PATCH', headers:{'Prefer':'return=minimal'}, body: JSON.stringify({answer: ans, answered_at: new Date().toISOString()}) });
+  loadAdminQnas();
+}
+
+// ── 공통 삭제 ──
+async function deleteBoard(table, id) {
+  if (!confirm('삭제하시겠습니까?')) return;
+  await supabaseFetch(table+'?id=eq.'+id, { method:'DELETE', headers:{'Prefer':'return=minimal'} });
+  if (table === 'notices') loadAdminNotices();
+  if (table === 'faqs')    loadAdminFaqs();
+  if (table === 'reviews') loadAdminReviews();
+  if (table === 'qnas')    loadAdminQnas();
+}
+
+// ══════════════════════════════════════════
+// 시작 — 인증 후에만 init() 호출됨 (위의 checkPW 및 세션 체크에서 호출)
+// ══════════════════════════════════════════
+
+// ══════════════════════════════════════════
+// 작명 접수 관리
+// ══════════════════════════════════════════
+let ALL_NAMING = [];
+let currentNaming = null;
+
+async function loadNamingApplications() {
+  document.getElementById('namingList').innerHTML =
+    '<div style="padding:24px 18px;text-align:center;color:var(--muted);font-size:11px;letter-spacing:0.1em">로딩 중…</div>';
+  try {
+    const rows = await supabaseFetch(
+      'naming_applications?select=*&order=created_at.desc&limit=100'
+    );
+    ALL_NAMING = rows;
+    renderNamingList();
+  } catch(e) {
+    document.getElementById('namingList').innerHTML =
+      '<div style="padding:18px;color:var(--red);font-size:11px;">로딩 실패: ' + e.message + '</div>';
+  }
+}
+
+function renderNamingList() {
+  const list = document.getElementById('namingList');
+  const pending = ALL_NAMING.filter(r => r.status === 'pending').length;
+  document.getElementById('namingPendingCount').textContent = pending;
+
+  if (ALL_NAMING.length === 0) {
+    list.innerHTML = '<div style="padding:24px 18px;text-align:center;color:var(--muted);font-size:11px;letter-spacing:0.1em">접수 내역이 없습니다</div>';
+    return;
+  }
+
+  const statusLabel = {
+    pending: '접수 대기', confirmed: '입금 확인',
+    in_progress: '작명 진행 중', completed: '작명 완료', delivered: '전달 완료'
+  };
+  const statusClass = {
+    pending: 'status-pending', confirmed: 'status-pending',
+    in_progress: 'status-sent', completed: 'status-done', delivered: 'status-done'
+  };
+
+  list.innerHTML = ALL_NAMING.map(r => `
+    <div class="person-item ${currentNaming?.id === r.id ? 'active' : ''}"
+         onclick="selectNaming('${r.id}')">
+      <div class="name">${r.applicant_name || '—'}
+        <small>${r.service_type || ''} ${r.tier ? '· ' + r.tier : ''}</small>
+      </div>
+      <div class="meta">${r.applicant_phone || ''}</div>
+      <div class="meta">${(r.created_at || '').replace('T',' ').slice(0,16)}</div>
+      <span class="status ${statusClass[r.status] || 'status-pending'}">
+        ${statusLabel[r.status] || r.status}
+      </span>
+    </div>
+  `).join('');
+}
+
+function selectNaming(id) {
+  currentNaming = ALL_NAMING.find(r => r.id === id);
+  if (!currentNaming) return;
+
+  document.getElementById('namingEmptyState').classList.add('hidden');
+  document.getElementById('namingDetailPanel').classList.remove('hidden');
+
+  const r = currentNaming;
+  const fd = r.form_data || {};
+
+  document.getElementById('nClientName').textContent = r.applicant_name || '—';
+  document.getElementById('nClientMeta').textContent =
+    (r.service_type || '') + (r.tier ? ' · ' + r.tier : '') +
+    ' · ' + ((r.created_at || '').replace('T',' ').slice(0,16));
+
+  document.getElementById('n-svc-type').textContent  = r.service_type || '—';
+  document.getElementById('n-tier').textContent      = r.tier || '상담 후 안내';
+  document.getElementById('n-price').textContent     = r.total_price ? r.total_price.toLocaleString() + '원' : '상담 후 안내';
+  document.getElementById('n-payment').textContent   = (r.payment_method || '') + (r.depositor_name ? ' / ' + r.depositor_name : '');
+  document.getElementById('n-name').textContent      = r.applicant_name || '—';
+  document.getElementById('n-phone').textContent     = r.applicant_phone || '—';
+  document.getElementById('n-email').textContent     = r.applicant_email || '—';
+  document.getElementById('n-delivery').textContent  = r.delivery_method || '—';
+  document.getElementById('n-kakao').textContent     = fd.kakao_id || '—';
+  document.getElementById('n-referral').textContent  = fd.referral || '—';
+  document.getElementById('n-address').textContent   = fd.address?.trim() || '—';
+  document.getElementById('n-cert').textContent      = r.cert_option ? '✓ 신청함 (+30,000원)' : '미신청';
+
+  // form_data 전체 출력
+  document.getElementById('n-formdata').textContent = JSON.stringify(r.form_data, null, 2);
+
+  // 상태 선택
+  const sel = document.getElementById('n-status-select');
+  sel.value = r.status || 'pending';
+
+  // 메모
+  document.getElementById('n-memo').value = r.memo || '';
+
+  renderNamingList();
+}
+
+async function saveNamingStatus() {
+  if (!currentNaming) return;
+  const status = document.getElementById('n-status-select').value;
+  const memo   = document.getElementById('n-memo').value;
+
+  try {
+    await supabaseFetch(
+      'naming_applications?id=eq.' + currentNaming.id,
+      { method: 'PATCH', headers: { 'Prefer': 'return=minimal' },
+        body: JSON.stringify({ status, memo }) }
+    );
+    currentNaming.status = status;
+    currentNaming.memo   = memo;
+    const idx = ALL_NAMING.findIndex(r => r.id === currentNaming.id);
+    if (idx >= 0) { ALL_NAMING[idx].status = status; ALL_NAMING[idx].memo = memo; }
+    renderNamingList();
+    // 토스트
+    const t = document.createElement('div');
+    t.textContent = '✓ 저장 완료';
+    t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--green);color:#fff;padding:10px 24px;font-size:12px;z-index:9999;letter-spacing:0.08em;';
+    document.body.appendChild(t);
+    setTimeout(() => t.remove(), 2000);
+  } catch(e) {
+    alert('저장 오류: ' + e.message);
+  }
+}
+
+async function deleteNamingApp() {
+  if (!currentNaming) return;
+  if (!confirm(`"${currentNaming.applicant_name}" 님의 접수 건을 삭제하시겠습니까?\n되돌릴 수 없습니다.`)) return;
+  try {
+    await supabaseFetch(
+      'naming_applications?id=eq.' + currentNaming.id,
+      { method: 'DELETE', headers: { 'Prefer': 'return=minimal' } }
+    );
+    ALL_NAMING = ALL_NAMING.filter(r => r.id !== currentNaming.id);
+    currentNaming = null;
+    renderNamingList();
+    document.getElementById('namingEmptyState').classList.remove('hidden');
+    document.getElementById('namingDetailPanel').classList.add('hidden');
+  } catch(e) {
+    alert('삭제 오류: ' + e.message);
   }
 }
 
