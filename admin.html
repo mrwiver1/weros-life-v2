@@ -1665,7 +1665,7 @@ function renderSurveyAnswers() {
 async function deleteRequest() {
   if (!currentRequest) return;
   const name = currentRequest.name || '이 요청';
-  if (!confirm(\`"$\{name}" 님의 데이터를 삭제하시겠어요?\n이 작업은 되돌릴 수 없습니다.\`)) return;
+  if (!confirm(`"${name}" 님의 데이터를 삭제하시겠어요?\n이 작업은 되돌릴 수 없습니다.`)) return;
 
   try {
     await supabaseFetch(
@@ -1685,9 +1685,8 @@ async function deleteRequest() {
 }
 
 // ══════════════════════════════════════════
-// 시작
+// 시작 — 인증 후에만 init() 호출됨 (위의 checkPW 및 세션 체크에서 호출)
 // ══════════════════════════════════════════
-init();
 </script>
 </body>
 </html>
