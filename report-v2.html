@@ -1931,7 +1931,10 @@ async function saveToSupabase() {
           }));
         } catch(e) {}
         showReportBanner(reportLink, state.email);
-        sendReportLinkEmail(state.email, state.name, reportLink);
+        // test 모드에서는 이메일 발송 안 함
+        if (APP_MODE !== 'test') {
+          sendReportLinkEmail(state.email, state.name, reportLink);
+        }
       }
     } else {
       console.error('❌ 저장 실패 — HTTP', res.status, ':', resText);
