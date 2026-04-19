@@ -1869,6 +1869,29 @@ async function saveToSupabase() {
   const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indhdmhja252aW96d2FkcXlqbHVnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ4NTQ5NjksImV4cCI6MjA5MDQzMDk2OX0.frq_z3GgL8BEjHCRuVcdOqPLe0DhJp0k-joOXYVK_Ws';
   try {
     const reportHtml = document.getElementById('reportBody')?.innerHTML || null;
+    const payload = {
+      name:        state.name        || null,
+      name_hanja:  state.nameHanja   || null,
+      gender:      state.gender      || null,
+      mbti:        state.mbti        || null,
+      birth_year:  state.birthYear   ? parseInt(state.birthYear)  : null,
+      birth_month: state.birthMonth  ? parseInt(state.birthMonth) : null,
+      birth_day:   state.birthDay    ? parseInt(state.birthDay)   : null,
+      cal_type:    state.calType     || null,
+      email:       state.email       || null,
+      concern:     state.concern     || null,
+      answers:     state.answers     || null,
+      ko_won:      state.koWon       ? String(state.koWon)   : null,
+      ko_hyung:    state.koHyung     ? String(state.koHyung) : null,
+      ko_yi:       state.koYi        ? String(state.koYi)    : null,
+      ko_jung:     state.koJung      ? String(state.koJung)  : null,
+      ko_gua_e:    state.koJuyeokE   ? String(state.koJuyeokE)   : null,
+      ko_gua_m:    state.koJuyeokM   ? String(state.koJuyeokM)   : null,
+      ko_gua_l:    state.koJuyeokL   ? String(state.koJuyeokL)   : null,
+      status:      'pending',
+      report_html: reportHtml
+    };
+    console.log('📤 Supabase 저장 시도:', payload.name, payload.email);
     const res = await fetch(`${SUPABASE_URL}/rest/v1/life_reports`, {
       method: 'POST',
       headers: {
@@ -1877,33 +1900,24 @@ async function saveToSupabase() {
         'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
         'Prefer': 'return=representation'
       },
-      body: JSON.stringify({
-        name:        state.name        || null,
-        name_hanja:  state.nameHanja   || null,
-        gender:      state.gender      || null,
-        mbti:        state.mbti        || null,
-        birth_year:  state.birthYear   ? parseInt(state.birthYear)  : null,
-        birth_month: state.birthMonth  ? parseInt(state.birthMonth) : null,
-        birth_day:   state.birthDay    ? parseInt(state.birthDay)   : null,
-        cal_type:    state.calType     || null,
-        email:       state.email       || null,
-        concern:     state.concern     || null,
-        answers:     state.answers     || null,
-        ko_won:      state.koWon       ? String(state.koWon)   : null,
-        ko_hyung:    state.koHyung     ? String(state.koHyung) : null,
-        ko_yi:       state.koYi        ? String(state.koYi)    : null,
-        ko_jung:     state.koJung      ? String(state.koJung)  : null,
-        ko_gua_e:    state.koJuyeokE   ? String(state.koJuyeokE)   : null,
-        ko_gua_m:    state.koJuyeokM   ? String(state.koJuyeokM)   : null,
-        ko_gua_l:    state.koJuyeokL   ? String(state.koJuyeokL)   : null,
-        status:      'pending',
-        report_html: reportHtml
-      })
+      body: JSON.stringify(payload)
     });
+    const resText = await res.text();
+    console.log('📥 Supabase 응답 status:', res.status, res.statusText);
+    console.log('📥 Supabase 응답 body:', resText);
     if (res.ok) {
-      const data = await res.json();
+      let data;
+      try { data = JSON.parse(resText); } catch(e) { data = null; }
       const recordId = Array.isArray(data) ? data[0]?.id : data?.id;
       console.log('✅ 저장 완료, id:', recordId);
+      // ── RLS 진단: 저장 직후 같은 id로 SELECT 테스트 ──
+      if (recordId) {
+        const verifyRes = await fetch(`${SUPABASE_URL}/rest/v1/life_reports?id=eq.${recordId}&select=id,name,status`, {
+          headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` }
+        });
+        const verifyData = await verifyRes.json();
+        console.log('🔍 SELECT 검증 (RLS 확인):', verifyRes.status, JSON.stringify(verifyData));
+      }
       if (APP_MODE !== 'test' && recordId) {
         await sendAdminEmail(recordId);
       }
@@ -1912,11 +1926,17 @@ async function saveToSupabase() {
         const reportLink = `${window.location.origin}/report-v2.html?id=${recordId}`;
         showReportBanner(reportLink, state.email);
         sendReportLinkEmail(state.email, state.name, reportLink);
+      } else {
+        console.error('❌ recordId 없음 — 저장은 됐지만 id를 못 받음. 응답:', resText);
       }
     } else {
-      console.error('❌ 저장 실패', await res.text());
+      console.error('❌ 저장 실패 — HTTP', res.status, ':', resText);
+      alert('데이터 저장 중 오류가 발생했습니다.\n잠시 후 다시 시도해 주세요.\n\n오류: ' + res.status + ' ' + resText.slice(0, 100));
     }
-  } catch(e) { console.error('❌ Supabase 오류', e); }
+  } catch(e) {
+    console.error('❌ Supabase 네트워크 오류:', e);
+    alert('네트워크 오류로 데이터 저장에 실패했습니다.\n인터넷 연결을 확인하고 다시 시도해 주세요.');
+  }
 }
 
 
@@ -2169,7 +2189,6 @@ document.addEventListener('keydown', e => {
     window.addEventListener('load', function() {
       if (typeof emailjs !== 'undefined') {
         emailjs.init('XtQjgmwTBrg29gJnf');
-        console.log('✅ EmailJS 초기화 완료');
       }
 
       // ── URL ?id= 파라미터로 기존 접수 내역 불러오기 ──
