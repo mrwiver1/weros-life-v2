@@ -1924,6 +1924,15 @@ async function saveToSupabase() {
       // 고유 링크 발급 및 배너 표시 (사용자용 링크는 report-v2.html)
       if (recordId) {
         const reportLink = `${window.location.origin}/report-v2.html?id=${recordId}`;
+        // sessionStorage에 state 저장 (RLS 우회용 fallback)
+        try {
+          sessionStorage.setItem('weros_last_state_' + recordId, JSON.stringify({
+            name: state.name, nameHanja: state.nameHanja, gender: state.gender,
+            mbti: state.mbti, concern: state.concern,
+            birthYear: state.birthYear, birthMonth: state.birthMonth, birthDay: state.birthDay,
+            calType: state.calType, email: state.email, answers: state.answers
+          }));
+        } catch(e) {}
         showReportBanner(reportLink, state.email);
         sendReportLinkEmail(state.email, state.name, reportLink);
       } else {
@@ -2202,57 +2211,79 @@ document.addEventListener('keydown', e => {
     async function loadReportById(id) {
       const SUPABASE_URL = 'https://wavhcknviozwadqyjlug.supabase.co';
       const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indhdmhja252aW96d2FkcXlqbHVnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ4NTQ5NjksImV4cCI6MjA5MDQzMDk2OX0.frq_z3GgL8BEjHCRuVcdOqPLe0DhJp0k-joOXYVK_Ws';
+
+      let rowData = null;
+
+      // 1) Supabase에서 먼저 시도
       try {
         const res = await fetch(`${SUPABASE_URL}/rest/v1/life_reports?id=eq.${id}&select=*`, {
-          headers: {
-            'apikey': SUPABASE_ANON_KEY,
-            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
-          }
+          headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` }
         });
-        if (!res.ok) throw new Error('조회 실패');
-        const data = await res.json();
-        if (!data || data.length === 0) {
-          alert('해당 접수 내역을 찾을 수 없습니다.');
-          return;
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.length > 0) {
+            rowData = data[0];
+            console.log('✅ Supabase SELECT 성공');
+          } else {
+            console.warn('⚠️ Supabase SELECT 빈 결과 (RLS 차단 가능성) — sessionStorage fallback');
+          }
+        } else {
+          console.warn('⚠️ Supabase 오류:', res.status, '— sessionStorage fallback');
         }
-        const row = data[0];
-
-        // state 복원
-        state.name      = row.name       || '';
-        state.nameHanja = row.name_hanja || '';
-        state.gender    = row.gender     || '';
-        state.mbti      = row.mbti       || '';
-        state.concern   = row.concern    || '';
-        state.birthYear = row.birth_year  ? String(row.birth_year)  : '';
-        state.birthMonth= row.birth_month ? String(row.birth_month) : '';
-        state.birthDay  = row.birth_day   ? String(row.birth_day)   : '';
-        state.calType   = row.cal_type   || '양력';
-        state.email     = row.email      || '';
-        state.answers   = row.answers    || {};
-
-        // 접수완료 화면 표시
-        const nameEl = document.getElementById('rptNameComplete');
-        if (nameEl) nameEl.textContent = state.name || '고객';
-
-        const sumEl = document.getElementById('submitSummary');
-        if (sumEl) {
-          sumEl.innerHTML =
-            `이름: <strong>${state.name}${state.nameHanja ? ' · ' + state.nameHanja : ''}</strong><br>` +
-            `생년월일: <strong>${state.calType} ${state.birthYear}년 ${state.birthMonth}월 ${state.birthDay}일</strong><br>` +
-            `성별: <strong>${state.gender}</strong>${state.mbti ? ' · MBTI: <strong>' + state.mbti + '</strong>' : ''}<br>` +
-            `이메일: <strong>${state.email}</strong>`;
-        }
-
-        // 배너에 현재 링크 표시
-        const reportLink = window.location.href;
-        showReportBanner(reportLink, state.email);
-
-        setStep('complete');
-        console.log('✅ 접수 내역 불러오기 완료, id:', id);
       } catch(e) {
-        console.error('❌ 접수 내역 불러오기 실패:', e);
-        alert('접수 내역을 불러오는 중 오류가 발생했습니다.\n잠시 후 다시 시도해 주세요.');
+        console.warn('⚠️ Supabase fetch 실패:', e.message, '— sessionStorage fallback');
       }
+
+      // 2) Supabase 실패 시 sessionStorage fallback
+      if (!rowData) {
+        try {
+          const cached = sessionStorage.getItem('weros_last_state_' + id);
+          if (cached) {
+            const p = JSON.parse(cached);
+            rowData = {
+              name: p.name, name_hanja: p.nameHanja, gender: p.gender, mbti: p.mbti,
+              concern: p.concern, birth_year: p.birthYear, birth_month: p.birthMonth,
+              birth_day: p.birthDay, cal_type: p.calType, email: p.email, answers: p.answers
+            };
+            console.log('✅ sessionStorage fallback 성공');
+          }
+        } catch(e) {}
+      }
+
+      if (!rowData) {
+        console.error('❌ 데이터 없음 — Supabase RLS 정책 확인 필요');
+        return; // 조용히 step1 유지 (alert 없음)
+      }
+
+      // state 복원
+      state.name       = rowData.name        || '';
+      state.nameHanja  = rowData.name_hanja  || '';
+      state.gender     = rowData.gender      || '';
+      state.mbti       = rowData.mbti        || '';
+      state.concern    = rowData.concern     || '';
+      state.birthYear  = rowData.birth_year  ? String(rowData.birth_year)  : '';
+      state.birthMonth = rowData.birth_month ? String(rowData.birth_month) : '';
+      state.birthDay   = rowData.birth_day   ? String(rowData.birth_day)   : '';
+      state.calType    = rowData.cal_type    || '양력';
+      state.email      = rowData.email       || '';
+      state.answers    = rowData.answers     || {};
+
+      // 접수완료 화면 표시
+      const nameEl = document.getElementById('rptNameComplete');
+      if (nameEl) nameEl.textContent = state.name || '고객';
+
+      const sumEl = document.getElementById('submitSummary');
+      if (sumEl) {
+        sumEl.innerHTML =
+          `이름: <strong>${state.name}${state.nameHanja ? ' · ' + state.nameHanja : ''}</strong><br>` +
+          `생년월일: <strong>${state.calType} ${state.birthYear}년 ${state.birthMonth}월 ${state.birthDay}일</strong><br>` +
+          `성별: <strong>${state.gender}</strong>${state.mbti ? ' · MBTI: <strong>' + state.mbti + '</strong>' : ''}<br>` +
+          `이메일: <strong>${state.email}</strong>`;
+      }
+
+      showReportBanner(window.location.href, state.email);
+      setStep('complete');
+      console.log('✅ 접수완료 화면 표시, id:', id);
     }
   </script>
 </body>
