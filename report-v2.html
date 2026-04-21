@@ -2239,9 +2239,14 @@ function autoCalcSuri(silent) {
   state.koWon = won; state.koHyung = hyung;
   state.koYi  = yi;  state.koJung  = jung;
   if (guaResult) {
-    state.koJuyeokE = guaResult.early  || '';
-    state.koJuyeokM = guaResult.middle || '';
-    state.koJuyeokL = guaResult.late   || '';
+    // calcGua 반환값: {원격, 이격, 정격} — 각 괘 인덱스 번호로 저장
+    const guaIdx = (row, col) => String((row - 1) * 8 + col);
+    const 상 = (function mod8(n) { while(n<=0)n+=8; const r=n%8; return r!==0?r:8; })(hyung);
+    const mod8 = n => { while(n<=0)n+=8; const r=n%8; return r!==0?r:8; };
+    const mod6 = n => { while(n<=0)n+=6; const r=n%6; return r!==0?r:6; };
+    state.koJuyeokE = String((상 - 1) * 8 + mod8(won));
+    state.koJuyeokM = String((상 - 1) * 8 + mod8(yi));
+    state.koJuyeokL = String((상 - 1) * 8 + mod6(jung));
   }
   // sajuResult 영역에 수리 결과 표시
   const sr = document.getElementById('sajuResult');
