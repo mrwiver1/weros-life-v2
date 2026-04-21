@@ -2283,7 +2283,7 @@ document.addEventListener('keydown', e => {
     <a href="/terms.html" style="font-size:13px;color:rgba(200,168,112,.75);text-decoration:none;letter-spacing:.06em;">이용약관</a>
     <a href="/privacy.html" style="font-size:13px;color:rgba(200,168,112,.75);text-decoration:none;letter-spacing:.06em;">개인정보처리방침</a>
     <a href="/refund.html" style="font-size:13px;color:rgba(200,168,112,.75);text-decoration:none;letter-spacing:.06em;">환불정책</a>
-    <a href="mailto:help@theweros.com" style="font-size:13px;color:rgba(200,168,112,.75);text-decoration:none;letter-spacing:.06em;">문의하기</a>
+    <span onclick="openContactModal()" style="font-size:13px;color:rgba(200,168,112,.75);letter-spacing:.06em;cursor:pointer;">문의하기</span>
   </div>
   <div style="font-size:12px;color:rgba(255,255,255,.6);line-height:2;letter-spacing:.03em">
     주식회사 위버플레인 | 대표이사 이정운 | 경기도 김포시 김포한강11로 322 138-P44호 (운양동, 더 파크뷰테라스 상업시설)
@@ -2295,6 +2295,83 @@ document.addEventListener('keydown', e => {
     고객문의 <a href="mailto:help@theweros.com" style="color:rgba(200,168,112,.8);text-decoration:none;">help@theweros.com</a>
   </div>
 </div>
+
+<!-- 문의하기 모달 -->
+<div id="contact-modal-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:9100;align-items:center;justify-content:center;padding:24px;backdrop-filter:blur(6px)" onclick="if(event.target===this)closeContactModal()">
+  <div style="background:#141210;border:1px solid rgba(201,169,110,.2);max-width:520px;width:100%;padding:52px 44px;position:relative;border-radius:2px" onclick="event.stopPropagation()">
+    <button onclick="closeContactModal()" style="position:absolute;top:20px;right:24px;background:none;border:none;font-size:22px;color:#b8b0a4;cursor:pointer;line-height:1">✕</button>
+    <div id="contact-sent-msg" style="display:none;text-align:center;padding:20px 0">
+      <div style="font-size:40px;margin-bottom:16px">✓</div>
+      <p style="font-family:Georgia,serif;font-size:20px;color:#fff">문의가 전송되었습니다</p>
+      <p style="font-size:13px;color:rgba(255,255,255,.4);margin-top:8px">빠른 시일 내에 답변 드리겠습니다.</p>
+    </div>
+    <div id="contact-form-content">
+      <span style="font-size:10px;letter-spacing:4px;color:#c9a96e;text-transform:uppercase;margin-bottom:16px;display:block">Contact</span>
+      <h2 style="font-family:'Playfair Display',Georgia,serif;font-size:26px;color:#fff;font-weight:400;margin-bottom:8px">문의하기</h2>
+      <p style="font-size:13px;color:rgba(255,255,255,.4);margin-bottom:36px;line-height:1.7">인생 리포트, 서비스, 협업 문의 등 편하게 보내주세요.</p>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">
+        <label style="font-size:11px;letter-spacing:2px;color:#b8b0a4;text-transform:uppercase">이름</label>
+        <input id="contact-name" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:#fff;padding:14px 16px;font-size:14px;outline:none;width:100%;box-sizing:border-box" placeholder="홍길동">
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">
+        <label style="font-size:11px;letter-spacing:2px;color:#b8b0a4;text-transform:uppercase">이메일</label>
+        <input id="contact-email" type="email" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:#fff;padding:14px 16px;font-size:14px;outline:none;width:100%;box-sizing:border-box" placeholder="example@email.com">
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">
+        <label style="font-size:11px;letter-spacing:2px;color:#b8b0a4;text-transform:uppercase">문의 내용</label>
+        <textarea id="contact-message" rows="5" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:#fff;padding:14px 16px;font-size:14px;outline:none;resize:none;width:100%;box-sizing:border-box" placeholder="문의 내용을 입력해주세요"></textarea>
+      </div>
+      <button id="contact-submit-btn" onclick="submitContactForm()" style="width:100%;margin-top:8px;padding:16px;background:#c9a96e;color:#000;font-size:12px;font-weight:700;letter-spacing:3px;text-transform:uppercase;border:none;cursor:pointer">보내기 →</button>
+    </div>
+  </div>
+</div>
+
+<script>
+function openContactModal() {
+  document.getElementById('contact-modal-overlay').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+function closeContactModal() {
+  document.getElementById('contact-modal-overlay').style.display = 'none';
+  document.body.style.overflow = '';
+  document.getElementById('contact-sent-msg').style.display = 'none';
+  document.getElementById('contact-form-content').style.display = 'block';
+  document.getElementById('contact-name').value = '';
+  document.getElementById('contact-email').value = '';
+  document.getElementById('contact-message').value = '';
+}
+async function submitContactForm() {
+  const name = document.getElementById('contact-name').value;
+  const email = document.getElementById('contact-email').value;
+  const message = document.getElementById('contact-message').value;
+  if (!name || !email || !message) return;
+  const btn = document.getElementById('contact-submit-btn');
+  btn.textContent = '전송 중...';
+  btn.disabled = true;
+  try {
+    await fetch('https://api.emailjs.com/api/v1.0/email/send', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        service_id: 'service_efyhv3m',
+        template_id: 'template_ae4yz8e',
+        user_id: 'XtQjgmwTBrg29gJnf',
+        template_params: { from_name: name, from_email: email, message: message }
+      })
+    });
+    document.getElementById('contact-form-content').style.display = 'none';
+    document.getElementById('contact-sent-msg').style.display = 'block';
+    setTimeout(closeContactModal, 3000);
+  } catch(e) {
+    alert('전송 중 오류가 발생했습니다.');
+    btn.textContent = '보내기 →';
+    btn.disabled = false;
+  }
+}
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeContactModal();
+});
+</script>
 
 </body>
 </html>
