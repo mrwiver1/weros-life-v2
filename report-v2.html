@@ -1971,7 +1971,7 @@ const EMAILJS_PUBLIC_KEY  = 'XtQjgmwTBrg29gJnf';
 
 async function sendAdminEmail(recordId) {
   try {
-    const adminUrl = window.location.origin + '/admin.html?id=' + recordId;
+    const adminUrl = 'https://theweros.com/admin?id=' + recordId;
     await fetch('https://api.emailjs.com/api/v1.0/email/send', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
