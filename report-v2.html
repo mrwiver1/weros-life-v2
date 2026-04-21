@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>WEROS · 인생전략 보고서</title>
+  <title>WEROS · 인생 패턴 분석 리포트</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Noto+Serif+KR:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
@@ -1019,12 +1019,9 @@
       <div id="submitSummary" style="font-size:13px;color:var(--text-sub);line-height:2"></div>
     </div>
 
-    <p style="font-size:12px;color:var(--muted);line-height:1.8;margin-bottom:12px">
-      궁금한 점이 있으시면 아래 버튼으로 문의해 주세요.
+    <p style="font-size:12px;color:var(--muted);line-height:1.8">
+      문의사항은 <strong>theweros.com</strong> 으로 연락해 주세요.
     </p>
-    <button onclick="openContactModal()" style="background:none;border:1px solid var(--border);color:var(--muted);font-size:12px;padding:10px 24px;cursor:pointer;letter-spacing:0.06em;font-family:'Noto Serif KR',serif;transition:all .2s;" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">
-      문의하기
-    </button>
 
     <div style="margin-top:40px;padding-top:32px;border-top:1px solid var(--border)">
       <p style="font-size:12px;color:var(--muted);margin-bottom:16px">다른 분의 분석을 신청하시거나 다시 작성하고 싶으신가요?</p>
@@ -1891,6 +1888,9 @@ async function saveToSupabase() {
       birth_month: state.birthMonth  ? parseInt(state.birthMonth) : null,
       birth_day:   state.birthDay    ? parseInt(state.birthDay)   : null,
       cal_type:    state.calType     || null,
+      birth_am_pm: state.birthAmPm && state.birthAmPm !== '모름' ? state.birthAmPm : null,
+      birth_hour:  state.birthHour  ? parseInt(state.birthHour)  : null,
+      birth_min:   state.birthMin   ? parseInt(state.birthMin)   : null,
       email:       state.email       || null,
       concern:     state.concern     || null,
       answers:     state.answers     || null,
