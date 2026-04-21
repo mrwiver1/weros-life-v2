@@ -303,6 +303,126 @@
     }
     .report-footer .tagline { font-size: 12px; color: var(--muted); margin-top: 8px; font-style: italic; }
 
+    /* ── 앞표지 ── */
+    .cover-front {
+      background: var(--dark);
+      min-height: 600px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 64px 40px;
+      position: relative;
+      overflow: hidden;
+      border-bottom: 1px solid rgba(200,168,112,0.15);
+    }
+    .cover-front::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 40%, rgba(154,122,64,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .cover-eyebrow {
+      font-size: 10px;
+      letter-spacing: 0.35em;
+      color: var(--gold);
+      margin-bottom: 48px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .cover-eyebrow::before, .cover-eyebrow::after {
+      content: '';
+      width: 40px;
+      height: 1px;
+      background: rgba(154,122,64,0.4);
+    }
+    .cover-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(28px, 5vw, 48px);
+      font-weight: 300;
+      color: #f5f0e8;
+      line-height: 1.3;
+      margin-bottom: 8px;
+      letter-spacing: -0.01em;
+    }
+    .cover-subtitle {
+      font-size: 11px;
+      letter-spacing: 0.3em;
+      color: rgba(200,168,112,0.5);
+      margin-bottom: 56px;
+      text-transform: uppercase;
+    }
+    .cover-divider {
+      width: 60px;
+      height: 1px;
+      background: rgba(200,168,112,0.3);
+      margin: 0 auto 40px;
+    }
+    .cover-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(22px, 3.5vw, 36px);
+      font-weight: 400;
+      color: var(--gold-light);
+      margin-bottom: 12px;
+    }
+    .cover-meta {
+      font-size: 12px;
+      color: rgba(200,168,112,0.6);
+      letter-spacing: 0.1em;
+      line-height: 1.8;
+      margin-bottom: 56px;
+    }
+    .cover-tagline {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 15px;
+      font-style: italic;
+      color: rgba(200,168,112,0.5);
+    }
+
+    /* ── 뒷표지 ── */
+    .cover-back {
+      background: var(--dark);
+      min-height: 480px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 64px 40px;
+      border-top: 1px solid rgba(200,168,112,0.15);
+    }
+    .cover-back-logo { margin-bottom: 32px; }
+    .cover-back-brand {
+      font-size: 11px;
+      letter-spacing: 0.25em;
+      color: rgba(200,168,112,0.7);
+      line-height: 2;
+      margin-bottom: 32px;
+    }
+    .cover-back-contact {
+      font-size: 11px;
+      color: rgba(200,168,112,0.5);
+      letter-spacing: 0.1em;
+      line-height: 2;
+      margin-bottom: 32px;
+    }
+    .cover-back-divider {
+      width: 40px;
+      height: 1px;
+      background: rgba(200,168,112,0.2);
+      margin: 0 auto 24px;
+    }
+    .cover-back-disclaimer {
+      font-size: 10px;
+      color: rgba(200,168,112,0.3);
+      line-height: 1.9;
+      max-width: 480px;
+      letter-spacing: 0.05em;
+    }
+
     @media (max-width: 640px) {
       .grid2, .grid3, .grid4 { grid-template-columns: 1fr; }
       .report-header { flex-direction: column; gap: 16px; }
@@ -1044,6 +1164,19 @@
 <!-- ===== STEP 3: 보고서 ===== -->
 <div id="step3" class="hidden">
   <div class="report-wrap">
+
+    <!-- 앞표지 -->
+    <div class="cover-front">
+      <div class="cover-eyebrow">WEROS</div>
+      <div class="cover-title">인생 패턴 분석 리포트</div>
+      <div class="cover-subtitle">LIFE PATTERN REPORT</div>
+      <div class="cover-divider"></div>
+      <div class="cover-name" id="coverName">—</div>
+      <div class="cover-meta" id="coverMeta"></div>
+      <div class="cover-tagline">See Both Sides of You</div>
+    </div>
+
+    <!-- 헤더 -->
     <div class="report-header">
       <div class="report-header-left">
         <div class="report-eyebrow">WEROS · 인생 전략 리포트 · LIFE STRATEGY REPORT</div>
@@ -1084,10 +1217,31 @@
       <button class="btn-secondary" onclick="location.reload()">새 보고서</button>
     </div>
 
-    <div class="report-footer">
-      <div class="weros-logo">WEROS</div>
-      <div class="tagline">See Both Sides of You</div>
-      <div style="font-size:11px;color:var(--muted);margin-top:12px">© 2026 · 당신이 몰랐던 당신을 만나는 심층 자기통찰 보고서</div>
+    <div class="report-footer" style="display:none"></div>
+
+    <!-- 뒷표지 -->
+    <div class="cover-back">
+      <div class="cover-back-logo">
+        <img src="/images/weroslogo_white.png" alt="WEROS" style="height:72px;width:auto;mix-blend-mode:screen;" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+        <div style="display:none;font-family:'Cormorant Garamond',serif;font-size:28px;color:var(--gold);letter-spacing:0.2em">WEROS</div>
+      </div>
+      <div class="cover-back-brand">
+        WEROS · See Both Sides of You<br>
+        © 2026 WEROS · THEWEROS.COM<br>
+        운영: (주)위버플레인
+      </div>
+      <div class="cover-back-divider"></div>
+      <div class="cover-back-contact">
+        문의: help@theweros.com<br>
+        life.theweros.com
+      </div>
+      <div class="cover-back-divider"></div>
+      <div class="cover-back-disclaimer">
+        본 리포트는 사주명리·수리성명학·심리 설문 데이터를 기반으로 작성된 인생 방향성 탐색 자료입니다.<br>
+        전문적인 심리상담, 정신건강 의학, 법률 또는 재무 조언을 대체하지 않습니다.<br>
+        리포트의 해석은 참고용이며, 최종 판단과 결정은 본인에게 있습니다.<br>
+        본 리포트의 무단 복제 및 재배포를 금합니다.
+      </div>
     </div>
   </div>
 </div>
@@ -1734,12 +1888,18 @@ async function generateReport() {
 
   // 보고서 화면 준비
   setStep(3);
-  document.getElementById('rptName').textContent = state.name + '님의\n인생 분석 리포트';
+  document.getElementById('rptName').textContent = state.name + '님의\n인생 패턴 분석 리포트';
   const saju = state.saju;
-  document.getElementById('rptMeta').innerHTML = `
+  const metaHtml = `
     ${state.calType} ${state.birthYear}-${String(state.birthMonth).padStart(2,'0')}-${String(state.birthDay).padStart(2,'0')} · ${state.gender}${state.mbti?' · '+state.mbti:''}<br>
     ${new Date().getFullYear()}년 ${new Date().getMonth()+1}월 ${new Date().getDate()}일 발행
   `;
+  document.getElementById('rptMeta').innerHTML = metaHtml;
+  // 앞표지 동적 채우기
+  const coverNameEl = document.getElementById('coverName');
+  const coverMetaEl = document.getElementById('coverMeta');
+  if (coverNameEl) coverNameEl.textContent = state.name + '님의 리포트';
+  if (coverMetaEl) coverMetaEl.innerHTML = metaHtml;
 
   const body = document.getElementById('reportBody');
   body.innerHTML = '';
