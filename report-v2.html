@@ -1275,6 +1275,7 @@ let state = {
 </script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
+<script src="/hanja-db.js"></script>
 <script src="/suri-db.js"></script>
 <script src="/manse-db.js"></script>
 
@@ -1441,6 +1442,15 @@ function goToPayment() {
 
   localStorage.setItem('weros_life_email', state.email.toLowerCase().trim());
 
+  // 수리 자동계산 (DB 로드 완료 후 실행)
+  (function waitAndSuri(tries) {
+    if (typeof calcHanjaStrokes !== 'undefined' && (typeof calcGua !== 'undefined' || window.calcGua)) {
+      autoCalcSuri(true);
+    } else if (tries > 0) {
+      setTimeout(function() { waitAndSuri(tries - 1); }, 300);
+    }
+  })(20);
+
   // 결제 페이지 이름 표시
   const payName = document.getElementById('paymentName');
   if (payName) payName.textContent = state.name + '님의 인생 패턴 분석 리포트';
@@ -1522,6 +1532,15 @@ function goToStep2() {
 
   // localStorage에 이메일 저장
   localStorage.setItem('weros_life_email', state.email.toLowerCase().trim());
+
+  // 수리 자동계산 (DB 로드 완료 후 실행)
+  (function waitAndSuri(tries) {
+    if (typeof calcHanjaStrokes !== 'undefined' && (typeof calcGua !== 'undefined' || window.calcGua)) {
+      autoCalcSuri(true);
+    } else if (tries > 0) {
+      setTimeout(function() { waitAndSuri(tries - 1); }, 300);
+    }
+  })(20);
 
   renderSurvey();
   setStep(2);
@@ -2252,10 +2271,9 @@ function autoCalcSuri(silent) {
   const sr = document.getElementById('sajuResult');
   if (sr) {
     const prev = sr.textContent ? sr.textContent + ' · ' : '';
-    const guaTxt = guaResult ? ` / 괘: ${guaResult.early||''}·${guaResult.middle||''}·${guaResult.late||''}` : '';
-    sr.textContent = prev + '✦ 수리: 원' + won + ' 형' + hyung + ' 이' + yi + ' 정' + jung + guaTxt;
+    sr.textContent = prev + '✦ 수리: 원' + won + ' 형' + hyung + ' 이' + yi + ' 정' + jung;
   }
-  alert('✓ 수리 자동계산 완료\n원격:' + won + ' / 형격:' + hyung + ' / 이격:' + yi + ' / 정격:' + jung);
+  if (!silent) alert('✓ 수리 자동계산 완료');
 }
 function fillDummy1() {
   // 이름
