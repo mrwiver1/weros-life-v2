@@ -1444,7 +1444,7 @@ function goToPayment() {
 
   // 수리 자동계산 (DB 로드 완료 후 실행)
   (function waitAndSuri(tries) {
-    if (typeof calcHanjaStrokes !== 'undefined' && (typeof calcGua !== 'undefined' || window.calcGua)) {
+    if ((typeof calcHanjaStrokes !== 'undefined' || window.calcHanjaStrokes) && (typeof calcGua !== 'undefined' || window.calcGua)) {
       autoCalcSuri(true);
     } else if (tries > 0) {
       setTimeout(function() { waitAndSuri(tries - 1); }, 300);
@@ -1535,7 +1535,7 @@ function goToStep2() {
 
   // 수리 자동계산 (DB 로드 완료 후 실행)
   (function waitAndSuri(tries) {
-    if (typeof calcHanjaStrokes !== 'undefined' && (typeof calcGua !== 'undefined' || window.calcGua)) {
+    if ((typeof calcHanjaStrokes !== 'undefined' || window.calcHanjaStrokes) && (typeof calcGua !== 'undefined' || window.calcGua)) {
       autoCalcSuri(true);
     } else if (tries > 0) {
       setTimeout(function() { waitAndSuri(tries - 1); }, 300);
@@ -2212,11 +2212,12 @@ function autoCalcSuri(silent) {
     return;
   }
   // 한자 획수 계산
-  if (typeof calcHanjaStrokes === 'undefined') {
+  const calcHanjaStrokesFn = (typeof calcHanjaStrokes !== 'undefined') ? calcHanjaStrokes : window.calcHanjaStrokes;
+  if (!calcHanjaStrokesFn) {
     if (!silent) alert('한자 획수 DB가 로드되지 않았습니다.');
     return;
   }
-  const strokes = hanja.split('').map(c => calcHanjaStrokes(c));
+  const strokes = hanja.split('').map(c => calcHanjaStrokesFn(c));
   if (strokes.includes(null)) {
     alert('DB에 없는 한자가 포함되어 있습니다. 수동으로 입력해주세요.');
     return;
@@ -2317,7 +2318,7 @@ function fillDummy1() {
 
   // 수리 자동계산 — DB 로드 대기 후 실행 (silent: alert 없음)
   (function waitAndCalc(tries) {
-    if (typeof calcHanjaStrokes !== 'undefined' && typeof calcGua !== 'undefined') {
+    if ((typeof calcHanjaStrokes !== 'undefined' || window.calcHanjaStrokes) && (typeof calcGua !== 'undefined' || window.calcGua)) {
       autoCalcSuri(true);
     } else if (tries > 0) {
       setTimeout(function() { waitAndCalc(tries - 1); }, 300);
