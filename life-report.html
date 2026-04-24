@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WEROS · 인생 패턴 분석 보고서</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Noto+Serif+KR:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:         #f5f0e8;
+      --dark:       #1a1510;
+      --gold:       #9a7a50;
+      --gold-light: #c4a882;
+      --gold-pale:  #f0e4c8;
+      --cream:      #faf7f2;
+      --border:     #e0d5c5;
+      --text:       #2c2418;
+      --muted:      #8a7a65;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Noto Serif KR', serif;
+      min-height: 100vh;
+    }
+
+    /* ── 로딩 ── */
+    #loadingScreen {
+      position: fixed; inset: 0;
+      background: var(--dark);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      z-index: 999;
+      transition: opacity 0.6s;
+    }
+    #loadingScreen.fade-out { opacity: 0; pointer-events: none; }
+    .loading-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 28px; letter-spacing: 0.35em;
+      color: var(--gold-light); font-weight: 300;
+      margin-bottom: 40px;
+    }
+    .loading-bar-wrap {
+      width: 200px; height: 1px;
+      background: rgba(154,122,80,0.2);
+    }
+    .loading-bar {
+      height: 100%; background: var(--gold);
+      width: 0; transition: width 0.4s ease;
+    }
+    .loading-text {
+      margin-top: 20px; font-size: 11px;
+      letter-spacing: 0.2em; color: var(--muted);
+    }
+
+    /* ── 오류 화면 ── */
+    #errorScreen {
+      display: none;
+      min-height: 100vh;
+      align-items: center; justify-content: center;
+      flex-direction: column; gap: 16px;
+      text-align: center; padding: 40px;
+    }
+    #errorScreen .err-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 28px; color: var(--gold);
+    }
+    #errorScreen .err-msg { font-size: 14px; color: var(--muted); line-height: 1.8; }
+
+    /* ── 헤더 ── */
+    .report-header {
+      background: var(--dark);
+      padding: 0 32px; height: 56px;
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 100;
+    }
+    .header-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 18px; letter-spacing: 0.32em;
+      color: var(--gold-light); font-weight: 300;
+    }
+    .header-right {
+      font-size: 10px; letter-spacing: 0.2em;
+      color: rgba(154,122,80,0.6);
+    }
+
+    /* ── 표지 ── */
+    .cover {
+      background: var(--dark);
+      padding: 80px 48px 64px;
+      min-height: 360px;
+      display: flex; flex-direction: column; justify-content: flex-end;
+      position: relative; overflow: hidden;
+    }
+    .cover::before {
+      content: 'WEROS';
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%,-50%);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 180px; font-weight: 300;
+      color: rgba(154,122,80,0.04);
+      letter-spacing: 0.3em; white-space: nowrap;
+      pointer-events: none;
+    }
+    .cover-eyebrow {
+      font-size: 9px; letter-spacing: 0.35em;
+      color: var(--gold); text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+    .cover-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 48px; font-weight: 300;
+      color: #f5f0e8; letter-spacing: 0.04em;
+      line-height: 1.1; margin-bottom: 16px;
+    }
+    .cover-meta {
+      font-size: 13px; color: var(--muted);
+      line-height: 2; letter-spacing: 0.04em;
+    }
+    .cover-divider {
+      width: 48px; height: 1px;
+      background: var(--gold); opacity: 0.4;
+      margin: 24px 0;
+    }
+
+    /* ── 보고서 본문 ── */
+    .report-wrap {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 64px 32px 100px;
+    }
+
+    .report-chapter {
+      margin-bottom: 64px;
+      padding-bottom: 56px;
+      border-bottom: 1px solid var(--border);
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    .report-chapter.visible {
+      opacity: 1; transform: translateY(0);
+    }
+    .report-chapter:last-child { border-bottom: none; }
+
+    .chapter-eyebrow {
+      font-size: 9px; letter-spacing: 0.35em;
+      color: var(--gold); text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+
+    /* 마크다운 렌더링 스타일 */
+    .chapter-content h1,
+    .chapter-content h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 26px; font-weight: 400;
+      color: var(--dark); letter-spacing: 0.02em;
+      margin: 32px 0 16px; line-height: 1.3;
+    }
+    .chapter-content h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 20px; font-weight: 400;
+      color: var(--dark); margin: 24px 0 12px;
+    }
+    .chapter-content p {
+      font-size: 15px; line-height: 2;
+      color: var(--text); margin-bottom: 18px;
+    }
+    .chapter-content strong {
+      color: var(--dark); font-weight: 600;
+    }
+    .chapter-content em { font-style: italic; color: var(--muted); }
+    .chapter-content blockquote {
+      border-left: 3px solid var(--gold);
+      padding: 14px 22px; margin: 24px 0;
+      background: var(--cream);
+      color: var(--muted); font-style: italic;
+      font-size: 14px; line-height: 1.9;
+    }
+    .chapter-content ul, .chapter-content ol {
+      padding-left: 22px; margin-bottom: 18px;
+    }
+    .chapter-content li {
+      font-size: 15px; line-height: 2;
+      margin-bottom: 6px; color: var(--text);
+    }
+    .chapter-content hr {
+      border: none; border-top: 1px solid var(--border);
+      margin: 32px 0;
+    }
+
+    /* ── 푸터 ── */
+    .report-footer {
+      background: var(--dark);
+      padding: 40px 32px;
+      text-align: center;
+    }
+    .footer-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 20px; letter-spacing: 0.3em;
+      color: var(--gold); font-weight: 300;
+      margin-bottom: 12px;
+    }
+    .footer-text {
+      font-size: 11px; color: rgba(154,122,80,0.5);
+      letter-spacing: 0.1em; line-height: 2;
+    }
+
+    /* ── 반응형 ── */
+    @media (max-width: 640px) {
+      .cover { padding: 60px 24px 48px; }
+      .cover-name { font-size: 34px; }
+      .report-wrap { padding: 48px 20px 80px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- 로딩 -->
+<div id="loadingScreen">
+  <div class="loading-logo">W E R O S</div>
+  <div class="loading-bar-wrap">
+    <div class="loading-bar" id="loadingBar"></div>
+  </div>
+  <div class="loading-text" id="loadingText">보고서를 불러오는 중입니다</div>
+</div>
+
+<!-- 오류 -->
+<div id="errorScreen" style="display:none;min-height:100vh;display:none;align-items:center;justify-content:center;flex-direction:column;gap:16px;text-align:center;padding:40px;">
+  <div class="err-title">보고서를 찾을 수 없습니다</div>
+  <div class="err-msg" id="errorMsg">링크가 만료되었거나 잘못된 주소입니다.<br>담당자에게 문의해주세요.</div>
+</div>
+
+<!-- 헤더 -->
+<div class="report-header" id="reportHeader" style="display:none">
+  <div class="header-logo">W E R O S</div>
+  <div class="header-right">LIFE PATTERN REPORT</div>
+</div>
+
+<!-- 표지 -->
+<div class="cover" id="reportCover" style="display:none">
+  <div class="cover-eyebrow">WEROS · 인생 패턴 분석 보고서</div>
+  <div class="cover-name" id="coverName">—</div>
+  <div class="cover-divider"></div>
+  <div class="cover-meta" id="coverMeta">—</div>
+</div>
+
+<!-- 본문 -->
+<div class="report-wrap" id="reportBody" style="display:none"></div>
+
+<!-- 푸터 -->
+<div class="report-footer" id="reportFooter" style="display:none">
+  <div class="footer-logo">W E R O S</div>
+  <div class="footer-text">
+    본 보고서는 WEROS 인생 패턴 분석 시스템에 의해 생성되었습니다.<br>
+    무단 복제 및 배포를 금합니다.
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://wavhcknviozwadqyjlug.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indhdmhja252aW96d2FkcXlqbHVnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ4NTQ5NjksImV4cCI6MjA5MDQzMDk2OX0.frq_z3GgL8BEjHCRuVcdOqPLe0DhJp0k-joOXYVK_Ws';
+
+// 로딩 바 애니메이션
+const loadingBar = document.getElementById('loadingBar');
+const loadingText = document.getElementById('loadingText');
+let loadingProgress = 0;
+const loadingTimer = setInterval(() => {
+  loadingProgress = Math.min(loadingProgress + Math.random() * 15, 85);
+  loadingBar.style.width = loadingProgress + '%';
+}, 300);
+
+function finishLoading() {
+  clearInterval(loadingTimer);
+  loadingBar.style.width = '100%';
+  setTimeout(() => {
+    document.getElementById('loadingScreen').classList.add('fade-out');
+    setTimeout(() => {
+      document.getElementById('loadingScreen').style.display = 'none';
+    }, 600);
+  }, 400);
+}
+
+function showError(msg) {
+  clearInterval(loadingTimer);
+  document.getElementById('loadingScreen').style.display = 'none';
+  const errScreen = document.getElementById('errorScreen');
+  errScreen.style.display = 'flex';
+  if (msg) document.getElementById('errorMsg').innerHTML = msg;
+}
+
+function showReport(row) {
+  // 표지
+  const name = row.name || '고객';
+  document.getElementById('coverName').textContent = name + ' 님의 리포트';
+
+  const parts = [];
+  if (row.birth_year && row.birth_month && row.birth_day) {
+    const cal = row.cal_type || '양력';
+    parts.push(cal + ' ' + row.birth_year + '년 ' + row.birth_month + '월 ' + row.birth_day + '일');
+  }
+  if (row.gender) parts.push(row.gender);
+  if (row.mbti) parts.push('MBTI · ' + row.mbti);
+  document.getElementById('coverMeta').innerHTML = parts.join('<br>');
+
+  // 본문 — report_html 그대로 삽입
+  const body = document.getElementById('reportBody');
+  body.innerHTML = row.report_html || '';
+
+  // 챕터별 fade-in 애니메이션
+  const chapters = body.querySelectorAll('.report-chapter');
+  if (chapters.length > 0) {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.1 });
+    chapters.forEach(ch => observer.observe(ch));
+  } else {
+    // report_html에 .report-chapter 클래스 없는 경우 그냥 표시
+    body.style.opacity = '1';
+  }
+
+  // 표시
+  document.getElementById('reportHeader').style.display = 'flex';
+  document.getElementById('reportCover').style.display = 'flex';
+  body.style.display = 'block';
+  document.getElementById('reportFooter').style.display = 'block';
+
+  finishLoading();
+}
+
+async function loadReport() {
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get('id');
+
+  if (!id) {
+    showError('보고서 ID가 없습니다.<br>올바른 링크로 접속해주세요.');
+    return;
+  }
+
+  try {
+    loadingText.textContent = '데이터를 확인하는 중…';
+    const res = await fetch(
+      SUPABASE_URL + '/rest/v1/life_reports?id=eq.' + encodeURIComponent(id) + '&select=*',
+      {
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+        }
+      }
+    );
+
+    if (!res.ok) throw new Error('데이터 조회 실패 (' + res.status + ')');
+
+    const data = await res.json();
+
+    if (!data || data.length === 0) {
+      showError('보고서를 찾을 수 없습니다.<br>링크가 만료되었거나 잘못된 주소입니다.');
+      return;
+    }
+
+    const row = data[0];
+
+    if (!row.report_html) {
+      showError('보고서가 아직 준비되지 않았습니다.<br>담당자가 보고서를 생성 중입니다.<br>잠시 후 다시 확인해주세요.');
+      return;
+    }
+
+    loadingText.textContent = '보고서를 렌더링하는 중…';
+    showReport(row);
+
+  } catch (e) {
+    showError('오류가 발생했습니다.<br>' + e.message);
+  }
+}
+
+// 시작
+loadReport();
+</script>
+</body>
+</html>
