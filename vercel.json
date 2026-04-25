@@ -2,6 +2,7 @@
   "cleanUrls": true,
   "rewrites": [
     { "source": "/report-v2", "destination": "/report-v2.html" },
+    { "source": "/life-report", "destination": "/life-report.html" },
     { "source": "/", "destination": "/index.html" }
   ]
 }
